@@ -3,901 +3,651 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>16小時 AI 實作課程規劃</title>
+  <title>AI 課程規劃｜三版本差異比較</title>
   <style>
     :root {
-      --blue:    #2563eb;
-      --blue-lt: #dbeafe;
-      --teal:    #0d9488;
-      --teal-lt: #ccfbf1;
-      --amber:   #d97706;
-      --amber-lt:#fef3c7;
-      --gray-50: #f8fafc;
-      --gray-100:#f1f5f9;
-      --gray-200:#e2e8f0;
-      --gray-600:#475569;
-      --gray-800:#1e293b;
-      --radius:  10px;
+      --blue:#2563eb; --blue-lt:#dbeafe;
+      --teal:#0d9488; --teal-lt:#ccfbf1;
+      --amber:#d97706; --amber-lt:#fef3c7;
+      --purple:#7c3aed; --purple-lt:#ede9fe;
+      --red:#dc2626; --red-lt:#fee2e2;
+      --green:#16a34a; --green-lt:#dcfce7;
+      --gray-50:#f8fafc; --gray-100:#f1f5f9;
+      --gray-200:#e2e8f0; --gray-600:#475569; --gray-800:#1e293b;
+      --radius:10px;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
-      background: var(--gray-50);
-      color: var(--gray-800);
-      line-height: 1.7;
-    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; background:var(--gray-50); color:var(--gray-800); line-height:1.7; }
 
     /* ── Hero ── */
-    .hero {
-      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 60%, #0d9488 100%);
-      color: #fff;
-      padding: 60px 24px 48px;
-      text-align: center;
-    }
-    .hero .tag {
-      display: inline-block;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.35);
-      border-radius: 99px;
-      padding: 4px 16px;
-      font-size: 13px;
-      letter-spacing: .05em;
-      margin-bottom: 20px;
-    }
-    .hero h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; margin-bottom: 12px; }
-    .hero p  { font-size: 16px; opacity: .88; max-width: 560px; margin: 0 auto 32px; }
-    .hero .badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-    .hero .badge {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 8px;
-      padding: 8px 18px;
-      font-size: 14px;
-      font-weight: 600;
-    }
+    .hero { background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 40%,#7c3aed 70%,#0d9488 100%); color:#fff; padding:48px 24px 40px; text-align:center; }
+    .hero h1 { font-size:clamp(22px,4vw,36px); font-weight:800; margin-bottom:10px; }
+    .hero p { font-size:15px; opacity:.88; margin-bottom:28px; }
+    .hero .version-cards { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; }
+    .vcard { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.3); border-radius:10px; padding:14px 20px; text-align:left; min-width:220px; max-width:260px; text-decoration:none; color:#fff; transition:background .15s, transform .15s; }
+    .vcard:hover { background:rgba(255,255,255,.22); transform:translateY(-2px); }
+    .vcard .vcard-name { font-size:15px; font-weight:700; margin-bottom:4px; }
+    .vcard .vcard-sub { font-size:12px; opacity:.8; margin-bottom:10px; }
+    .vcard .vcard-link { font-size:12px; font-weight:600; opacity:.9; display:flex; align-items:center; gap:5px; }
+    .vcard.v1 { border-top:3px solid #93c5fd; }
+    .vcard.v2 { border-top:3px solid #fcd34d; }
+    .vcard.v3 { border-top:3px solid #c4b5fd; }
 
-    /* ── Layout ── */
-    .container { max-width: 1000px; margin: 0 auto; padding: 48px 24px; }
+    /* ── Container ── */
+    .container { max-width:1200px; margin:0 auto; padding:40px 20px 60px; }
 
-    /* ── Section title ── */
-    .section-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .section-title::after {
-      content: "";
-      flex: 1;
-      height: 2px;
-      background: var(--gray-200);
-      border-radius: 2px;
-    }
+    /* ── Legend ── */
+    .legend { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px; align-items:center; }
+    .legend-label { font-size:13px; font-weight:600; color:var(--gray-600); margin-right:4px; }
+    .badge { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; padding:3px 10px; border-radius:99px; white-space:nowrap; }
+    .badge.same   { background:var(--gray-200);  color:var(--gray-600); }
+    .badge.similar{ background:var(--teal-lt);   color:#0f766e; }
+    .badge.modified{background:var(--amber-lt);  color:#92400e; }
+    .badge.merged { background:var(--blue-lt);   color:#1e40af; }
+    .badge.removed{ background:var(--red-lt);    color:#991b1b; }
+    .badge.added  { background:var(--green-lt);  color:var(--green); }
 
-    /* ── Timeline nav ── */
-    .timeline-nav {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 56px;
-    }
-    .tnav-card {
-      border-radius: var(--radius);
-      padding: 20px;
-      text-align: center;
-      border: 2px solid transparent;
-      transition: transform .15s;
-    }
-    .tnav-card:hover { transform: translateY(-3px); }
-    .tnav-card.mod1 { background: var(--blue-lt);  border-color: #93c5fd; }
-    .tnav-card.mod2 { background: var(--teal-lt);  border-color: #5eead4; }
-    .tnav-card.mod3 { background: var(--amber-lt); border-color: #fcd34d; }
-    .tnav-card .num {
-      font-size: 28px;
-      font-weight: 800;
-      display: block;
-      margin-bottom: 4px;
-    }
-    .mod1 .num { color: var(--blue); }
-    .mod2 .num { color: var(--teal); }
-    .mod3 .num { color: var(--amber); }
-    .tnav-card .label { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-    .tnav-card .sub   { font-size: 12px; color: var(--gray-600); }
+    /* ── Section heading ── */
+    .section-heading { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--gray-600); margin:32px 0 12px; display:flex; align-items:center; gap:10px; }
+    .section-heading::after { content:""; flex:1; height:1px; background:var(--gray-200); }
 
-    /* ── Module header ── */
-    .module-header {
-      border-radius: var(--radius);
-      padding: 22px 28px;
-      margin-bottom: 24px;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .module-header.m1 { background: linear-gradient(90deg, #1d4ed8, #2563eb); }
-    .module-header.m2 { background: linear-gradient(90deg, #0f766e, #0d9488); }
-    .module-header.m3 { background: linear-gradient(90deg, #b45309, #d97706); }
-    .module-header .mnum {
-      font-size: 36px;
-      font-weight: 800;
-      opacity: .6;
-      line-height: 1;
-    }
-    .module-header .minfo h2 { font-size: 20px; font-weight: 700; }
-    .module-header .minfo p  { font-size: 13px; opacity: .85; margin-top: 2px; }
+    /* ── Comparison Table ── */
+    .cmp-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:8px; }
+    .cmp-table thead tr { background:var(--gray-800); color:#fff; }
+    .cmp-table thead th { padding:10px 14px; text-align:left; font-weight:600; font-size:12px; }
+    .cmp-table thead th:nth-child(2) { background:#1d4ed8; }
+    .cmp-table thead th:nth-child(3) { background:#b45309; }
+    .cmp-table thead th:nth-child(4) { background:#6d28d9; }
 
-    /* ── Session card ── */
-    .session-card {
-      background: #fff;
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius);
-      margin-bottom: 16px;
-      overflow: hidden;
-    }
-    .session-card summary {
-      list-style: none;
-      padding: 16px 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      user-select: none;
-    }
-    .session-card summary::-webkit-details-marker { display: none; }
-    .session-card summary:hover { background: var(--gray-50); }
-    .session-num {
-      background: var(--gray-100);
-      border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--gray-600);
-      white-space: nowrap;
-    }
-    .session-card.m1 .session-num { background: var(--blue-lt);  color: var(--blue); }
-    .session-card.m2 .session-num { background: var(--teal-lt);  color: var(--teal); }
-    .session-card.m3 .session-num { background: var(--amber-lt); color: var(--amber); }
-    .session-title { font-weight: 600; font-size: 15px; flex: 1; }
-    .session-dur {
-      font-size: 12px;
-      color: var(--gray-600);
-      white-space: nowrap;
-    }
-    .chevron {
-      font-size: 12px;
-      color: var(--gray-600);
-      transition: transform .2s;
-    }
-    details[open] .chevron { transform: rotate(90deg); }
-    .session-body {
-      padding: 0 20px 20px 20px;
-      border-top: 1px solid var(--gray-100);
-    }
+    .cmp-table tbody tr { border-bottom:1px solid var(--gray-200); vertical-align:top; }
+    .cmp-table tbody tr:last-child { border-bottom:none; }
+    .cmp-table tbody tr:hover { background:var(--gray-50); }
 
-    /* ── Content components ── */
-    .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
-    .tag-pill {
-      background: var(--gray-100);
-      border-radius: 99px;
-      padding: 3px 12px;
-      font-size: 13px;
-      font-weight: 500;
-    }
+    /* module header rows */
+    .cmp-table tr.mod-row td { background:var(--gray-100); font-weight:700; font-size:12px; padding:8px 14px; color:var(--gray-600); border-bottom:2px solid var(--gray-200); }
+    .cmp-table tr.mod-row td:first-child { color:var(--gray-800); font-size:13px; }
 
-    table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
-    th {
-      background: var(--gray-100);
-      padding: 9px 12px;
-      text-align: left;
-      font-weight: 600;
-      border-bottom: 2px solid var(--gray-200);
-    }
-    td { padding: 9px 12px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
-    tr:last-child td { border-bottom: none; }
+    .cmp-table td { padding:10px 14px; line-height:1.55; }
+    .cmp-table td:first-child { white-space:nowrap; font-weight:600; color:var(--gray-600); font-size:12px; }
 
-    .code-block {
-      background: #1e293b;
-      color: #e2e8f0;
-      border-radius: 8px;
-      padding: 16px 18px;
-      font-family: "JetBrains Mono", "Fira Code", monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      overflow-x: auto;
-      margin: 12px 0;
-      white-space: pre;
-    }
-    .code-block .cm  { color: #94a3b8; }
-    .code-block .kw  { color: #7dd3fc; }
-    .code-block .str { color: #86efac; }
-    .code-block .var { color: #fde68a; }
+    .dur { display:inline-block; background:var(--gray-100); border-radius:4px; padding:1px 7px; font-size:11px; font-weight:700; color:var(--gray-600); margin-bottom:4px; }
+    .dur.changed { background:var(--amber-lt); color:#92400e; }
+    .dur.added   { background:var(--green-lt); color:var(--green); }
+    .dur.removed { background:var(--red-lt);   color:#991b1b; text-decoration:line-through; }
 
-    .info-box {
-      border-left: 4px solid var(--blue);
-      background: var(--blue-lt);
-      border-radius: 0 8px 8px 0;
-      padding: 12px 16px;
-      font-size: 14px;
-      margin: 12px 0;
-    }
-    .info-box.teal  { border-color: var(--teal);  background: var(--teal-lt); }
-    .info-box.amber { border-color: var(--amber); background: var(--amber-lt); }
+    .cell-title { font-weight:600; font-size:13px; margin-bottom:4px; color:var(--gray-800); }
+    .cell-body  { font-size:12px; color:var(--gray-600); }
+    .cell-body ul { padding-left:14px; }
+    .cell-body ul li { margin-bottom:2px; }
 
-    .step-list { counter-reset: step; list-style: none; margin: 12px 0; }
-    .step-list li {
-      counter-increment: step;
-      padding: 8px 0 8px 36px;
-      position: relative;
-      font-size: 14px;
-      border-bottom: 1px dashed var(--gray-200);
-    }
-    .step-list li:last-child { border-bottom: none; }
-    .step-list li::before {
-      content: counter(step);
-      position: absolute;
-      left: 0;
-      top: 8px;
-      width: 22px;
-      height: 22px;
-      background: var(--blue);
-      color: #fff;
-      border-radius: 50%;
-      font-size: 11px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .step-list.teal li::before  { background: var(--teal); }
-    .step-list.amber li::before { background: var(--amber); }
+    .placeholder { font-size:12px; color:#9ca3af; font-style:italic; border:1px dashed #d1d5db; border-radius:6px; padding:8px 12px; }
+    .placeholder.removed { border-color:#fca5a5; color:#ef4444; background:#fef2f2; font-style:normal; }
 
-    ul.bullet { padding-left: 20px; font-size: 14px; }
-    ul.bullet li { margin-bottom: 6px; }
+    /* row status left border */
+    .cmp-table tr.status-same     td:nth-child(2),
+    .cmp-table tr.status-same     td:nth-child(3),
+    .cmp-table tr.status-same     td:nth-child(4) { border-left:3px solid var(--gray-200); }
+    .cmp-table tr.status-similar  td:nth-child(2),
+    .cmp-table tr.status-similar  td:nth-child(3),
+    .cmp-table tr.status-similar  td:nth-child(4) { border-left:3px solid var(--teal); }
+    .cmp-table tr.status-modified td:nth-child(2),
+    .cmp-table tr.status-modified td:nth-child(3),
+    .cmp-table tr.status-modified td:nth-child(4) { border-left:3px solid var(--amber); }
+    .cmp-table tr.status-merged   td:nth-child(2),
+    .cmp-table tr.status-merged   td:nth-child(3),
+    .cmp-table tr.status-merged   td:nth-child(4) { border-left:3px solid var(--blue); }
+    .cmp-table tr.status-removed  td:nth-child(2),
+    .cmp-table tr.status-removed  td:nth-child(3),
+    .cmp-table tr.status-removed  td:nth-child(4) { border-left:3px solid var(--red); }
+    .cmp-table tr.status-added    td:nth-child(2),
+    .cmp-table tr.status-added    td:nth-child(3),
+    .cmp-table tr.status-added    td:nth-child(4) { border-left:3px solid var(--green); }
 
-    h3 { font-size: 15px; font-weight: 700; margin: 16px 0 8px; color: var(--gray-800); }
-    h4 { font-size: 13px; font-weight: 700; margin: 12px 0 6px; color: var(--gray-600); text-transform: uppercase; letter-spacing: .05em; }
+    /* highlight cell that differs */
+    .hl-amber { background:#fffbeb !important; }
+    .hl-purple { background:#faf5ff !important; }
+    .hl-red    { background:#fef2f2 !important; }
+    .hl-green  { background:#f0fdf4 !important; }
 
-    /* ── Architecture diagram ── */
-    .arch {
-      background: #0f172a;
-      color: #e2e8f0;
-      border-radius: var(--radius);
-      padding: 28px;
-      font-family: monospace;
-      font-size: 13px;
-      line-height: 2;
-      overflow-x: auto;
-      margin: 16px 0;
-    }
-    .arch .node   { color: #7dd3fc; font-weight: 700; }
-    .arch .arrow  { color: #94a3b8; }
-    .arch .note   { color: #86efac; }
-    .arch .label  { color: #fde68a; }
+    /* ── Summary banner ── */
+    .summary-banner { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px; }
+    .sv-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); padding:16px 20px; }
+    .sv-card.v1 { border-top:4px solid var(--blue); }
+    .sv-card.v2 { border-top:4px solid var(--amber); }
+    .sv-card.v3 { border-top:4px solid var(--purple); }
+    .sv-card h3 { font-size:14px; font-weight:700; margin-bottom:8px; }
+    .sv-card .stat { display:flex; gap:8px; font-size:12px; color:var(--gray-600); flex-wrap:wrap; margin-bottom:8px; }
+    .sv-card .stat span { background:var(--gray-100); border-radius:4px; padding:2px 8px; font-weight:600; }
+    .sv-card p { font-size:12px; color:var(--gray-600); line-height:1.6; }
+    .sv-link { display:inline-flex; align-items:center; gap:5px; margin-top:10px; font-size:12px; font-weight:700; color:var(--blue); text-decoration:none; padding:5px 12px; border:1px solid var(--blue); border-radius:6px; transition:background .15s; }
+    .sv-link:hover { background:var(--blue-lt); }
+    .sv-card.v2 .sv-link { color:var(--amber); border-color:var(--amber); }
+    .sv-card.v2 .sv-link:hover { background:var(--amber-lt); }
+    .sv-card.v3 .sv-link { color:var(--purple); border-color:var(--purple); }
+    .sv-card.v3 .sv-link:hover { background:var(--purple-lt); }
 
-    /* ── Summary table ── */
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .summary-item {
-      background: #fff;
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .summary-item .si-num {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--blue);
-      min-width: 36px;
-    }
-    .summary-item .si-text { font-size: 13px; line-height: 1.4; }
-    .summary-item .si-text strong { display: block; font-size: 14px; }
+    /* ── Diff summary pills ── */
+    .diff-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:24px; }
 
-    @media (max-width: 640px) {
-      .timeline-nav { grid-template-columns: 1fr; }
-      .module-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+    @media(max-width:768px) {
+      .cmp-table { font-size:12px; }
+      .cmp-table td { padding:8px 10px; }
+      .summary-banner { grid-template-columns:1fr; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── Hero ── -->
+<!-- Hero -->
 <div class="hero">
-  <span class="tag">青聚點 × AI 實作課程</span>
-  <h1>16小時 AI 工具實作課程</h1>
-  <p>從 AI 觀念建立到完整系統整合，帶領學員親手打造課程查詢 AI 助理</p>
-  <div class="badges">
-    <span class="badge">🎯 適合新手</span>
-    <span class="badge">🛠 hands-on 動手實作</span>
-    <span class="badge">🤖 n8n 自動化</span>
-    <span class="badge">💻 VSCode + Codex</span>
-    <span class="badge">🔍 向量資料庫</span>
+  <h1>16小時 AI 課程規劃｜三版本差異比較</h1>
+  <p>點擊下方版本卡片，可開啟各版本的完整課程規劃</p>
+  <div class="version-cards">
+    <a class="vcard v1" href="ai課程規劃.html" target="_blank">
+      <div class="vcard-name">原始版</div>
+      <div class="vcard-sub">11 節｜模組一 4h + 模組二 4h + 模組三 8h</div>
+      <div class="vcard-link">↗ 開啟完整版本</div>
+    </a>
+    <a class="vcard v2" href="ai課程規劃_基礎代理版.html" target="_blank">
+      <div class="vcard-name">基礎代理版</div>
+      <div class="vcard-sub">10 節｜組合二 + Cloudflare Worker 基礎安全</div>
+      <div class="vcard-link">↗ 開啟完整版本</div>
+    </a>
+    <a class="vcard v3" href="ai課程規劃_正式上線版.html" target="_blank">
+      <div class="vcard-name">正式上線版</div>
+      <div class="vcard-sub">10 節｜組合二 + Turnstile + Rate Limit + 監控</div>
+      <div class="vcard-link">↗ 開啟完整版本</div>
+    </a>
   </div>
 </div>
 
 <div class="container">
 
-  <!-- ── Overview ── -->
-  <div class="timeline-nav">
-    <div class="tnav-card mod1">
-      <span class="num">4h</span>
-      <div class="label">模組一</div>
-      <div class="sub">n8n 基礎 × Google 憑證</div>
-    </div>
-    <div class="tnav-card mod2">
-      <span class="num">4h</span>
-      <div class="label">模組二</div>
-      <div class="sub">VSCode × Codex 前端開發</div>
-    </div>
-    <div class="tnav-card mod3">
-      <span class="num">8h</span>
-      <div class="label">模組三</div>
-      <div class="sub">整合應用 × 課程查詢系統</div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════
-       MODULE 1
-  ════════════════════════════════════ -->
-  <div class="module-header m1">
-    <div class="mnum">01</div>
-    <div class="minfo">
-      <h2>n8n 基礎與 Google 憑證</h2>
-      <p>AI 觀念建構 → n8n 工作流操作 → Google API 申請｜共 4 小時</p>
-    </div>
-  </div>
-
-  <!-- 第1節 -->
-  <details class="session-card m1" open>
-    <summary>
-      <span class="session-num">第 1 節</span>
-      <span class="session-title">AI 觀念建構：LLM、Agent、PSIO 與 Prompt 設計規範</span>
-      <span class="session-dur">1 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-
-      <h3>LLM vs AI Agent</h3>
-      <table>
-        <tr><th></th><th>LLM</th><th>AI Agent</th></tr>
-        <tr><td>比喻</td><td>百科全書式問答機</td><td>會執行任務的助理</td></tr>
-        <tr><td>行為</td><td>一問一答，無記憶</td><td>多步驟、可呼叫工具、有記憶</td></tr>
-        <tr><td>例子</td><td>ChatGPT 對話視窗</td><td>n8n 工作流 + AI 節點</td></tr>
-      </table>
-      <div class="info-box">💡 類比：LLM 是「聰明的大腦」，Agent 是「有腦又有手腳的員工」</div>
-
-      <h3>Prompt 設計規範</h3>
-      <p style="font-size:14px;margin-bottom:10px;">與 AI 對話前，先掌握這六條規範，才能穩定拿到好結果：</p>
-      <table>
-        <tr><th>規範</th><th>說明</th><th>反例 → 正例</th></tr>
-        <tr>
-          <td>具體明確</td>
-          <td>避免模糊詞彙，說清楚預期結果</td>
-          <td>「寫得好一點」→「改為正式書信語氣，不超過 100 字」</td>
-        </tr>
-        <tr>
-          <td>提供脈絡</td>
-          <td>告訴 AI 背景資訊與限制條件</td>
-          <td>「幫我寫通知」→「這是寄給 40 歲以上學員的課前通知，需含時間地點」</td>
-        </tr>
-        <tr>
-          <td>指定格式</td>
-          <td>明確說明輸出要用什麼結構</td>
-          <td>「整理一下」→「輸出為 Markdown 表格，欄位：項目、說明、優先級」</td>
-        </tr>
-        <tr>
-          <td>正向描述</td>
-          <td>說「要什麼」而非「不要什麼」</td>
-          <td>「不要太難」→「使用國中程度的語彙說明」</td>
-        </tr>
-        <tr>
-          <td>分段給資料</td>
-          <td>長資料與指令明確分開</td>
-          <td>指令和資料混在一起 → 「指令寫在前，資料用『---』隔開後貼上」</td>
-        </tr>
-        <tr>
-          <td>一次一件事</td>
-          <td>複雜需求拆成多輪提問</td>
-          <td>一次要求翻譯＋摘要＋改寫 → 先翻譯，確認後再摘要</td>
-        </tr>
-      </table>
-      <div class="info-box amber">實作：講師示範同一需求用「不符規範」與「符合規範」各問一次，學員觀察差異</div>
-
-      <h3>PSIO Prompt 撰寫框架</h3>
-      <p style="font-size:14px;margin-bottom:10px;">掌握規範後，用 PSIO 框架把需求結構化，讓每次 prompt 都有完整的骨架：</p>
-      <div class="code-block"><span class="kw">P</span> — <span class="str">Purpose（目的）</span>  推薦最適合初學者的資料分析課程
-<span class="kw">S</span> — <span class="str">Step（步驟）</span>    1. 閱讀課程清單  2. 評估難度與適合對象  3. 列出推薦
-<span class="kw">I</span> — <span class="str">Input（輸入）</span>   課程清單如下：[貼上課程資料]
-<span class="kw">O</span> — <span class="str">Output（輸出）</span>  條列3門課，每門附上一句推薦理由（20字以內）</div>
-
-      <h3>任務拆解練習</h3>
-      <p style="font-size:14px;margin-bottom:8px;">將「建立可以回答課程問題的機器人」拆解為 5 個步驟：</p>
-      <ol class="step-list">
-        <li>使用者輸入問題（Input 邊界定義）</li>
-        <li>判斷問題類型（分類任務）</li>
-        <li>查詢課程資料（資料來源）</li>
-        <li>組合回答（LLM 整合）</li>
-        <li>回傳給使用者（Output 格式）</li>
-      </ol>
-      <div class="info-box teal">每個步驟 = n8n 的一個節點</div>
-    </div>
-  </details>
-
-  <!-- 第2節 -->
-  <details class="session-card m1">
-    <summary>
-      <span class="session-num">第 2 節</span>
-      <span class="session-title">n8n 介面操作與簡易對話工作流</span>
-      <span class="session-dur">1.5 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <h3>環境設定</h3>
-      <ul class="bullet">
-        <li>使用 <strong>n8n Cloud</strong>（免安裝，新手友善）</li>
-        <li>介面說明：畫布、節點庫、執行記錄面板</li>
-      </ul>
-
-      <h3>核心節點介紹</h3>
-      <table>
-        <tr><th>節點</th><th>用途</th><th>類比</th></tr>
-        <tr><td>Chat Trigger</td><td>啟動對話，提供內建聊天介面</td><td>接待人員開啟對話窗口</td></tr>
-        <tr><td>Set</td><td>整理 / 轉換資料</td><td>填寫表單格式</td></tr>
-        <tr><td>IF</td><td>條件判斷</td><td>主管決策</td></tr>
-        <tr><td>AI Agent</td><td>呼叫 LLM，可搭配工具與記憶</td><td>交給 AI 員工處理</td></tr>
-        <tr><td>Webhook</td><td>接收外部 HTTP 請求</td><td>公司對外收件信箱</td></tr>
-      </table>
-
-      <h3>實作：簡易對話工作流</h3>
-      <div class="code-block"><span class="node">[Chat Trigger]</span> <span class="arrow">──</span> 內建聊天介面，直接在 n8n 測試
-    <span class="arrow">↓</span>
-<span class="node">[AI Agent]</span> <span class="arrow">──</span> 設定 system prompt（用 PSIO 框架撰寫）
-    <span class="arrow">↓</span>
-<span class="cm">（Chat Trigger 自動處理回傳，不需另加節點）</span></div>
-      <div class="info-box amber">優點：不需 Postman，直接在 n8n 畫布右側開啟聊天視窗測試</div>
-    </div>
-  </details>
-
-  <!-- 第3節 -->
-  <details class="session-card m1">
-    <summary>
-      <span class="session-num">第 3 節</span>
-      <span class="session-title">申請 Google 憑證</span>
-      <span class="session-dur">1.5 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <h3>逐步操作流程</h3>
-      <ol class="step-list teal">
-        <li>進入 Google Cloud Console → 建立新專案「AI課程專案」</li>
-        <li>啟用 API：Gmail API、Google Sheets API、Google Drive API</li>
-        <li>建立 OAuth 2.0 憑證：應用程式類型選「網頁應用程式」，填入 n8n callback URL</li>
-        <li>在 n8n Credentials 貼上 Client ID 與 Client Secret → 授權</li>
-      </ol>
-
-      <h3>常見地雷</h3>
-      <ul class="bullet">
-        <li><strong>測試帳號限制：</strong>OAuth 同意畫面須加入測試使用者才能授權</li>
-        <li><strong>範圍不足：</strong>回 API 頁面確認已啟用正確服務</li>
-        <li><strong>憑證過期：</strong>了解 token 自動更新機制</li>
-      </ul>
-    </div>
-  </details>
-
-
-  <!-- ════════════════════════════════════
-       MODULE 2
-  ════════════════════════════════════ -->
-  <div class="module-header m2" style="margin-top:48px;">
-    <div class="mnum">02</div>
-    <div class="minfo">
-      <h2>VSCode × Codex 前端開發</h2>
-      <p>對話策略 → 漸進式實作 → 資料清理與報告撰寫｜共 4 小時</p>
-    </div>
-  </div>
-
-  <!-- 第4節 -->
-  <details class="session-card m2">
-    <summary>
-      <span class="session-num">第 4 節</span>
-      <span class="session-title">與模型對話的方式</span>
-      <span class="session-dur">1 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <h3>對話心態建立</h3>
-      <ul class="bullet">
-        <li>AI 是「可以討論的協作者」，不是搜尋引擎</li>
-        <li>不用第一次就說完整，可以漸進補充</li>
-        <li>錯了繼續說「修改剛才的…」，不需重新開始</li>
-      </ul>
-
-      <h3>三層次對話策略</h3>
-      <div class="code-block"><span class="cm">── 層次1：直接描述 ──</span>
-<span class="str">「幫我寫一個有姓名和信箱欄位的 HTML 表單」</span>
-
-<span class="cm">── 層次2：加上限制條件 ──</span>
-<span class="str">「幫我寫一個 HTML 表單，有姓名和信箱欄位，
- 用藍色主題，送出按鈕在右下角」</span>
-
-<span class="cm">── 層次3：PSIO 完整 Prompt ──</span>
-<span class="str">「目的：建立一個課程查詢頁面。
- 步驟：先規劃 HTML 結構，再加入 CSS 樣式。
- 輸入：姓名輸入框、多行問題輸入框、送出按鈕。
- 輸出：完整可執行的單一 HTML 檔案，風格簡潔專業。」</span></div>
-      <div class="info-box teal">實作：學員用三種層次各寫一個 prompt，比較產出品質差異</div>
-    </div>
-  </details>
-
-  <!-- 第5節 -->
-  <details class="session-card m2">
-    <summary>
-      <span class="session-num">第 5 節</span>
-      <span class="session-title">漸進式前端實作系列</span>
-      <span class="session-dur">2 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <p style="font-size:14px;margin-bottom:16px;">每個範例在前一個基礎上累加，聚焦在前端本身的能力，不串接後端。</p>
-      <table>
-        <tr><th>#</th><th>範例</th><th>目標</th><th>學習點</th><th>時間</th></tr>
-        <tr>
-          <td>1</td>
-          <td>靜態查詢頁面</td>
-          <td>姓名輸入 + 問題輸入 + 送出按鈕</td>
-          <td>看懂 HTML 結構，用 AI 調整樣式</td>
-          <td>20 分</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>表單驗證</td>
-          <td>空白提示、格式錯誤變紅框</td>
-          <td>「在剛才的基礎上加上…」追加功能</td>
-          <td>20 分</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>互動效果</td>
-          <td>課程類別下拉選單、勾選框篩選</td>
-          <td>用 AI 加入互動元素，不改既有結構</td>
-          <td>25 分</td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td>假資料展示</td>
-          <td>用 JS 陣列模擬課程清單，按類別顯示卡片</td>
-          <td>資料與畫面分離的概念，為後續串接做準備</td>
-          <td>25 分</td>
-        </tr>
-        <tr>
-          <td>5</td>
-          <td>UI 優化</td>
-          <td>RWD 手機版、卡片懸停效果、送出動畫</td>
-          <td>用 AI 做 UX 改善，一次描述多個需求</td>
-          <td>30 分</td>
-        </tr>
-      </table>
-    </div>
-  </details>
-
-  <!-- 第6節 -->
-  <details class="session-card m2">
-    <summary>
-      <span class="session-num">第 6 節</span>
-      <span class="session-title">清理撰寫成果報告所需的資料</span>
-      <span class="session-dur">1 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <h3>為什麼需要資料清理？</h3>
-      <p style="font-size:14px;margin-bottom:8px;">課程結束後通常會留下雜亂的原始資料：學員問答記錄、操作截圖說明、Google Sheets 的填答結果。這些資料需要先整理，AI 才能幫你產出有品質的報告。</p>
-
-      <h3>第一步：整理原始資料（25 分鐘）</h3>
-      <div class="code-block"><span class="cm">Prompt 範例：資料清洗</span>
-<span class="str">「以下是學員問答記錄，格式不一致。
- 請幫我：1. 移除重複的問題  2. 統一問題的句型為疑問句
- 3. 將問題依主題分類（操作類、觀念類、其他）
- 4. 輸出為表格格式（欄位：類別、問題、出現次數）」</span></div>
-      <h4>常見原始資料類型與清理重點</h4>
-      <table>
-        <tr><th>資料類型</th><th>常見問題</th><th>清理方向</th></tr>
-        <tr><td>問答記錄</td><td>重複、格式混亂、口語化</td><td>去重、分類、標準化語句</td></tr>
-        <tr><td>操作截圖說明</td><td>說明文字零散、缺少脈絡</td><td>統一格式：步驟編號＋說明</td></tr>
-        <tr><td>學員填答結果</td><td>空白欄位、中英混用</td><td>補全、統一語言、去除無效填答</td></tr>
-      </table>
-
-      <h3>第二步：萃取報告關鍵資訊（20 分鐘）</h3>
-      <div class="code-block"><span class="cm">Prompt 範例：資訊萃取</span>
-<span class="str">「根據以下清理後的問答記錄，幫我找出：
- 1. 學員最常問的前3個問題
- 2. 最多人卡關的操作步驟
- 3. 對課程最正面的回饋關鍵詞（列出前5個）
- 輸出格式：每項用標題 + 2句說明」</span></div>
-
-      <h3>第三步：確認資料完整性（15 分鐘）</h3>
-      <ul class="bullet">
-        <li>確認每個報告章節都有對應的素材（數字、範例、截圖清單）</li>
-        <li>缺少的部分用 AI 標記：「以下哪些欄位資料不足，需要補充？」</li>
-        <li>完成後：資料夾整理好，準備下一階段撰寫報告</li>
-      </ul>
-      <div class="info-box teal">實作：學員用提供的範本原始資料，產出一份可直接用於報告的結構化素材包</div>
-    </div>
-  </details>
-
-
-  <!-- ════════════════════════════════════
-       MODULE 3
-  ════════════════════════════════════ -->
-  <div class="module-header m3" style="margin-top:48px;">
-    <div class="mnum">03</div>
-    <div class="minfo">
-      <h2>整合應用：課程查詢 AI 助理</h2>
-      <p>向量資料庫概念 → n8n 查詢工作流（Qdrant）→ 前端整合 → 部署上線｜共 8 小時</p>
-    </div>
-  </div>
-
-  <!-- 系統架構 -->
-  <details class="session-card m3" open>
-    <summary>
-      <span class="session-num">系統架構</span>
-      <span class="session-title">完整資料流說明</span>
-      <span class="session-dur">全覽</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <div class="arch">
-<span class="label">使用者瀏覽器</span>
-  <span class="note">輸入姓名 + 問題，按下送出</span>
-         <span class="arrow">│  POST { name, question }</span>
-         <span class="arrow">▼</span>
-<span class="node">[前端 HTML 頁面]</span>  <span class="note">← Codex 產生</span>
-         <span class="arrow">│</span>
-         <span class="arrow">▼</span>
-<span class="node">[n8n Webhook 節點]</span>
-         <span class="arrow">│</span>
-         <span class="arrow">▼</span>
-<span class="node">[資料前處理節點]</span>  <span class="note">整理輸入格式</span>
-         <span class="arrow">│</span>
-         <span class="arrow">▼</span>
-<span class="node">[OpenAI Embeddings]</span>  <span class="note">將問題轉換為向量</span>
-         <span class="arrow">│</span>
-         <span class="arrow">▼</span>
-<span class="node">[Qdrant 向量搜尋]</span>  <span class="note">語意搜尋最相關的 top-3 課程</span>
-         <span class="arrow">│</span>
-         <span class="arrow">▼</span>
-<span class="node">[AI Agent 節點]</span>  <span class="note">整合問題 + 搜尋結果 → 自然語言回覆</span>
-         <span class="arrow">│</span>
-         <span class="arrow">▼</span>
-<span class="node">[Respond to Webhook]</span>  <span class="note">回傳 { reply, courses }</span>
-         <span class="arrow">│</span>
-         <span class="arrow">▼</span>
-<span class="label">使用者瀏覽器</span>  <span class="note">顯示推薦課程卡片</span></div>
-    </div>
-  </details>
-
-  <!-- 第7節 -->
-  <details class="session-card m3">
-    <summary>
-      <span class="session-num">第 7 節</span>
-      <span class="session-title">向量資料庫概念介紹</span>
-      <span class="session-dur">1 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <h3>關鍵字 vs 語意搜尋</h3>
-      <table>
-        <tr><th>搜尋方式</th><th>行為</th><th>結果範例</th></tr>
-        <tr><td>關鍵字搜尋</td><td>找完全一樣的字</td><td>搜尋「Python課程」只找到標題含 Python 的</td></tr>
-        <tr><td>語意搜尋（向量）</td><td>找意思最接近的</td><td>搜尋「適合初學者的程式課」→ 找到 Python、Scratch、視覺化工具等</td></tr>
-      </table>
-
-      <h3>Embedding 是什麼？</h3>
-      <div class="info-box">💡 類比：把每一段文字轉換成一串數字（座標），意思相近的文字在「空間中」距離很近。搜尋時就是找距離最近的幾個座標。</div>
-      <div class="code-block"><span class="cm">文字 → Embedding 模型 → 向量（數字陣列）</span>
-<span class="str">「Python 入門課」  →  [0.12, -0.45, 0.87, ...]</span>
-<span class="str">「初學者程式課程」  →  [0.11, -0.43, 0.85, ...]</span>  <span class="cm">← 距離很近</span>
-<span class="str">「咖啡豆烘焙技術」  →  [0.72,  0.31, -0.20, ...]</span>  <span class="cm">← 距離很遠</span></div>
-
-      <h3>常見向量資料庫比較</h3>
-      <table>
-        <tr><th>工具</th><th>特色</th><th>適合場景</th></tr>
-        <tr><td>Qdrant</td><td>開源、效能高、n8n 原生支援</td><td>本課程使用，適合實作練習</td></tr>
-        <tr><td>Pinecone</td><td>全托管雲端服務，免建置</td><td>快速上線的商業應用</td></tr>
-        <tr><td>Supabase pgvector</td><td>整合在 PostgreSQL 中</td><td>已有 Supabase 資料庫的專案</td></tr>
-        <tr><td>Chroma</td><td>輕量、本機執行</td><td>本地開發、原型測試</td></tr>
-      </table>
-
-      <h3>整合到課程系統的角色</h3>
-      <div class="code-block"><span class="cm">課程資料 → Embedding → 存入 Qdrant</span>
-<span class="cm">（一次性建立知識庫）</span>
-
-<span class="cm">使用者問題 → Embedding → 在 Qdrant 搜尋最相近的課程</span>
-<span class="cm">（每次查詢時執行）</span></div>
-    </div>
-  </details>
-
-  <!-- 第8節 -->
-  <details class="session-card m3">
-    <summary>
-      <span class="session-num">第 8 節</span>
-      <span class="session-title">n8n 查詢工作流建立</span>
-      <span class="session-dur">2.5 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-
-      <h3>第一步：建立 Qdrant 知識庫（30 分鐘）<span style="font-size:12px;font-weight:400;color:#d97706;background:#fef3c7;border:1px solid #fcd34d;border-radius:4px;padding:2px 8px;margin-left:8px;">Optional</span></h3>
-      <ol class="step-list amber">
-        <li>註冊 Qdrant Cloud 免費帳號，建立新 Cluster</li>
-        <li>取得 API Key 與 Cluster URL，填入 n8n Credentials</li>
-        <li>在 n8n 建立「資料匯入流程」：手動觸發 → 讀取課程 JSON → OpenAI Embeddings → Qdrant 插入節點</li>
-        <li>執行一次，確認課程資料已存入 Qdrant Collection</li>
-      </ol>
-      <div class="info-box amber">課程資料（約 20 筆）由講師預先準備，學員直接匯入即可，聚焦在流程理解</div>
-
-      <h3>第二步：主查詢工作流節點配置（1 小時）</h3>
-      <table>
-        <tr><th>節點</th><th>設定重點</th></tr>
-        <tr><td>① Webhook</td><td>接收 { name, question }</td></tr>
-        <tr><td>② Set</td><td>整理 userName、userQuestion 變數</td></tr>
-        <tr><td>③ OpenAI Embeddings</td><td>將 userQuestion 轉換成向量</td></tr>
-        <tr><td>④ Qdrant 向量搜尋</td><td>語意搜尋，回傳相似度最高 3 筆課程</td></tr>
-        <tr><td>⑤ Set（組合 context）</td><td>將 3 筆課程內容組合成 context 文字</td></tr>
-        <tr><td>⑥ OpenAI Chat Model</td><td>PSIO system prompt + context 注入</td></tr>
-        <tr><td>⑦ Respond to Webhook</td><td>回傳 { reply, courses }</td></tr>
-      </table>
-
-      <h3>System Prompt 設計（PSIO）</h3>
-      <div class="code-block"><span class="kw">P</span> — Purpose  回答使用者的課程查詢，給出準確的推薦
-<span class="kw">S</span> — Step     1. 閱讀提供的課程資料  2. 對應使用者問題  3. 選出最相關課程
-<span class="kw">I</span> — Input    使用者：{userName}，問題：{userQuestion}
-             課程資料（來自 Qdrant 語意搜尋）：{context}
-<span class="kw">O</span> — Output   推薦 1-3 門課程，每門包含名稱和推薦說明（50字以內）</div>
-
-      <h3>第三步：錯誤處理補強（1 小時）</h3>
-      <ul class="bullet">
-        <li>找不到相關課程時的 fallback 回覆（IF 節點判斷搜尋結果是否為空）</li>
-        <li>使用者輸入為空時的早期攔截（在 Webhook 後加 IF 節點）</li>
-        <li>n8n 執行記錄查看：如何從錯誤訊息找到哪個節點出問題</li>
-        <li>實測：故意輸入奇怪的問題，觀察系統回應</li>
-      </ul>
-    </div>
-  </details>
-
-  <!-- 第9節 -->
-  <details class="session-card m3">
-    <summary>
-      <span class="session-num">第 9 節</span>
-      <span class="session-title">前端整合</span>
-      <span class="session-dur">1.5 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <h3>分段 Prompt 策略</h3>
-      <div class="code-block"><span class="cm">Prompt 1：基本結構</span>
-<span class="str">「建立課程查詢頁面：標題、姓名欄位、問題輸入框（多行）、送出按鈕」</span>
-
-<span class="cm">Prompt 2：串接後端</span>
-<span class="str">「加入送出功能：POST 資料到 [n8n URL]，顯示 loading，成功後顯示 reply 欄位」</span>
-
-<span class="cm">Prompt 3：結果展示</span>
-<span class="str">「回傳的 JSON 包含 reply（文字）和 courses（陣列），
- reply 顯示在上方，courses 以卡片方式列在下方」</span>
-
-<span class="cm">Prompt 4：視覺優化</span>
-<span class="str">「整體風格參考教育機構網站，主色藍色，卡片有陰影，RWD 支援手機」</span></div>
-
-      <h3>前後端串接測試</h3>
-      <ul class="bullet">
-        <li>用 n8n 執行記錄確認資料流正確</li>
-        <li>測試邊界：問非課程相關問題、問題超長</li>
-        <li>用 Codex 修正實際遇到的 CORS 等問題</li>
-      </ul>
-    </div>
-  </details>
-
-  <!-- 第10節 -->
-  <details class="session-card m3">
-    <summary>
-      <span class="session-num">第 10 節</span>
-      <span class="session-title">功能優化與部署上線</span>
-      <span class="session-dur">1.5 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <h3>進階功能選項</h3>
-      <table>
-        <tr><th>功能</th><th>實作方式</th></tr>
-        <tr><td>對話記憶</td><td>n8n 加入 Memory 節點，記住同一使用者上下文</td></tr>
-        <tr><td>回覆評分</td><td>頁面加上 👍👎，記錄到 Google Sheets</td></tr>
-        <tr><td>查詢記錄</td><td>每次問答同步寫入 Google Sheets</td></tr>
-      </table>
-
-      <h3>GitHub Pages 免費部署</h3>
-      <ol class="step-list amber">
-        <li>建立 GitHub 帳號</li>
-        <li>上傳 HTML 檔案到新 repository</li>
-        <li>Settings → Pages → 選擇 main branch 啟用</li>
-        <li>取得公開網址，在真實環境測試完整流程</li>
-      </ol>
-    </div>
-  </details>
-
-  <!-- 第11節 -->
-  <details class="session-card m3">
-    <summary>
-      <span class="session-num">第 11 節</span>
-      <span class="session-title">成果展示與課程回顧</span>
-      <span class="session-dur">1 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <h3>成果展示（30 分鐘）</h3>
-      <p style="font-size:14px;margin-bottom:10px;">每位學員輪流展示，其他人可以實際使用查詢系統並提問。</p>
-      <ul class="bullet">
-        <li>開啟 GitHub Pages 網址，現場示範查詢流程</li>
-        <li>展示 n8n 工作流畫布（截圖或直接開啟）</li>
-        <li>分享一個「最有用的 prompt 技巧」或「踩過的最大坑」</li>
-      </ul>
-
-      <h3>課程回顧（15 分鐘）</h3>
-      <table>
-        <tr><th>學到什麼</th><th>可以做什麼</th></tr>
-        <tr><td>PSIO 框架</td><td>寫出有結構的 prompt，減少 AI 回錯</td></tr>
-        <tr><td>n8n 工作流</td><td>不寫程式也能串接多個服務</td></tr>
-        <tr><td>向量搜尋</td><td>讓系統理解「意思」而不只是關鍵字</td></tr>
-        <tr><td>Codex 前端</td><td>用 AI 產生並修改網頁，快速驗證想法</td></tr>
-      </table>
-
-      <h3>延伸應用方向（15 分鐘）</h3>
-      <div class="tag-list">
-        <span class="tag-pill">產品目錄查詢</span>
-        <span class="tag-pill">公司 FAQ 機器人</span>
-        <span class="tag-pill">LINE Bot 前端介面</span>
-        <span class="tag-pill">問卷自動整理</span>
-        <span class="tag-pill">客戶詢價 → 報價單</span>
-        <span class="tag-pill">內部知識庫查詢</span>
+  <!-- Summary cards -->
+  <div class="summary-banner">
+    <div class="sv-card v1">
+      <h3>原始版</h3>
+      <div class="stat">
+        <span>11 節</span><span>16 小時</span><span>無後端安全層</span>
       </div>
-      <div class="info-box teal" style="margin-top:14px;">課後資源：n8n 官方範本庫、Qdrant 文件、OpenAI Cookbook — 三個最值得書籤的學習來源</div>
+      <p>原始完整設計，模組二保留獨立的對話課、前端課、資料清理課（各自獨立），模組三前端直連 n8n Webhook。</p>
+      <a class="sv-link" href="ai課程規劃.html" target="_blank">↗ 開啟完整版本</a>
     </div>
-  </details>
-
-
-  <!-- ── 時間總覽 ── -->
-  <div style="margin-top:56px;">
-    <div class="section-title">課程時間總覽</div>
-    <div class="summary-grid">
-      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第1節</strong>AI 觀念、LLM/Agent、PSIO、Prompt 規範</div></div>
-      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第2節</strong>n8n 介面與 Chat Trigger 工作流</div></div>
-      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第3節</strong>Google 憑證申請</div></div>
-      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第4節</strong>與模型對話策略</div></div>
-      <div class="summary-item"><div class="si-num">2h</div><div class="si-text"><strong>第5節</strong>漸進式前端實作</div></div>
-      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第6節</strong>清理報告所需資料</div></div>
-      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第7節</strong>向量資料庫概念介紹</div></div>
-      <div class="summary-item"><div class="si-num">2.5h</div><div class="si-text"><strong>第8節</strong>n8n 查詢工作流（Qdrant）</div></div>
-      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第9節</strong>前端整合</div></div>
-      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第10節</strong>優化與部署</div></div>
-      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第11節</strong>成果展示與課程回顧</div></div>
+    <div class="sv-card v2">
+      <h3>基礎代理版</h3>
+      <div class="stat">
+        <span>10 節</span><span>16 小時</span><span>Worker + CORS + Auth</span>
+      </div>
+      <p>採用組合二：合併 S4+S5、移除 S6 至課後作業。模組三新增 Cloudflare Worker 基礎安全（Origin 檢查、CORS、n8n Header Auth）。</p>
+      <a class="sv-link" href="ai課程規劃_基礎代理版.html" target="_blank">↗ 開啟完整版本</a>
     </div>
-    <div class="info-box" style="margin-top:20px;font-size:15px;font-weight:600;">
-      合計：16 小時　｜　模組一 4h + 模組二 4h + 模組三 8h
+    <div class="sv-card v3">
+      <h3>正式上線版</h3>
+      <div class="stat">
+        <span>10 節</span><span>16 小時</span><span>Turnstile + Rate Limit + 監控</span>
+      </div>
+      <p>採用組合二，向量DB壓縮至 0.5h，釋出 1.5h 給完整 Cloudflare 安全架構（6 部分）：Turnstile 人機驗證、Rate Limit、成本控管、監控記錄、Staging/Production 分離。</p>
+      <a class="sv-link" href="ai課程規劃_正式上線版.html" target="_blank">↗ 開啟完整版本</a>
     </div>
   </div>
 
-  <div style="text-align:center;color:var(--gray-600);font-size:13px;margin-top:48px;padding-top:24px;border-top:1px solid var(--gray-200);">
-    青聚點 AI 實作課程規劃 · 2026
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-label">標示說明：</span>
+    <span class="badge same">≡ 相同</span>
+    <span class="badge similar">≈ 相近（微調）</span>
+    <span class="badge modified">⚡ 修改</span>
+    <span class="badge merged">⊕ 合併</span>
+    <span class="badge removed">✕ 刪除</span>
+    <span class="badge added">✦ 新增</span>
   </div>
 
-</div><!-- /container -->
+  <!-- ── MODULE 1 ── -->
+  <div class="section-heading">模組一　n8n 基礎與 Google 憑證</div>
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th style="width:90px">單元</th>
+        <th>原始版</th>
+        <th>基礎代理版</th>
+        <th>正式上線版</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr class="mod-row">
+        <td>模組概述</td>
+        <td>4 小時｜3 節</td>
+        <td>4 小時｜3 節（相同）</td>
+        <td>4 小時｜3 節（相同）</td>
+      </tr>
+
+      <tr class="status-similar">
+        <td>第 1 節<br><span class="badge similar">≈ 相近</span></td>
+        <td>
+          <div class="dur">1 小時</div>
+          <div class="cell-title">AI 觀念建構：LLM、Agent、<u>PSIO 與 Prompt 設計規範</u></div>
+          <div class="cell-body">LLM vs Agent 表格 → Prompt 設計規範（6條）→ PSIO 框架 → 任務拆解練習<br><em>標題順序：先 PSIO 後 Prompt 規範</em></div>
+        </td>
+        <td>
+          <div class="dur">1 小時</div>
+          <div class="cell-title">AI 觀念建構：LLM、Agent、<u>Prompt 規範與 PSIO 框架</u></div>
+          <div class="cell-body">同上，內容相同，標題調整為先 Prompt 規範再 PSIO</div>
+        </td>
+        <td>
+          <div class="dur">1 小時</div>
+          <div class="cell-title">AI 觀念建構：LLM、Agent、Prompt 規範與 PSIO 框架</div>
+          <div class="cell-body">同基礎代理版，內容完全相同</div>
+        </td>
+      </tr>
+
+      <tr class="status-same">
+        <td>第 2 節<br><span class="badge same">≡ 相同</span></td>
+        <td>
+          <div class="dur">1.5 小時</div>
+          <div class="cell-title">n8n 介面操作與簡易對話工作流</div>
+          <div class="cell-body">n8n Cloud 環境 → 核心節點表（Chat Trigger / Set / IF / AI Agent / Webhook）→ Chat Trigger + AI Agent 工作流實作</div>
+        </td>
+        <td colspan="2" style="color:var(--gray-600);font-size:12px;">
+          <div class="dur">1.5 小時</div>
+          <div class="cell-title">n8n 介面操作與簡易對話工作流</div>
+          <div class="cell-body">三版本內容相同</div>
+        </td>
+      </tr>
+
+      <tr class="status-same">
+        <td>第 3 節<br><span class="badge same">≡ 相同</span></td>
+        <td>
+          <div class="dur">1.5 小時</div>
+          <div class="cell-title">申請 Google 憑證</div>
+          <div class="cell-body">Google Cloud Console → 啟用 Gmail / Sheets / Drive API → OAuth 2.0 憑證建立 → n8n 授權連接 → 常見地雷說明</div>
+        </td>
+        <td colspan="2" style="color:var(--gray-600);font-size:12px;">
+          <div class="dur">1.5 小時</div>
+          <div class="cell-title">申請 Google 憑證</div>
+          <div class="cell-body">三版本內容相同</div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- ── MODULE 2 ── -->
+  <div class="section-heading">模組二　前端開發</div>
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th style="width:90px">單元</th>
+        <th>原始版</th>
+        <th>基礎代理版</th>
+        <th>正式上線版</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr class="mod-row">
+        <td>模組概述</td>
+        <td class="hl-amber">4 小時｜3 節（S4 + S5 + S6）</td>
+        <td>2.5 小時｜1 節（S4+S5 合併，S6 移除）</td>
+        <td>2.5 小時｜1 節（同基礎代理版）</td>
+      </tr>
+
+      <tr class="status-merged">
+        <td>第 4 節<br><span class="badge merged">⊕ 合併</span></td>
+        <td class="hl-amber">
+          <div class="dur changed">1 小時</div>
+          <div class="cell-title">與模型對話的方式</div>
+          <div class="cell-body">對話心態建立 → 三層次對話策略（直接描述 / 加限制 / PSIO 完整）→ 學員比較練習</div>
+        </td>
+        <td>
+          <div class="dur">2.5 小時</div>
+          <div class="cell-title">與模型對話 × 漸進式前端實作（合併節）</div>
+          <div class="cell-body">
+            <ul>
+              <li>對話策略（30 分鐘）：心態 + 三層次策略</li>
+              <li>漸進式前端實作（2 小時）：5 個範例同原始版</li>
+              <li>課後作業說明</li>
+            </ul>
+          </div>
+        </td>
+        <td>
+          <div class="dur">2.5 小時</div>
+          <div class="cell-title">與模型對話 × 漸進式前端實作（合併節）</div>
+          <div class="cell-body">同基礎代理版，內容相同</div>
+        </td>
+      </tr>
+
+      <tr class="status-merged">
+        <td>第 5 節<br><span class="badge merged">⊕ 合併</span></td>
+        <td class="hl-amber">
+          <div class="dur changed">2 小時</div>
+          <div class="cell-title">漸進式前端實作系列</div>
+          <div class="cell-body">5 個範例：靜態查詢頁（20分）→ 表單驗證（20分）→ 互動效果（25分）→ 假資料展示（25分）→ UI 優化 RWD（30分）</div>
+        </td>
+        <td colspan="2">
+          <div class="placeholder">已合併至第 4 節（2.5 小時合併節），不再獨立成節</div>
+        </td>
+      </tr>
+
+      <tr class="status-removed">
+        <td>第 6 節<br><span class="badge removed">✕ 刪除</span></td>
+        <td class="hl-amber">
+          <div class="dur removed">1 小時</div>
+          <div class="cell-title">清理撰寫成果報告所需的資料</div>
+          <div class="cell-body">整理原始資料（25分）→ 萃取報告關鍵資訊（20分）→ 確認資料完整性（15分）<br>含 Prompt 範例與實作練習</div>
+        </td>
+        <td colspan="2">
+          <div class="placeholder removed">✕ 移至課後作業<br>學員課後自行使用 AI 清理資料並撰寫成果報告，不佔課堂時數</div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- ── MODULE 3 ── -->
+  <div class="section-heading">模組三　整合應用</div>
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th style="width:90px">單元</th>
+        <th>原始版</th>
+        <th>基礎代理版</th>
+        <th>正式上線版</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr class="mod-row">
+        <td>模組概述</td>
+        <td class="hl-amber">8 小時｜整合應用：課程查詢 AI 助理</td>
+        <td>9.5 小時｜整合應用與安全部署</td>
+        <td>9.5 小時｜整合應用與完整安全部署</td>
+      </tr>
+
+      <tr class="status-modified">
+        <td>系統架構<br><span class="badge modified">⚡ 修改</span></td>
+        <td>
+          <div class="cell-title">完整資料流說明（無時數）</div>
+          <div class="cell-body">前端 HTML → n8n Webhook → 資料前處理 → OpenAI Embeddings → Qdrant → AI Agent → 回傳</div>
+        </td>
+        <td>
+          <div class="cell-title">完整資料流說明（含 Cloudflare）</div>
+          <div class="cell-body">前端 → <strong>Cloudflare Worker</strong>（Origin 檢查 + CORS + secret header）→ n8n Webhook（Header Auth）→ Embeddings → Qdrant → AI Agent → 回傳</div>
+        </td>
+        <td class="hl-purple">
+          <div class="cell-title">正式上線完整架構</div>
+          <div class="cell-body">前端（含 Turnstile 驗證）→ <strong>Cloudflare Worker</strong>（Origin / Turnstile / Rate Limit / 輸入驗證 / X-Proxy-Secret）→ n8n（Header Auth）→ Embeddings → Qdrant → AI Agent → <strong>Google Sheets 記錄</strong> → 回傳</div>
+        </td>
+      </tr>
+
+      <tr class="status-modified">
+        <td>向量DB<br><span class="badge modified">⚡ 修改</span></td>
+        <td>
+          <div class="dur">1 小時（第 7 節）</div>
+          <div class="cell-title">向量資料庫概念介紹</div>
+          <div class="cell-body">關鍵字 vs 語意搜尋表格 → Embedding 概念說明 + code block → 4 種向量DB比較（Qdrant / Pinecone / pgvector / Chroma）→ 整合到課程系統的角色</div>
+        </td>
+        <td>
+          <div class="dur">1 小時（第 5 節）</div>
+          <div class="cell-title">向量資料庫概念介紹</div>
+          <div class="cell-body">關鍵字 vs 語意搜尋表格 → Embedding 概念 → 3 種向量DB比較（Qdrant / Pinecone / pgvector）<br>較原始版略精簡（移除 Chroma 列）</div>
+        </td>
+        <td class="hl-purple">
+          <div class="dur changed">0.5 小時（第 5 節，壓縮版）</div>
+          <div class="cell-title">向量資料庫概念介紹（壓縮版）</div>
+          <div class="cell-body">僅保留：搜尋方式對比表 + 單一 info-box 說明 Embedding 概念 + Qdrant 簡介<br><em>移除 Embedding code block 與多工具比較表，省出 0.5h 給 Cloudflare</em></div>
+        </td>
+      </tr>
+
+      <tr class="status-similar">
+        <td>n8n 查詢<br>工作流<br><span class="badge similar">≈ 相近</span></td>
+        <td>
+          <div class="dur">2.5 小時（第 8 節）</div>
+          <div class="cell-title">n8n 查詢工作流建立</div>
+          <div class="cell-body">
+            <ul>
+              <li>建立 Qdrant 知識庫（30分，Optional）</li>
+              <li>主查詢工作流（1h）：7 個節點（Webhook / Set / Embeddings / Qdrant / Set context / Chat Model / Respond）</li>
+              <li>System Prompt 設計（PSIO）</li>
+              <li>錯誤處理補強（1h）</li>
+            </ul>
+          </div>
+        </td>
+        <td>
+          <div class="dur">2.5 小時（第 6 節）</div>
+          <div class="cell-title">n8n 查詢工作流建立</div>
+          <div class="cell-body">同原始版結構，細節略精簡（約同等份量）</div>
+        </td>
+        <td class="hl-purple">
+          <div class="dur">2.5 小時（第 6 節）</div>
+          <div class="cell-title">n8n 查詢工作流建立</div>
+          <div class="cell-body">
+            <ul>
+              <li>主查詢工作流增加第 7 個節點：<strong>Google Sheets（記錄 timestamp / 問題長度 / 成功與否）</strong></li>
+              <li>System Prompt 新增：「回答限制 300 字、不自行編造課程」</li>
+              <li>其餘同前兩版</li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+
+      <tr class="status-modified">
+        <td>前端整合<br><span class="badge modified">⚡ 修改</span></td>
+        <td>
+          <div class="dur changed">1.5 小時（第 9 節）</div>
+          <div class="cell-title">前端整合</div>
+          <div class="cell-body">4 個分段 Prompt（基本結構 / 串接後端直連 n8n URL / 結果展示 / 視覺優化）→ 前後端串接測試</div>
+        </td>
+        <td>
+          <div class="dur changed">2 小時（第 7 節，+30分）</div>
+          <div class="cell-title">前端整合</div>
+          <div class="cell-body">同原始版 4 個 Prompt，但 Prompt 2 改為 POST 到 <strong>Worker URL（非直連 n8n）</strong><br>+ info-box 提示：「此階段先直連 n8n 測試，第 8 節改為 Worker」</div>
+        </td>
+        <td class="hl-purple">
+          <div class="dur changed">2 小時（第 7 節）</div>
+          <div class="cell-title">前端整合</div>
+          <div class="cell-body">5 個 Prompt（新增 Prompt 5：<strong>個資告知文字</strong>，說明系統會記錄問題，請勿輸入敏感資料）<br>+ info-box 提示：「先直連 n8n，第 8 節改為 Worker URL 並加入 Turnstile」</div>
+        </td>
+      </tr>
+
+      <tr class="status-added">
+        <td>Cloudflare<br><span class="badge added">✦ 新增</span></td>
+        <td>
+          <div class="placeholder">此版本不含 Cloudflare 安全層<br>前端直連 n8n Webhook</div>
+        </td>
+        <td class="hl-green">
+          <div class="dur added">2 小時（第 8 節，新增）</div>
+          <div class="cell-title">Cloudflare Worker 安全代理（基礎版）</div>
+          <div class="cell-body">
+            <ul>
+              <li><strong>第一部分（30分）</strong>：為什麼不能直連 n8n（URL 暴露 / CORS 難控 / 無法限流 對比表）</li>
+              <li><strong>第二部分（60分）</strong>：建立 Worker 代理（範本程式碼，Origin 檢查 + OPTIONS + secret header 轉送）</li>
+              <li><strong>第三部分（30分）</strong>：n8n Header Auth 設定（X-Proxy-Secret）</li>
+              <li>課後參考：Rate Limit / Turnstile（不在課堂帶做）</li>
+            </ul>
+          </div>
+        </td>
+        <td class="hl-purple">
+          <div class="dur added">3.5 小時（第 8 節，完整版）</div>
+          <div class="cell-title">Cloudflare Worker 完整安全部署</div>
+          <div class="cell-body">
+            <ul>
+              <li><strong>第一部分（30分）</strong>：安全架構全覽（8 層全部課堂帶做）</li>
+              <li><strong>第二部分（60分）</strong>：Worker 代理 + CORS + Origin（同基礎版）</li>
+              <li><strong>第三部分（30分）</strong>：n8n Header Auth</li>
+              <li><strong>第四部分（30分）</strong>：Cloudflare Turnstile 人機驗證（Site Key / Widget / Token 驗證）</li>
+              <li><strong>第五部分（30分）</strong>：Rate Limit（5次/分）+ 輸入驗證 + OpenAI 成本控管</li>
+              <li><strong>第六部分（30分）</strong>：Google Sheets 監控記錄 + 個資告知 + Staging/Production 分離 + 11 項正式上線檢查表</li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+
+      <tr class="status-modified">
+        <td>部署<br><span class="badge modified">⚡ 修改</span></td>
+        <td>
+          <div class="dur">1.5 小時（第 10 節）</div>
+          <div class="cell-title">功能優化與部署上線</div>
+          <div class="cell-body">進階功能選項（對話記憶 / 回覆評分 / 查詢記錄）→ GitHub Pages 部署（4 步驟）</div>
+        </td>
+        <td>
+          <div class="dur">1.5 小時（第 9 節）</div>
+          <div class="cell-title">功能優化與 GitHub Pages 部署</div>
+          <div class="cell-body">進階功能選項（同原始版）→ GitHub Pages 部署（<strong>5 步驟</strong>，新增：更新 Worker allowed origin 為 GitHub Pages 網址）</div>
+        </td>
+        <td class="hl-purple">
+          <div class="dur changed">0.5 小時（第 9 節，壓縮）</div>
+          <div class="cell-title">GitHub Pages 部署與功能確認</div>
+          <div class="cell-body">僅保留部署核心步驟（4 步驟）+ info-box 確認 Turnstile production 模式<br><em>進階功能選項移除（已含在第 8 節成本控管）</em></div>
+        </td>
+      </tr>
+
+      <tr class="status-modified">
+        <td>成果展示<br><span class="badge modified">⚡ 修改</span></td>
+        <td>
+          <div class="dur changed">1 小時（第 11 節）</div>
+          <div class="cell-title">成果展示與課程回顧</div>
+          <div class="cell-body">成果展示（30分）→ 課程回顧表（15分，PSIO / n8n / 向量搜尋 / Codex）→ 延伸應用方向 tag 列表（15分）→ 課後資源連結</div>
+        </td>
+        <td>
+          <div class="dur changed">0.5 小時（第 10 節）</div>
+          <div class="cell-title">成果展示與課程回顧</div>
+          <div class="cell-body">成果展示 bullet（精簡）→ 課程回顧表（PSIO / n8n / 向量搜尋 / <strong>Cloudflare Worker</strong>）→ 延伸應用 tag 列表<br><em>移除 15 分鐘延伸應用說明，改為 tag 快速瀏覽</em></div>
+        </td>
+        <td class="hl-purple">
+          <div class="dur changed">0.5 小時（第 10 節）</div>
+          <div class="cell-title">成果展示與課程回顧</div>
+          <div class="cell-body">同基礎代理版，課程回顧表增加 <strong>Staging/Production</strong> 一列 → 延伸應用 tag 列表</div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- ── Hours summary ── -->
+  <div class="section-heading" style="margin-top:40px;">時間分配總覽</div>
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th style="width:120px">項目</th>
+        <th>原始版</th>
+        <th>基礎代理版</th>
+        <th>正式上線版</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="status-same">
+        <td>模組一</td>
+        <td>4h（S1 1h + S2 1.5h + S3 1.5h）</td>
+        <td>4h（相同）</td>
+        <td>4h（相同）</td>
+      </tr>
+      <tr class="status-modified">
+        <td>模組二</td>
+        <td class="hl-amber">4h（S4 1h + S5 2h + S6 1h）</td>
+        <td>2.5h（S4 合併 2.5h）</td>
+        <td>2.5h（同基礎代理版）</td>
+      </tr>
+      <tr class="status-modified">
+        <td>模組三</td>
+        <td class="hl-amber">8h（無 Cloudflare）</td>
+        <td>9.5h（含 Cloudflare 2h）</td>
+        <td class="hl-purple">9.5h（含 Cloudflare 3.5h）</td>
+      </tr>
+      <tr class="status-modified">
+        <td>向量DB</td>
+        <td>1h</td>
+        <td>1h</td>
+        <td class="hl-purple">0.5h（壓縮）</td>
+      </tr>
+      <tr class="status-modified">
+        <td>前端整合</td>
+        <td class="hl-amber">1.5h</td>
+        <td>2h</td>
+        <td>2h</td>
+      </tr>
+      <tr class="status-added">
+        <td>Cloudflare</td>
+        <td><div class="placeholder">—</div></td>
+        <td class="hl-green">2h（基礎安全）</td>
+        <td class="hl-purple">3.5h（完整安全）</td>
+      </tr>
+      <tr class="status-modified">
+        <td>部署</td>
+        <td>1.5h</td>
+        <td>1.5h</td>
+        <td class="hl-purple">0.5h（壓縮）</td>
+      </tr>
+      <tr class="status-modified">
+        <td>成果展示</td>
+        <td class="hl-amber">1h</td>
+        <td>0.5h</td>
+        <td>0.5h</td>
+      </tr>
+      <tr style="font-weight:700;background:var(--gray-100);">
+        <td>合計</td>
+        <td>16 小時｜11 節</td>
+        <td>16 小時｜10 節</td>
+        <td>16 小時｜10 節</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── How to choose ── -->
+  <div class="section-heading" style="margin-top:40px;">如何選擇版本</div>
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th style="width:160px">考量點</th>
+        <th>原始版</th>
+        <th>基礎代理版</th>
+        <th>正式上線版</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>適合對象</td>
+        <td>純概念與原型驗證，不打算對外開放</td>
+        <td>想讓作品對外可用，但安全需求不高</td>
+        <td>打算實際上線、有真實使用者</td>
+      </tr>
+      <tr>
+        <td>前端安全</td>
+        <td>n8n URL 直接暴露</td>
+        <td>URL 隱藏、CORS 受控</td>
+        <td>人機驗證 + 限流 + URL 隱藏</td>
+      </tr>
+      <tr>
+        <td>OpenAI 費用保護</td>
+        <td>無</td>
+        <td>Rate Limit 範本（課後套用）</td>
+        <td>Rate Limit + 月度預算上限 + token 控制</td>
+      </tr>
+      <tr>
+        <td>資料清理課</td>
+        <td class="hl-amber">課堂 1h 帶做</td>
+        <td>課後作業</td>
+        <td>課後作業</td>
+      </tr>
+      <tr>
+        <td>課程難度</td>
+        <td>較低（不含 Cloudflare）</td>
+        <td>中（Worker 基礎操作）</td>
+        <td>中高（6 部分安全架構）</td>
+      </tr>
+      <tr>
+        <td>建議情境</td>
+        <td>內部測試、自用工具</td>
+        <td>小型展示、同學互測</td>
+        <td>對外服務、有品牌形象考量</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="text-align:center;color:var(--gray-600);font-size:12px;margin-top:48px;padding-top:20px;border-top:1px solid var(--gray-200);">
+    青聚點 AI 實作課程規劃｜版本比較頁 · 2026
+  </div>
+
+</div>
 </body>
 </html>

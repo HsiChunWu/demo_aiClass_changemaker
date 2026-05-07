@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>16小時 AI 實作課程規劃</title>
+  <style>
+    :root {
+      --blue:    #2563eb;
+      --blue-lt: #dbeafe;
+      --teal:    #0d9488;
+      --teal-lt: #ccfbf1;
+      --amber:   #d97706;
+      --amber-lt:#fef3c7;
+      --gray-50: #f8fafc;
+      --gray-100:#f1f5f9;
+      --gray-200:#e2e8f0;
+      --gray-600:#475569;
+      --gray-800:#1e293b;
+      --radius:  10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-800);
+      line-height: 1.7;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 60%, #0d9488 100%);
+      color: #fff;
+      padding: 60px 24px 48px;
+      text-align: center;
+    }
+    .hero .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 99px;
+      padding: 4px 16px;
+      font-size: 13px;
+      letter-spacing: .05em;
+      margin-bottom: 20px;
+    }
+    .hero h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; margin-bottom: 12px; }
+    .hero p  { font-size: 16px; opacity: .88; max-width: 560px; margin: 0 auto 32px; }
+    .hero .badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .hero .badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 1000px; margin: 0 auto; padding: 48px 24px; }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 2px;
+      background: var(--gray-200);
+      border-radius: 2px;
+    }
+
+    /* ── Timeline nav ── */
+    .timeline-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+    .tnav-card {
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: transform .15s;
+    }
+    .tnav-card:hover { transform: translateY(-3px); }
+    .tnav-card.mod1 { background: var(--blue-lt);  border-color: #93c5fd; }
+    .tnav-card.mod2 { background: var(--teal-lt);  border-color: #5eead4; }
+    .tnav-card.mod3 { background: var(--amber-lt); border-color: #fcd34d; }
+    .tnav-card .num {
+      font-size: 28px;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .mod1 .num { color: var(--blue); }
+    .mod2 .num { color: var(--teal); }
+    .mod3 .num { color: var(--amber); }
+    .tnav-card .label { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .tnav-card .sub   { font-size: 12px; color: var(--gray-600); }
+
+    /* ── Module header ── */
+    .module-header {
+      border-radius: var(--radius);
+      padding: 22px 28px;
+      margin-bottom: 24px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .module-header.m1 { background: linear-gradient(90deg, #1d4ed8, #2563eb); }
+    .module-header.m2 { background: linear-gradient(90deg, #0f766e, #0d9488); }
+    .module-header.m3 { background: linear-gradient(90deg, #b45309, #d97706); }
+    .module-header .mnum {
+      font-size: 36px;
+      font-weight: 800;
+      opacity: .6;
+      line-height: 1;
+    }
+    .module-header .minfo h2 { font-size: 20px; font-weight: 700; }
+    .module-header .minfo p  { font-size: 13px; opacity: .85; margin-top: 2px; }
+
+    /* ── Session card ── */
+    .session-card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .session-card summary {
+      list-style: none;
+      padding: 16px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      user-select: none;
+    }
+    .session-card summary::-webkit-details-marker { display: none; }
+    .session-card summary:hover { background: var(--gray-50); }
+    .session-num {
+      background: var(--gray-100);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray-600);
+      white-space: nowrap;
+    }
+    .session-card.m1 .session-num { background: var(--blue-lt);  color: var(--blue); }
+    .session-card.m2 .session-num { background: var(--teal-lt);  color: var(--teal); }
+    .session-card.m3 .session-num { background: var(--amber-lt); color: var(--amber); }
+    .session-title { font-weight: 600; font-size: 15px; flex: 1; }
+    .session-dur {
+      font-size: 12px;
+      color: var(--gray-600);
+      white-space: nowrap;
+    }
+    .chevron {
+      font-size: 12px;
+      color: var(--gray-600);
+      transition: transform .2s;
+    }
+    details[open] .chevron { transform: rotate(90deg); }
+    .session-body {
+      padding: 0 20px 20px 20px;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    /* ── Content components ── */
+    .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+    .tag-pill {
+      background: var(--gray-100);
+      border-radius: 99px;
+      padding: 3px 12px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+    th {
+      background: var(--gray-100);
+      padding: 9px 12px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid var(--gray-200);
+    }
+    td { padding: 9px 12px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 12px 0;
+      white-space: pre;
+    }
+    .code-block .cm  { color: #94a3b8; }
+    .code-block .kw  { color: #7dd3fc; }
+    .code-block .str { color: #86efac; }
+    .code-block .var { color: #fde68a; }
+
+    .info-box {
+      border-left: 4px solid var(--blue);
+      background: var(--blue-lt);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      font-size: 14px;
+      margin: 12px 0;
+    }
+    .info-box.teal  { border-color: var(--teal);  background: var(--teal-lt); }
+    .info-box.amber { border-color: var(--amber); background: var(--amber-lt); }
+
+    .step-list { counter-reset: step; list-style: none; margin: 12px 0; }
+    .step-list li {
+      counter-increment: step;
+      padding: 8px 0 8px 36px;
+      position: relative;
+      font-size: 14px;
+      border-bottom: 1px dashed var(--gray-200);
+    }
+    .step-list li:last-child { border-bottom: none; }
+    .step-list li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 22px;
+      height: 22px;
+      background: var(--blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-list.teal li::before  { background: var(--teal); }
+    .step-list.amber li::before { background: var(--amber); }
+
+    ul.bullet { padding-left: 20px; font-size: 14px; }
+    ul.bullet li { margin-bottom: 6px; }
+
+    h3 { font-size: 15px; font-weight: 700; margin: 16px 0 8px; color: var(--gray-800); }
+    h4 { font-size: 13px; font-weight: 700; margin: 12px 0 6px; color: var(--gray-600); text-transform: uppercase; letter-spacing: .05em; }
+
+    /* ── Architecture diagram ── */
+    .arch {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: var(--radius);
+      padding: 28px;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 2;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+    .arch .node   { color: #7dd3fc; font-weight: 700; }
+    .arch .arrow  { color: #94a3b8; }
+    .arch .note   { color: #86efac; }
+    .arch .label  { color: #fde68a; }
+
+    /* ── Summary table ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .summary-item {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .summary-item .si-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--blue);
+      min-width: 36px;
+    }
+    .summary-item .si-text { font-size: 13px; line-height: 1.4; }
+    .summary-item .si-text strong { display: block; font-size: 14px; }
+
+    @media (max-width: 640px) {
+      .timeline-nav { grid-template-columns: 1fr; }
+      .module-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <span class="tag">青聚點 × AI 實作課程</span>
+  <h1>16小時 AI 工具實作課程</h1>
+  <p>從 AI 觀念建立到完整系統整合，帶領學員親手打造課程查詢 AI 助理</p>
+  <div class="badges">
+    <span class="badge">🎯 適合新手</span>
+    <span class="badge">🛠 hands-on 動手實作</span>
+    <span class="badge">🤖 n8n 自動化</span>
+    <span class="badge">💻 VSCode + Codex</span>
+    <span class="badge">🔍 向量資料庫</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ── Overview ── -->
+  <div class="timeline-nav">
+    <div class="tnav-card mod1">
+      <span class="num">4h</span>
+      <div class="label">模組一</div>
+      <div class="sub">n8n 基礎 × Google 憑證</div>
+    </div>
+    <div class="tnav-card mod2">
+      <span class="num">4h</span>
+      <div class="label">模組二</div>
+      <div class="sub">VSCode × Codex 前端開發</div>
+    </div>
+    <div class="tnav-card mod3">
+      <span class="num">8h</span>
+      <div class="label">模組三</div>
+      <div class="sub">整合應用 × 課程查詢系統</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       MODULE 1
+  ════════════════════════════════════ -->
+  <div class="module-header m1">
+    <div class="mnum">01</div>
+    <div class="minfo">
+      <h2>n8n 基礎與 Google 憑證</h2>
+      <p>AI 觀念建構 → n8n 工作流操作 → Google API 申請｜共 4 小時</p>
+    </div>
+  </div>
+
+  <!-- 第1節 -->
+  <details class="session-card m1" open>
+    <summary>
+      <span class="session-num">第 1 節</span>
+      <span class="session-title">AI 觀念建構：LLM、Agent、PSIO 與 Prompt 設計規範</span>
+      <span class="session-dur">1 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+
+      <h3>LLM vs AI Agent</h3>
+      <table>
+        <tr><th></th><th>LLM</th><th>AI Agent</th></tr>
+        <tr><td>比喻</td><td>百科全書式問答機</td><td>會執行任務的助理</td></tr>
+        <tr><td>行為</td><td>一問一答，無記憶</td><td>多步驟、可呼叫工具、有記憶</td></tr>
+        <tr><td>例子</td><td>ChatGPT 對話視窗</td><td>n8n 工作流 + AI 節點</td></tr>
+      </table>
+      <div class="info-box">💡 類比：LLM 是「聰明的大腦」，Agent 是「有腦又有手腳的員工」</div>
+
+      <h3>Prompt 設計規範</h3>
+      <p style="font-size:14px;margin-bottom:10px;">與 AI 對話前，先掌握這六條規範，才能穩定拿到好結果：</p>
+      <table>
+        <tr><th>規範</th><th>說明</th><th>反例 → 正例</th></tr>
+        <tr>
+          <td>具體明確</td>
+          <td>避免模糊詞彙，說清楚預期結果</td>
+          <td>「寫得好一點」→「改為正式書信語氣，不超過 100 字」</td>
+        </tr>
+        <tr>
+          <td>提供脈絡</td>
+          <td>告訴 AI 背景資訊與限制條件</td>
+          <td>「幫我寫通知」→「這是寄給 40 歲以上學員的課前通知，需含時間地點」</td>
+        </tr>
+        <tr>
+          <td>指定格式</td>
+          <td>明確說明輸出要用什麼結構</td>
+          <td>「整理一下」→「輸出為 Markdown 表格，欄位：項目、說明、優先級」</td>
+        </tr>
+        <tr>
+          <td>正向描述</td>
+          <td>說「要什麼」而非「不要什麼」</td>
+          <td>「不要太難」→「使用國中程度的語彙說明」</td>
+        </tr>
+        <tr>
+          <td>分段給資料</td>
+          <td>長資料與指令明確分開</td>
+          <td>指令和資料混在一起 → 「指令寫在前，資料用『---』隔開後貼上」</td>
+        </tr>
+        <tr>
+          <td>一次一件事</td>
+          <td>複雜需求拆成多輪提問</td>
+          <td>一次要求翻譯＋摘要＋改寫 → 先翻譯，確認後再摘要</td>
+        </tr>
+      </table>
+      <div class="info-box amber">實作：講師示範同一需求用「不符規範」與「符合規範」各問一次，學員觀察差異</div>
+
+      <h3>PSIO Prompt 撰寫框架</h3>
+      <p style="font-size:14px;margin-bottom:10px;">掌握規範後，用 PSIO 框架把需求結構化，讓每次 prompt 都有完整的骨架：</p>
+      <div class="code-block"><span class="kw">P</span> — <span class="str">Purpose（目的）</span>  推薦最適合初學者的資料分析課程
+<span class="kw">S</span> — <span class="str">Step（步驟）</span>    1. 閱讀課程清單  2. 評估難度與適合對象  3. 列出推薦
+<span class="kw">I</span> — <span class="str">Input（輸入）</span>   課程清單如下：[貼上課程資料]
+<span class="kw">O</span> — <span class="str">Output（輸出）</span>  條列3門課，每門附上一句推薦理由（20字以內）</div>
+
+      <h3>任務拆解練習</h3>
+      <p style="font-size:14px;margin-bottom:8px;">將「建立可以回答課程問題的機器人」拆解為 5 個步驟：</p>
+      <ol class="step-list">
+        <li>使用者輸入問題（Input 邊界定義）</li>
+        <li>判斷問題類型（分類任務）</li>
+        <li>查詢課程資料（資料來源）</li>
+        <li>組合回答（LLM 整合）</li>
+        <li>回傳給使用者（Output 格式）</li>
+      </ol>
+      <div class="info-box teal">每個步驟 = n8n 的一個節點</div>
+    </div>
+  </details>
+
+  <!-- 第2節 -->
+  <details class="session-card m1">
+    <summary>
+      <span class="session-num">第 2 節</span>
+      <span class="session-title">n8n 介面操作與簡易對話工作流</span>
+      <span class="session-dur">1.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>環境設定</h3>
+      <ul class="bullet">
+        <li>使用 <strong>n8n Cloud</strong>（免安裝，新手友善）</li>
+        <li>介面說明：畫布、節點庫、執行記錄面板</li>
+      </ul>
+
+      <h3>核心節點介紹</h3>
+      <table>
+        <tr><th>節點</th><th>用途</th><th>類比</th></tr>
+        <tr><td>Chat Trigger</td><td>啟動對話，提供內建聊天介面</td><td>接待人員開啟對話窗口</td></tr>
+        <tr><td>Set</td><td>整理 / 轉換資料</td><td>填寫表單格式</td></tr>
+        <tr><td>IF</td><td>條件判斷</td><td>主管決策</td></tr>
+        <tr><td>AI Agent</td><td>呼叫 LLM，可搭配工具與記憶</td><td>交給 AI 員工處理</td></tr>
+        <tr><td>Webhook</td><td>接收外部 HTTP 請求</td><td>公司對外收件信箱</td></tr>
+      </table>
+
+      <h3>實作：簡易對話工作流</h3>
+      <div class="code-block"><span class="node">[Chat Trigger]</span> <span class="arrow">──</span> 內建聊天介面，直接在 n8n 測試
+    <span class="arrow">↓</span>
+<span class="node">[AI Agent]</span> <span class="arrow">──</span> 設定 system prompt（用 PSIO 框架撰寫）
+    <span class="arrow">↓</span>
+<span class="cm">（Chat Trigger 自動處理回傳，不需另加節點）</span></div>
+      <div class="info-box amber">優點：不需 Postman，直接在 n8n 畫布右側開啟聊天視窗測試</div>
+    </div>
+  </details>
+
+  <!-- 第3節 -->
+  <details class="session-card m1">
+    <summary>
+      <span class="session-num">第 3 節</span>
+      <span class="session-title">申請 Google 憑證</span>
+      <span class="session-dur">1.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>逐步操作流程</h3>
+      <ol class="step-list teal">
+        <li>進入 Google Cloud Console → 建立新專案「AI課程專案」</li>
+        <li>啟用 API：Gmail API、Google Sheets API、Google Drive API</li>
+        <li>建立 OAuth 2.0 憑證：應用程式類型選「網頁應用程式」，填入 n8n callback URL</li>
+        <li>在 n8n Credentials 貼上 Client ID 與 Client Secret → 授權</li>
+      </ol>
+
+      <h3>常見地雷</h3>
+      <ul class="bullet">
+        <li><strong>測試帳號限制：</strong>OAuth 同意畫面須加入測試使用者才能授權</li>
+        <li><strong>範圍不足：</strong>回 API 頁面確認已啟用正確服務</li>
+        <li><strong>憑證過期：</strong>了解 token 自動更新機制</li>
+      </ul>
+    </div>
+  </details>
+
+
+  <!-- ════════════════════════════════════
+       MODULE 2
+  ════════════════════════════════════ -->
+  <div class="module-header m2" style="margin-top:48px;">
+    <div class="mnum">02</div>
+    <div class="minfo">
+      <h2>VSCode × Codex 前端開發</h2>
+      <p>對話策略 → 漸進式實作 → 資料清理與報告撰寫｜共 4 小時</p>
+    </div>
+  </div>
+
+  <!-- 第4節 -->
+  <details class="session-card m2">
+    <summary>
+      <span class="session-num">第 4 節</span>
+      <span class="session-title">與模型對話的方式</span>
+      <span class="session-dur">1 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>對話心態建立</h3>
+      <ul class="bullet">
+        <li>AI 是「可以討論的協作者」，不是搜尋引擎</li>
+        <li>不用第一次就說完整，可以漸進補充</li>
+        <li>錯了繼續說「修改剛才的…」，不需重新開始</li>
+      </ul>
+
+      <h3>三層次對話策略</h3>
+      <div class="code-block"><span class="cm">── 層次1：直接描述 ──</span>
+<span class="str">「幫我寫一個有姓名和信箱欄位的 HTML 表單」</span>
+
+<span class="cm">── 層次2：加上限制條件 ──</span>
+<span class="str">「幫我寫一個 HTML 表單，有姓名和信箱欄位，
+ 用藍色主題，送出按鈕在右下角」</span>
+
+<span class="cm">── 層次3：PSIO 完整 Prompt ──</span>
+<span class="str">「目的：建立一個課程查詢頁面。
+ 步驟：先規劃 HTML 結構，再加入 CSS 樣式。
+ 輸入：姓名輸入框、多行問題輸入框、送出按鈕。
+ 輸出：完整可執行的單一 HTML 檔案，風格簡潔專業。」</span></div>
+      <div class="info-box teal">實作：學員用三種層次各寫一個 prompt，比較產出品質差異</div>
+    </div>
+  </details>
+
+  <!-- 第5節 -->
+  <details class="session-card m2">
+    <summary>
+      <span class="session-num">第 5 節</span>
+      <span class="session-title">漸進式前端實作系列</span>
+      <span class="session-dur">2 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <p style="font-size:14px;margin-bottom:16px;">每個範例在前一個基礎上累加，聚焦在前端本身的能力，不串接後端。</p>
+      <table>
+        <tr><th>#</th><th>範例</th><th>目標</th><th>學習點</th><th>時間</th></tr>
+        <tr>
+          <td>1</td>
+          <td>靜態查詢頁面</td>
+          <td>姓名輸入 + 問題輸入 + 送出按鈕</td>
+          <td>看懂 HTML 結構，用 AI 調整樣式</td>
+          <td>20 分</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>表單驗證</td>
+          <td>空白提示、格式錯誤變紅框</td>
+          <td>「在剛才的基礎上加上…」追加功能</td>
+          <td>20 分</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>互動效果</td>
+          <td>課程類別下拉選單、勾選框篩選</td>
+          <td>用 AI 加入互動元素，不改既有結構</td>
+          <td>25 分</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>假資料展示</td>
+          <td>用 JS 陣列模擬課程清單，按類別顯示卡片</td>
+          <td>資料與畫面分離的概念，為後續串接做準備</td>
+          <td>25 分</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>UI 優化</td>
+          <td>RWD 手機版、卡片懸停效果、送出動畫</td>
+          <td>用 AI 做 UX 改善，一次描述多個需求</td>
+          <td>30 分</td>
+        </tr>
+      </table>
+    </div>
+  </details>
+
+  <!-- 第6節 -->
+  <details class="session-card m2">
+    <summary>
+      <span class="session-num">第 6 節</span>
+      <span class="session-title">清理撰寫成果報告所需的資料</span>
+      <span class="session-dur">1 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>為什麼需要資料清理？</h3>
+      <p style="font-size:14px;margin-bottom:8px;">課程結束後通常會留下雜亂的原始資料：學員問答記錄、操作截圖說明、Google Sheets 的填答結果。這些資料需要先整理，AI 才能幫你產出有品質的報告。</p>
+
+      <h3>第一步：整理原始資料（25 分鐘）</h3>
+      <div class="code-block"><span class="cm">Prompt 範例：資料清洗</span>
+<span class="str">「以下是學員問答記錄，格式不一致。
+ 請幫我：1. 移除重複的問題  2. 統一問題的句型為疑問句
+ 3. 將問題依主題分類（操作類、觀念類、其他）
+ 4. 輸出為表格格式（欄位：類別、問題、出現次數）」</span></div>
+      <h4>常見原始資料類型與清理重點</h4>
+      <table>
+        <tr><th>資料類型</th><th>常見問題</th><th>清理方向</th></tr>
+        <tr><td>問答記錄</td><td>重複、格式混亂、口語化</td><td>去重、分類、標準化語句</td></tr>
+        <tr><td>操作截圖說明</td><td>說明文字零散、缺少脈絡</td><td>統一格式：步驟編號＋說明</td></tr>
+        <tr><td>學員填答結果</td><td>空白欄位、中英混用</td><td>補全、統一語言、去除無效填答</td></tr>
+      </table>
+
+      <h3>第二步：萃取報告關鍵資訊（20 分鐘）</h3>
+      <div class="code-block"><span class="cm">Prompt 範例：資訊萃取</span>
+<span class="str">「根據以下清理後的問答記錄，幫我找出：
+ 1. 學員最常問的前3個問題
+ 2. 最多人卡關的操作步驟
+ 3. 對課程最正面的回饋關鍵詞（列出前5個）
+ 輸出格式：每項用標題 + 2句說明」</span></div>
+
+      <h3>第三步：確認資料完整性（15 分鐘）</h3>
+      <ul class="bullet">
+        <li>確認每個報告章節都有對應的素材（數字、範例、截圖清單）</li>
+        <li>缺少的部分用 AI 標記：「以下哪些欄位資料不足，需要補充？」</li>
+        <li>完成後：資料夾整理好，準備下一階段撰寫報告</li>
+      </ul>
+      <div class="info-box teal">實作：學員用提供的範本原始資料，產出一份可直接用於報告的結構化素材包</div>
+    </div>
+  </details>
+
+
+  <!-- ════════════════════════════════════
+       MODULE 3
+  ════════════════════════════════════ -->
+  <div class="module-header m3" style="margin-top:48px;">
+    <div class="mnum">03</div>
+    <div class="minfo">
+      <h2>整合應用：課程查詢 AI 助理</h2>
+      <p>向量資料庫概念 → n8n 查詢工作流（Qdrant）→ 前端整合 → 部署上線｜共 8 小時</p>
+    </div>
+  </div>
+
+  <!-- 系統架構 -->
+  <details class="session-card m3" open>
+    <summary>
+      <span class="session-num">系統架構</span>
+      <span class="session-title">完整資料流說明</span>
+      <span class="session-dur">全覽</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <div class="arch">
+<span class="label">使用者瀏覽器</span>
+  <span class="note">輸入姓名 + 問題，按下送出</span>
+         <span class="arrow">│  POST { name, question }</span>
+         <span class="arrow">▼</span>
+<span class="node">[前端 HTML 頁面]</span>  <span class="note">← Codex 產生</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[n8n Webhook 節點]</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[資料前處理節點]</span>  <span class="note">整理輸入格式</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[OpenAI Embeddings]</span>  <span class="note">將問題轉換為向量</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[Qdrant 向量搜尋]</span>  <span class="note">語意搜尋最相關的 top-3 課程</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[AI Agent 節點]</span>  <span class="note">整合問題 + 搜尋結果 → 自然語言回覆</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[Respond to Webhook]</span>  <span class="note">回傳 { reply, courses }</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="label">使用者瀏覽器</span>  <span class="note">顯示推薦課程卡片</span></div>
+    </div>
+  </details>
+
+  <!-- 第7節 -->
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 7 節</span>
+      <span class="session-title">向量資料庫概念介紹</span>
+      <span class="session-dur">1 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>關鍵字 vs 語意搜尋</h3>
+      <table>
+        <tr><th>搜尋方式</th><th>行為</th><th>結果範例</th></tr>
+        <tr><td>關鍵字搜尋</td><td>找完全一樣的字</td><td>搜尋「Python課程」只找到標題含 Python 的</td></tr>
+        <tr><td>語意搜尋（向量）</td><td>找意思最接近的</td><td>搜尋「適合初學者的程式課」→ 找到 Python、Scratch、視覺化工具等</td></tr>
+      </table>
+
+      <h3>Embedding 是什麼？</h3>
+      <div class="info-box">💡 類比：把每一段文字轉換成一串數字（座標），意思相近的文字在「空間中」距離很近。搜尋時就是找距離最近的幾個座標。</div>
+      <div class="code-block"><span class="cm">文字 → Embedding 模型 → 向量（數字陣列）</span>
+<span class="str">「Python 入門課」  →  [0.12, -0.45, 0.87, ...]</span>
+<span class="str">「初學者程式課程」  →  [0.11, -0.43, 0.85, ...]</span>  <span class="cm">← 距離很近</span>
+<span class="str">「咖啡豆烘焙技術」  →  [0.72,  0.31, -0.20, ...]</span>  <span class="cm">← 距離很遠</span></div>
+
+      <h3>常見向量資料庫比較</h3>
+      <table>
+        <tr><th>工具</th><th>特色</th><th>適合場景</th></tr>
+        <tr><td>Qdrant</td><td>開源、效能高、n8n 原生支援</td><td>本課程使用，適合實作練習</td></tr>
+        <tr><td>Pinecone</td><td>全托管雲端服務，免建置</td><td>快速上線的商業應用</td></tr>
+        <tr><td>Supabase pgvector</td><td>整合在 PostgreSQL 中</td><td>已有 Supabase 資料庫的專案</td></tr>
+        <tr><td>Chroma</td><td>輕量、本機執行</td><td>本地開發、原型測試</td></tr>
+      </table>
+
+      <h3>整合到課程系統的角色</h3>
+      <div class="code-block"><span class="cm">課程資料 → Embedding → 存入 Qdrant</span>
+<span class="cm">（一次性建立知識庫）</span>
+
+<span class="cm">使用者問題 → Embedding → 在 Qdrant 搜尋最相近的課程</span>
+<span class="cm">（每次查詢時執行）</span></div>
+    </div>
+  </details>
+
+  <!-- 第8節 -->
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 8 節</span>
+      <span class="session-title">n8n 查詢工作流建立</span>
+      <span class="session-dur">2.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+
+      <h3>第一步：建立 Qdrant 知識庫（30 分鐘）<span style="font-size:12px;font-weight:400;color:#d97706;background:#fef3c7;border:1px solid #fcd34d;border-radius:4px;padding:2px 8px;margin-left:8px;">Optional</span></h3>
+      <ol class="step-list amber">
+        <li>註冊 Qdrant Cloud 免費帳號，建立新 Cluster</li>
+        <li>取得 API Key 與 Cluster URL，填入 n8n Credentials</li>
+        <li>在 n8n 建立「資料匯入流程」：手動觸發 → 讀取課程 JSON → OpenAI Embeddings → Qdrant 插入節點</li>
+        <li>執行一次，確認課程資料已存入 Qdrant Collection</li>
+      </ol>
+      <div class="info-box amber">課程資料（約 20 筆）由講師預先準備，學員直接匯入即可，聚焦在流程理解</div>
+
+      <h3>第二步：主查詢工作流節點配置（1 小時）</h3>
+      <table>
+        <tr><th>節點</th><th>設定重點</th></tr>
+        <tr><td>① Webhook</td><td>接收 { name, question }</td></tr>
+        <tr><td>② Set</td><td>整理 userName、userQuestion 變數</td></tr>
+        <tr><td>③ OpenAI Embeddings</td><td>將 userQuestion 轉換成向量</td></tr>
+        <tr><td>④ Qdrant 向量搜尋</td><td>語意搜尋，回傳相似度最高 3 筆課程</td></tr>
+        <tr><td>⑤ Set（組合 context）</td><td>將 3 筆課程內容組合成 context 文字</td></tr>
+        <tr><td>⑥ OpenAI Chat Model</td><td>PSIO system prompt + context 注入</td></tr>
+        <tr><td>⑦ Respond to Webhook</td><td>回傳 { reply, courses }</td></tr>
+      </table>
+
+      <h3>System Prompt 設計（PSIO）</h3>
+      <div class="code-block"><span class="kw">P</span> — Purpose  回答使用者的課程查詢，給出準確的推薦
+<span class="kw">S</span> — Step     1. 閱讀提供的課程資料  2. 對應使用者問題  3. 選出最相關課程
+<span class="kw">I</span> — Input    使用者：{userName}，問題：{userQuestion}
+             課程資料（來自 Qdrant 語意搜尋）：{context}
+<span class="kw">O</span> — Output   推薦 1-3 門課程，每門包含名稱和推薦說明（50字以內）</div>
+
+      <h3>第三步：錯誤處理補強（1 小時）</h3>
+      <ul class="bullet">
+        <li>找不到相關課程時的 fallback 回覆（IF 節點判斷搜尋結果是否為空）</li>
+        <li>使用者輸入為空時的早期攔截（在 Webhook 後加 IF 節點）</li>
+        <li>n8n 執行記錄查看：如何從錯誤訊息找到哪個節點出問題</li>
+        <li>實測：故意輸入奇怪的問題，觀察系統回應</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 第9節 -->
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 9 節</span>
+      <span class="session-title">前端整合</span>
+      <span class="session-dur">1.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>分段 Prompt 策略</h3>
+      <div class="code-block"><span class="cm">Prompt 1：基本結構</span>
+<span class="str">「建立課程查詢頁面：標題、姓名欄位、問題輸入框（多行）、送出按鈕」</span>
+
+<span class="cm">Prompt 2：串接後端</span>
+<span class="str">「加入送出功能：POST 資料到 [n8n URL]，顯示 loading，成功後顯示 reply 欄位」</span>
+
+<span class="cm">Prompt 3：結果展示</span>
+<span class="str">「回傳的 JSON 包含 reply（文字）和 courses（陣列），
+ reply 顯示在上方，courses 以卡片方式列在下方」</span>
+
+<span class="cm">Prompt 4：視覺優化</span>
+<span class="str">「整體風格參考教育機構網站，主色藍色，卡片有陰影，RWD 支援手機」</span></div>
+
+      <h3>前後端串接測試</h3>
+      <ul class="bullet">
+        <li>用 n8n 執行記錄確認資料流正確</li>
+        <li>測試邊界：問非課程相關問題、問題超長</li>
+        <li>用 Codex 修正實際遇到的 CORS 等問題</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 第10節 -->
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 10 節</span>
+      <span class="session-title">功能優化與部署上線</span>
+      <span class="session-dur">1.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>進階功能選項</h3>
+      <table>
+        <tr><th>功能</th><th>實作方式</th></tr>
+        <tr><td>對話記憶</td><td>n8n 加入 Memory 節點，記住同一使用者上下文</td></tr>
+        <tr><td>回覆評分</td><td>頁面加上 👍👎，記錄到 Google Sheets</td></tr>
+        <tr><td>查詢記錄</td><td>每次問答同步寫入 Google Sheets</td></tr>
+      </table>
+
+      <h3>GitHub Pages 免費部署</h3>
+      <ol class="step-list amber">
+        <li>建立 GitHub 帳號</li>
+        <li>上傳 HTML 檔案到新 repository</li>
+        <li>Settings → Pages → 選擇 main branch 啟用</li>
+        <li>取得公開網址，在真實環境測試完整流程</li>
+      </ol>
+    </div>
+  </details>
+
+  <!-- 第11節 -->
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 11 節</span>
+      <span class="session-title">成果展示與課程回顧</span>
+      <span class="session-dur">1 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>成果展示（30 分鐘）</h3>
+      <p style="font-size:14px;margin-bottom:10px;">每位學員輪流展示，其他人可以實際使用查詢系統並提問。</p>
+      <ul class="bullet">
+        <li>開啟 GitHub Pages 網址，現場示範查詢流程</li>
+        <li>展示 n8n 工作流畫布（截圖或直接開啟）</li>
+        <li>分享一個「最有用的 prompt 技巧」或「踩過的最大坑」</li>
+      </ul>
+
+      <h3>課程回顧（15 分鐘）</h3>
+      <table>
+        <tr><th>學到什麼</th><th>可以做什麼</th></tr>
+        <tr><td>PSIO 框架</td><td>寫出有結構的 prompt，減少 AI 回錯</td></tr>
+        <tr><td>n8n 工作流</td><td>不寫程式也能串接多個服務</td></tr>
+        <tr><td>向量搜尋</td><td>讓系統理解「意思」而不只是關鍵字</td></tr>
+        <tr><td>Codex 前端</td><td>用 AI 產生並修改網頁，快速驗證想法</td></tr>
+      </table>
+
+      <h3>延伸應用方向（15 分鐘）</h3>
+      <div class="tag-list">
+        <span class="tag-pill">產品目錄查詢</span>
+        <span class="tag-pill">公司 FAQ 機器人</span>
+        <span class="tag-pill">LINE Bot 前端介面</span>
+        <span class="tag-pill">問卷自動整理</span>
+        <span class="tag-pill">客戶詢價 → 報價單</span>
+        <span class="tag-pill">內部知識庫查詢</span>
+      </div>
+      <div class="info-box teal" style="margin-top:14px;">課後資源：n8n 官方範本庫、Qdrant 文件、OpenAI Cookbook — 三個最值得書籤的學習來源</div>
+    </div>
+  </details>
+
+
+  <!-- ── 時間總覽 ── -->
+  <div style="margin-top:56px;">
+    <div class="section-title">課程時間總覽</div>
+    <div class="summary-grid">
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第1節</strong>AI 觀念、LLM/Agent、PSIO、Prompt 規範</div></div>
+      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第2節</strong>n8n 介面與 Chat Trigger 工作流</div></div>
+      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第3節</strong>Google 憑證申請</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第4節</strong>與模型對話策略</div></div>
+      <div class="summary-item"><div class="si-num">2h</div><div class="si-text"><strong>第5節</strong>漸進式前端實作</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第6節</strong>清理報告所需資料</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第7節</strong>向量資料庫概念介紹</div></div>
+      <div class="summary-item"><div class="si-num">2.5h</div><div class="si-text"><strong>第8節</strong>n8n 查詢工作流（Qdrant）</div></div>
+      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第9節</strong>前端整合</div></div>
+      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第10節</strong>優化與部署</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第11節</strong>成果展示與課程回顧</div></div>
+    </div>
+    <div class="info-box" style="margin-top:20px;font-size:15px;font-weight:600;">
+      合計：16 小時　｜　模組一 4h + 模組二 4h + 模組三 8h
+    </div>
+  </div>
+
+  <div style="text-align:center;color:var(--gray-600);font-size:13px;margin-top:48px;padding-top:24px;border-top:1px solid var(--gray-200);">
+    青聚點 AI 實作課程規劃 · 2026
+  </div>
+
+</div><!-- /container -->
+</body>
+</html>

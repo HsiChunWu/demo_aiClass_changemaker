@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>16小時 AI 實作課程規劃｜正式上線版</title>
+  <style>
+    :root {
+      --blue:#2563eb; --blue-lt:#dbeafe; --teal:#0d9488; --teal-lt:#ccfbf1;
+      --amber:#d97706; --amber-lt:#fef3c7; --gray-50:#f8fafc; --gray-100:#f1f5f9;
+      --gray-200:#e2e8f0; --gray-600:#475569; --gray-800:#1e293b; --radius:10px;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; background:var(--gray-50); color:var(--gray-800); line-height:1.7; }
+    .hero { background:linear-gradient(135deg,#1e3a5f 0%,#7c3aed 60%,#0d9488 100%); color:#fff; padding:60px 24px 48px; text-align:center; }
+    .hero .tag { display:inline-block; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); border-radius:99px; padding:4px 16px; font-size:13px; letter-spacing:.05em; margin-bottom:20px; }
+    .hero h1 { font-size:clamp(26px,5vw,42px); font-weight:800; margin-bottom:12px; }
+    .hero p  { font-size:16px; opacity:.88; max-width:560px; margin:0 auto 32px; }
+    .hero .badges { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+    .hero .badge { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:8px; padding:8px 18px; font-size:14px; font-weight:600; }
+    .version-badge { display:inline-block; background:#7c3aed; color:#fff; font-weight:800; font-size:13px; border-radius:6px; padding:4px 14px; margin-top:16px; }
+    .container { max-width:1000px; margin:0 auto; padding:48px 24px; }
+    .section-title { font-size:22px; font-weight:700; margin-bottom:24px; display:flex; align-items:center; gap:10px; }
+    .section-title::after { content:""; flex:1; height:2px; background:var(--gray-200); border-radius:2px; }
+    .timeline-nav { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:56px; }
+    .tnav-card { border-radius:var(--radius); padding:20px; text-align:center; border:2px solid transparent; transition:transform .15s; }
+    .tnav-card:hover { transform:translateY(-3px); }
+    .tnav-card.mod1 { background:var(--blue-lt); border-color:#93c5fd; }
+    .tnav-card.mod2 { background:var(--teal-lt); border-color:#5eead4; }
+    .tnav-card.mod3 { background:#ede9fe; border-color:#c4b5fd; }
+    .tnav-card .num { font-size:28px; font-weight:800; display:block; margin-bottom:4px; }
+    .mod1 .num { color:var(--blue); } .mod2 .num { color:var(--teal); } .mod3 .num { color:#7c3aed; }
+    .module-header { border-radius:var(--radius); padding:22px 28px; margin-bottom:24px; color:#fff; display:flex; align-items:center; gap:16px; }
+    .module-header.m1 { background:linear-gradient(90deg,#1d4ed8,#2563eb); }
+    .module-header.m2 { background:linear-gradient(90deg,#0f766e,#0d9488); }
+    .module-header.m3 { background:linear-gradient(90deg,#6d28d9,#7c3aed); }
+    .module-header .mnum { font-size:36px; font-weight:800; opacity:.6; line-height:1; }
+    .module-header .minfo h2 { font-size:20px; font-weight:700; }
+    .module-header .minfo p  { font-size:13px; opacity:.85; margin-top:2px; }
+    .session-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); margin-bottom:16px; overflow:hidden; }
+    .session-card summary { list-style:none; padding:16px 20px; cursor:pointer; display:flex; align-items:center; gap:12px; user-select:none; }
+    .session-card summary::-webkit-details-marker { display:none; }
+    .session-card summary:hover { background:var(--gray-50); }
+    .session-num { background:var(--gray-100); border-radius:6px; padding:4px 10px; font-size:12px; font-weight:700; color:var(--gray-600); white-space:nowrap; }
+    .session-card.m1 .session-num { background:var(--blue-lt); color:var(--blue); }
+    .session-card.m2 .session-num { background:var(--teal-lt); color:var(--teal); }
+    .session-card.m3 .session-num { background:#ede9fe; color:#7c3aed; }
+    .session-title { font-weight:600; font-size:15px; flex:1; }
+    .session-dur { font-size:12px; color:var(--gray-600); white-space:nowrap; }
+    .chevron { font-size:12px; color:var(--gray-600); transition:transform .2s; }
+    details[open] .chevron { transform:rotate(90deg); }
+    .session-body { padding:0 20px 20px 20px; border-top:1px solid var(--gray-100); }
+    .tag-list { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px; }
+    .tag-pill { background:var(--gray-100); border-radius:99px; padding:3px 12px; font-size:13px; font-weight:500; }
+    table { width:100%; border-collapse:collapse; font-size:14px; margin:12px 0; }
+    th { background:var(--gray-100); padding:9px 12px; text-align:left; font-weight:600; border-bottom:2px solid var(--gray-200); }
+    td { padding:9px 12px; border-bottom:1px solid var(--gray-100); vertical-align:top; }
+    tr:last-child td { border-bottom:none; }
+    .code-block { background:#1e293b; color:#e2e8f0; border-radius:8px; padding:16px 18px; font-family:"JetBrains Mono","Fira Code",monospace; font-size:13px; line-height:1.6; overflow-x:auto; margin:12px 0; white-space:pre; }
+    .code-block .cm { color:#94a3b8; } .code-block .kw { color:#7dd3fc; } .code-block .str { color:#86efac; } .code-block .var { color:#fde68a; }
+    .info-box { border-left:4px solid var(--blue); background:var(--blue-lt); border-radius:0 8px 8px 0; padding:12px 16px; font-size:14px; margin:12px 0; }
+    .info-box.teal  { border-color:var(--teal);  background:var(--teal-lt); }
+    .info-box.amber { border-color:var(--amber); background:var(--amber-lt); }
+    .info-box.purple { border-color:#7c3aed; background:#ede9fe; }
+    .step-list { counter-reset:step; list-style:none; margin:12px 0; }
+    .step-list li { counter-increment:step; padding:8px 0 8px 36px; position:relative; font-size:14px; border-bottom:1px dashed var(--gray-200); }
+    .step-list li:last-child { border-bottom:none; }
+    .step-list li::before { content:counter(step); position:absolute; left:0; top:8px; width:22px; height:22px; background:var(--blue); color:#fff; border-radius:50%; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+    .step-list.teal li::before  { background:var(--teal); }
+    .step-list.amber li::before { background:var(--amber); }
+    .step-list.purple li::before { background:#7c3aed; }
+    ul.bullet { padding-left:20px; font-size:14px; }
+    ul.bullet li { margin-bottom:6px; }
+    h3 { font-size:15px; font-weight:700; margin:16px 0 8px; color:var(--gray-800); }
+    h4 { font-size:13px; font-weight:700; margin:12px 0 6px; color:var(--gray-600); text-transform:uppercase; letter-spacing:.05em; }
+    .arch { background:#0f172a; color:#e2e8f0; border-radius:var(--radius); padding:28px; font-family:monospace; font-size:13px; line-height:2; overflow-x:auto; margin:16px 0; }
+    .arch .node { color:#7dd3fc; font-weight:700; } .arch .arrow { color:#94a3b8; } .arch .note { color:#86efac; } .arch .label { color:#fde68a; }
+    .summary-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-top:16px; }
+    .summary-item { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); padding:14px 16px; display:flex; align-items:center; gap:12px; }
+    .summary-item .si-num { font-size:22px; font-weight:800; color:var(--blue); min-width:36px; }
+    .summary-item .si-num.purple { color:#7c3aed; }
+    .summary-item .si-text { font-size:13px; line-height:1.4; }
+    .summary-item .si-text strong { display:block; font-size:14px; }
+    @media (max-width:640px) { .timeline-nav { grid-template-columns:1fr; } .module-header { flex-direction:column; align-items:flex-start; gap:6px; } }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="tag">青聚點 × AI 實作課程</span>
+  <h1>16小時 AI 工具實作課程</h1>
+  <p>從 AI 觀念建立到完整系統整合，帶領學員親手打造課程查詢 AI 助理</p>
+  <div class="badges">
+    <span class="badge">🎯 適合新手</span>
+    <span class="badge">🛠 hands-on 動手實作</span>
+    <span class="badge">🤖 n8n 自動化</span>
+    <span class="badge">💻 VSCode + Codex</span>
+    <span class="badge">🔍 向量資料庫</span>
+    <span class="badge">🔒 正式上線安全架構</span>
+  </div>
+  <div class="version-badge">正式上線版｜Turnstile + Rate Limit + 監控 + Staging/Prod</div>
+</div>
+
+<div class="container">
+
+  <div class="timeline-nav">
+    <div class="tnav-card mod1">
+      <span class="num">4h</span>
+      <div class="label">模組一</div>
+      <div class="sub">n8n 基礎 × Google 憑證</div>
+    </div>
+    <div class="tnav-card mod2">
+      <span class="num">2.5h</span>
+      <div class="label">模組二</div>
+      <div class="sub">Codex 前端開發</div>
+    </div>
+    <div class="tnav-card mod3">
+      <span class="num">9.5h</span>
+      <div class="label">模組三</div>
+      <div class="sub">整合 × 完整安全部署</div>
+    </div>
+  </div>
+
+  <!-- MODULE 1 -->
+  <div class="module-header m1">
+    <div class="mnum">01</div>
+    <div class="minfo">
+      <h2>n8n 基礎與 Google 憑證</h2>
+      <p>AI 觀念建構 → n8n 工作流操作 → Google API 申請｜共 4 小時</p>
+    </div>
+  </div>
+
+  <details class="session-card m1" open>
+    <summary>
+      <span class="session-num">第 1 節</span>
+      <span class="session-title">AI 觀念建構：LLM、Agent、Prompt 規範與 PSIO 框架</span>
+      <span class="session-dur">1 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>LLM vs AI Agent</h3>
+      <table>
+        <tr><th></th><th>LLM</th><th>AI Agent</th></tr>
+        <tr><td>比喻</td><td>百科全書式問答機</td><td>會執行任務的助理</td></tr>
+        <tr><td>行為</td><td>一問一答，無記憶</td><td>多步驟、可呼叫工具、有記憶</td></tr>
+        <tr><td>例子</td><td>ChatGPT 對話視窗</td><td>n8n 工作流 + AI 節點</td></tr>
+      </table>
+      <div class="info-box">💡 LLM 是「聰明的大腦」，Agent 是「有腦又有手腳的員工」</div>
+
+      <h3>Prompt 設計規範</h3>
+      <table>
+        <tr><th>規範</th><th>說明</th><th>反例 → 正例</th></tr>
+        <tr><td>具體明確</td><td>避免模糊詞彙</td><td>「寫得好一點」→「改為正式語氣，不超過 100 字」</td></tr>
+        <tr><td>提供脈絡</td><td>給背景與限制條件</td><td>「幫我寫通知」→「寄給 40 歲以上學員的課前通知，需含時間地點」</td></tr>
+        <tr><td>指定格式</td><td>說明輸出結構</td><td>「整理一下」→「輸出為 Markdown 表格，欄位：項目、說明、優先級」</td></tr>
+        <tr><td>正向描述</td><td>說要什麼，不說不要什麼</td><td>「不要太難」→「使用國中程度的語彙說明」</td></tr>
+        <tr><td>分段給資料</td><td>指令與資料明確分開</td><td>混在一起 → 「指令在前，資料用『---』隔開後貼上」</td></tr>
+        <tr><td>一次一件事</td><td>複雜需求拆成多輪</td><td>一次要求翻譯＋摘要＋改寫 → 先翻譯，確認後再摘要</td></tr>
+      </table>
+      <div class="info-box amber">實作：講師示範同一需求用「不符規範」與「符合規範」各問一次，觀察差異</div>
+
+      <h3>PSIO Prompt 撰寫框架</h3>
+      <div class="code-block"><span class="kw">P</span> — <span class="str">Purpose（目的）</span>  推薦最適合初學者的資料分析課程
+<span class="kw">S</span> — <span class="str">Step（步驟）</span>    1. 閱讀課程清單  2. 評估難度與適合對象  3. 列出推薦
+<span class="kw">I</span> — <span class="str">Input（輸入）</span>   課程清單如下：[貼上課程資料]
+<span class="kw">O</span> — <span class="str">Output（輸出）</span>  條列3門課，每門附上一句推薦理由（20字以內）</div>
+
+      <h3>任務拆解練習</h3>
+      <ol class="step-list">
+        <li>使用者輸入問題（Input 邊界定義）</li>
+        <li>判斷問題類型（分類任務）</li>
+        <li>查詢課程資料（資料來源）</li>
+        <li>組合回答（LLM 整合）</li>
+        <li>回傳給使用者（Output 格式）</li>
+      </ol>
+      <div class="info-box teal">每個步驟 = n8n 的一個節點</div>
+    </div>
+  </details>
+
+  <details class="session-card m1">
+    <summary>
+      <span class="session-num">第 2 節</span>
+      <span class="session-title">n8n 介面操作與簡易對話工作流</span>
+      <span class="session-dur">1.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>環境設定</h3>
+      <ul class="bullet">
+        <li>使用 <strong>n8n Cloud</strong>（免安裝，新手友善）</li>
+        <li>介面說明：畫布、節點庫、執行記錄面板</li>
+      </ul>
+      <h3>核心節點介紹</h3>
+      <table>
+        <tr><th>節點</th><th>用途</th><th>類比</th></tr>
+        <tr><td>Chat Trigger</td><td>啟動對話，提供內建聊天介面</td><td>接待人員開啟對話窗口</td></tr>
+        <tr><td>Set</td><td>整理 / 轉換資料</td><td>填寫表單格式</td></tr>
+        <tr><td>IF</td><td>條件判斷</td><td>主管決策</td></tr>
+        <tr><td>AI Agent</td><td>呼叫 LLM，可搭配工具與記憶</td><td>交給 AI 員工處理</td></tr>
+        <tr><td>Webhook</td><td>接收外部 HTTP 請求</td><td>公司對外收件信箱</td></tr>
+      </table>
+      <h3>實作：簡易對話工作流</h3>
+      <div class="code-block"><span class="node">[Chat Trigger]</span> <span class="arrow">──</span> 內建聊天介面，直接在 n8n 測試
+    <span class="arrow">↓</span>
+<span class="node">[AI Agent]</span> <span class="arrow">──</span> 設定 system prompt（用 PSIO 框架撰寫）
+    <span class="arrow">↓</span>
+<span class="cm">（Chat Trigger 自動處理回傳，不需另加節點）</span></div>
+      <div class="info-box amber">優點：不需 Postman，直接在 n8n 畫布右側開啟聊天視窗測試</div>
+    </div>
+  </details>
+
+  <details class="session-card m1">
+    <summary>
+      <span class="session-num">第 3 節</span>
+      <span class="session-title">申請 Google 憑證</span>
+      <span class="session-dur">1.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>逐步操作流程</h3>
+      <ol class="step-list teal">
+        <li>進入 Google Cloud Console → 建立新專案「AI課程專案」</li>
+        <li>啟用 API：Gmail API、Google Sheets API、Google Drive API</li>
+        <li>建立 OAuth 2.0 憑證：應用程式類型選「網頁應用程式」，填入 n8n callback URL</li>
+        <li>在 n8n Credentials 貼上 Client ID 與 Client Secret → 授權</li>
+      </ol>
+      <h3>常見地雷</h3>
+      <ul class="bullet">
+        <li><strong>測試帳號限制：</strong>OAuth 同意畫面須加入測試使用者才能授權</li>
+        <li><strong>範圍不足：</strong>回 API 頁面確認已啟用正確服務</li>
+        <li><strong>憑證過期：</strong>了解 token 自動更新機制</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- MODULE 2 -->
+  <div class="module-header m2" style="margin-top:48px;">
+    <div class="mnum">02</div>
+    <div class="minfo">
+      <h2>Codex 前端開發</h2>
+      <p>與模型對話策略 → 漸進式前端實作｜共 2.5 小時</p>
+    </div>
+  </div>
+
+  <details class="session-card m2">
+    <summary>
+      <span class="session-num">第 4 節</span>
+      <span class="session-title">與模型對話 × 漸進式前端實作</span>
+      <span class="session-dur">2.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>對話策略（30 分鐘）</h3>
+      <ul class="bullet">
+        <li>AI 是「可以討論的協作者」，不是搜尋引擎</li>
+        <li>不用第一次就說完整，可以漸進補充</li>
+        <li>錯了繼續說「修改剛才的…」，不需重新開始</li>
+      </ul>
+      <div class="code-block"><span class="cm">── 層次3：PSIO 完整 Prompt ──</span>
+<span class="str">「目的：建立一個課程查詢頁面。
+ 步驟：先規劃 HTML 結構，再加入 CSS 樣式。
+ 輸入：姓名輸入框、多行問題輸入框、送出按鈕。
+ 輸出：完整可執行的單一 HTML 檔案，風格簡潔專業。」</span></div>
+
+      <h3>漸進式前端實作（2 小時）</h3>
+      <table>
+        <tr><th>#</th><th>範例</th><th>目標</th><th>學習點</th><th>時間</th></tr>
+        <tr><td>1</td><td>靜態查詢頁面</td><td>姓名輸入 + 問題輸入 + 送出按鈕</td><td>看懂 HTML 結構，用 AI 調整樣式</td><td>20 分</td></tr>
+        <tr><td>2</td><td>表單驗證</td><td>空白提示、格式錯誤變紅框</td><td>「在剛才的基礎上加上…」追加功能</td><td>20 分</td></tr>
+        <tr><td>3</td><td>互動效果</td><td>課程類別下拉選單、勾選框篩選</td><td>用 AI 加入互動元素，不改既有結構</td><td>25 分</td></tr>
+        <tr><td>4</td><td>假資料展示</td><td>用 JS 陣列模擬課程清單，按類別顯示卡片</td><td>資料與畫面分離的概念</td><td>25 分</td></tr>
+        <tr><td>5</td><td>UI 優化</td><td>RWD 手機版、卡片懸停效果、送出動畫</td><td>用 AI 做 UX 改善，一次描述多個需求</td><td>30 分</td></tr>
+      </table>
+      <div class="info-box teal">課後作業：修改配色與文案、補充假資料、測試手機版，繳交 HTML 或 GitHub 連結</div>
+    </div>
+  </details>
+
+  <!-- MODULE 3 -->
+  <div class="module-header m3" style="margin-top:48px;">
+    <div class="mnum">03</div>
+    <div class="minfo">
+      <h2>整合應用與完整安全部署</h2>
+      <p>向量搜尋 → n8n 工作流 → 前端整合 → Cloudflare 完整安全架構｜共 9.5 小時</p>
+    </div>
+  </div>
+
+  <details class="session-card m3" open>
+    <summary>
+      <span class="session-num">系統架構</span>
+      <span class="session-title">正式上線完整架構</span>
+      <span class="session-dur">全覽</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <div class="arch">
+<span class="label">使用者瀏覽器</span>
+  <span class="note">輸入姓名 + 問題，完成 Turnstile 人機驗證，按下送出</span>
+         <span class="arrow">│  POST { name, question, turnstile_token }</span>
+         <span class="arrow">▼</span>
+<span class="node">[前端 HTML 頁面]</span>  <span class="note">← GitHub Pages，不含任何 secret</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[Cloudflare Worker]</span>
+  <span class="note">・Origin 檢查（只允許 GitHub Pages）</span>
+  <span class="note">・Turnstile token 驗證</span>
+  <span class="note">・Rate Limit（同 IP 每分鐘 5 次）</span>
+  <span class="note">・輸入長度與格式驗證</span>
+  <span class="note">・加上 X-Proxy-Secret header 轉送</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[n8n Webhook + Header Auth]</span>  <span class="note">← 只接受 Worker 轉送的請求</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[OpenAI Embeddings → Qdrant → AI Agent]</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[Google Sheets 記錄查詢]</span>  <span class="note">timestamp / 問題長度 / 成功與否</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="node">[Respond to Webhook]</span>  <span class="note">回傳 { reply, courses }</span>
+         <span class="arrow">│</span>
+         <span class="arrow">▼</span>
+<span class="label">使用者瀏覽器</span>  <span class="note">顯示推薦課程卡片</span></div>
+    </div>
+  </details>
+
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 5 節</span>
+      <span class="session-title">向量資料庫概念介紹（壓縮版）</span>
+      <span class="session-dur">0.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>關鍵字 vs 語意搜尋</h3>
+      <table>
+        <tr><th>搜尋方式</th><th>行為</th><th>結果範例</th></tr>
+        <tr><td>關鍵字搜尋</td><td>找完全一樣的字</td><td>「Python課程」只找標題含 Python 的</td></tr>
+        <tr><td>語意搜尋（向量）</td><td>找意思最接近的</td><td>「適合初學者的程式課」→ 找到 Python、Scratch 等</td></tr>
+      </table>
+      <div class="info-box">💡 把文字轉成數字座標，意思相近的距離近，搜尋時找最近的幾筆。本課程使用 <strong>Qdrant</strong>（開源、n8n 原生支援）。</div>
+    </div>
+  </details>
+
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 6 節</span>
+      <span class="session-title">n8n 查詢工作流建立</span>
+      <span class="session-dur">2.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>第一步：建立 Qdrant 知識庫（30 分鐘）<span style="font-size:12px;font-weight:400;color:#d97706;background:#fef3c7;border:1px solid #fcd34d;border-radius:4px;padding:2px 8px;margin-left:8px;">Optional</span></h3>
+      <ol class="step-list amber">
+        <li>Qdrant Cloud 帳號建立，建立新 Cluster</li>
+        <li>取得 API Key 與 Cluster URL，填入 n8n Credentials</li>
+        <li>建立資料匯入流程：手動觸發 → 課程 JSON → OpenAI Embeddings → Qdrant 插入</li>
+        <li>執行確認資料存入</li>
+      </ol>
+      <div class="info-box amber">講師預先準備約 20 筆課程資料，學員直接匯入</div>
+
+      <h3>第二步：主查詢工作流（1 小時）</h3>
+      <table>
+        <tr><th>節點</th><th>設定重點</th></tr>
+        <tr><td>① Webhook</td><td>接收 { name, question }，設定 Header Auth</td></tr>
+        <tr><td>② Set</td><td>整理 userName、userQuestion 變數</td></tr>
+        <tr><td>③ OpenAI Embeddings</td><td>將 userQuestion 轉換成向量</td></tr>
+        <tr><td>④ Qdrant 向量搜尋</td><td>語意搜尋，回傳相似度最高 3 筆課程</td></tr>
+        <tr><td>⑤ Set（組合 context）</td><td>將 3 筆課程組合成 context 文字</td></tr>
+        <tr><td>⑥ OpenAI Chat Model</td><td>PSIO system prompt + context 注入</td></tr>
+        <tr><td>⑦ Google Sheets</td><td>記錄查詢時間、問題長度、成功與否</td></tr>
+        <tr><td>⑧ Respond to Webhook</td><td>回傳 { reply, courses }</td></tr>
+      </table>
+      <h3>System Prompt（PSIO）</h3>
+      <div class="code-block"><span class="kw">P</span> — Purpose  回答使用者課程查詢，給出準確推薦
+<span class="kw">S</span> — Step     1. 閱讀課程資料  2. 對應問題  3. 選最相關課程
+<span class="kw">I</span> — Input    使用者：{userName}，問題：{userQuestion}
+             課程資料（Qdrant 搜尋結果）：{context}
+<span class="kw">O</span> — Output   推薦 1-3 門，每門含名稱和說明（50字以內）
+             回答限制在 300 字以內。只根據提供資料回答，不自行編造課程。</div>
+
+      <h3>第三步：錯誤處理（1 小時）</h3>
+      <ul class="bullet">
+        <li>搜尋結果為空時的 fallback 回覆</li>
+        <li>使用者輸入為空的早期攔截</li>
+        <li>n8n 執行記錄查看與除錯</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 7 節</span>
+      <span class="session-title">前端整合</span>
+      <span class="session-dur">2 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>分段 Prompt 策略</h3>
+      <div class="code-block"><span class="cm">Prompt 1：基本結構</span>
+<span class="str">「建立課程查詢頁面：標題、姓名欄位、問題輸入框（多行）、送出按鈕」</span>
+
+<span class="cm">Prompt 2：串接後端（先直連 n8n 測試）</span>
+<span class="str">「加入送出功能：POST 資料到 [n8n URL]，顯示 loading，成功後顯示 reply」</span>
+
+<span class="cm">Prompt 3：結果展示</span>
+<span class="str">「回傳 JSON 含 reply 和 courses 陣列，reply 顯示上方，courses 以卡片列在下方」</span>
+
+<span class="cm">Prompt 4：視覺優化</span>
+<span class="str">「教育機構風格，主色藍色，RWD 支援手機，卡片有陰影」</span>
+
+<span class="cm">Prompt 5：個資告知（正式上線需要）</span>
+<span class="str">「在送出按鈕下方加一行小字：
+ 送出後，系統會記錄你的問題內容，用於課程回覆與服務改善。
+ 請勿輸入敏感個人資訊。」</span></div>
+      <div class="info-box amber">此階段前端先直連 n8n 驗證功能，第 8 節改為 Worker URL 並加入 Turnstile</div>
+    </div>
+  </details>
+
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 8 節</span>
+      <span class="session-title">Cloudflare Worker 完整安全部署</span>
+      <span class="session-dur">3.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+
+      <h3>第一部分：安全架構全覽（30 分鐘）</h3>
+      <table>
+        <tr><th>安全層</th><th>保護什麼</th><th>本節實作</th></tr>
+        <tr><td>Origin 限制</td><td>只允許自己的前端呼叫</td><td>✅ 課堂帶做</td></tr>
+        <tr><td>CORS preflight</td><td>瀏覽器跨域請求管控</td><td>✅ 課堂帶做</td></tr>
+        <tr><td>n8n Header Auth</td><td>防止繞過 Worker 直連 n8n</td><td>✅ 課堂帶做</td></tr>
+        <tr><td>Turnstile 人機驗證</td><td>防止機器人批次呼叫</td><td>✅ 課堂帶做</td></tr>
+        <tr><td>Rate Limit</td><td>防止同一 IP 濫用</td><td>✅ 課堂帶做</td></tr>
+        <tr><td>輸入驗證</td><td>防止超長輸入燒 token</td><td>✅ 課堂帶做</td></tr>
+        <tr><td>成本控管</td><td>OpenAI token 上限設定</td><td>✅ 課堂帶做</td></tr>
+        <tr><td>Staging/Production 分離</td><td>改動不影響正式服務</td><td>✅ 課堂帶做</td></tr>
+      </table>
+
+      <h3>第二部分：建立 Worker 代理 + CORS + Origin（60 分鐘）</h3>
+      <ol class="step-list purple">
+        <li>Cloudflare 帳號建立，進入 Workers &amp; Pages → 建立 Worker</li>
+        <li>貼入講師提供的範本程式碼</li>
+        <li>設定 Worker Secrets：<code>N8N_WEBHOOK_URL</code>、<code>N8N_PROXY_SECRET</code></li>
+        <li>設定允許的 Origin：填入 GitHub Pages 網址</li>
+        <li>確認 OPTIONS preflight 正確回應 204</li>
+        <li>Deploy，取得 Worker URL</li>
+      </ol>
+      <div class="code-block"><span class="cm">// Worker 核心邏輯（範本已提供，此處說明原理）</span>
+<span class="kw">if</span> (!allowedOrigins.includes(origin)) <span class="kw">return</span> <span class="str">403 Forbidden</span>
+<span class="kw">if</span> (method === <span class="str">"OPTIONS"</span>) <span class="kw">return</span> corsHeaders + <span class="str">204 No Content</span>
+<span class="kw">if</span> (method !== <span class="str">"POST"</span>) <span class="kw">return</span> <span class="str">405 Method Not Allowed</span>
+<span class="cm">// 驗證通過後，加上 secret header 轉送 n8n</span>
+fetch(N8N_WEBHOOK_URL, { headers: { <span class="str">"X-Proxy-Secret"</span>: N8N_PROXY_SECRET } })</div>
+
+      <h3>第三部分：n8n Header Auth 設定（30 分鐘）</h3>
+      <ol class="step-list teal">
+        <li>n8n Webhook 節點 → Authentication → Header Auth</li>
+        <li>Header Name：<code>X-Proxy-Secret</code>，Value：一串隨機密碼</li>
+        <li>Worker Secret 填入相同密碼</li>
+        <li>前端 API URL 改為 Worker URL，測試是否仍正常回應</li>
+      </ol>
+
+      <h3>第四部分：Cloudflare Turnstile 人機驗證（30 分鐘）</h3>
+      <ol class="step-list purple">
+        <li>Cloudflare Dashboard → Turnstile → 建立 Site，取得 Site Key 與 Secret Key</li>
+        <li>前端加入 Turnstile widget（貼入一段 HTML + script）</li>
+        <li>送出表單時，將 Turnstile token 一起 POST 給 Worker</li>
+        <li>Worker 加入 Turnstile 驗證邏輯：呼叫 Cloudflare API 確認 token 有效</li>
+        <li>Worker Secret 新增：<code>TURNSTILE_SECRET_KEY</code></li>
+      </ol>
+      <div class="info-box purple">Turnstile 是 Cloudflare 提供的免費人機驗證，比 reCAPTCHA 更簡潔，不需用戶勾選</div>
+
+      <h3>第五部分：Rate Limit + 輸入驗證 + 成本控管（30 分鐘）</h3>
+      <h4>Rate Limit（Worker 層）</h4>
+      <div class="code-block"><span class="cm">建議最低限制（已寫入範本，調整數字即可）：</span>
+同一 IP：每分鐘 <span class="var">5</span> 次
+同一 IP：每天 <span class="var">50</span> 次
+單題長度：<span class="var">500</span> 字以內</div>
+      <h4>成本控管（n8n + OpenAI）</h4>
+      <ul class="bullet">
+        <li>OpenAI Dashboard 設定 Monthly Budget（月度費用上限）</li>
+        <li>System Prompt 加入：「回答限制在 300 字以內」</li>
+        <li>Qdrant 搜尋只回傳 top-3，不傳多餘 context</li>
+        <li>n8n 加入錯誤分支：連續失敗時回傳維護訊息，避免重試燒費用</li>
+      </ul>
+
+      <h3>第六部分：監控記錄 + 個資告知 + Staging/Production（30 分鐘）</h3>
+      <h4>查詢記錄（n8n → Google Sheets）</h4>
+      <table>
+        <tr><th>記錄欄位</th><th>用途</th></tr>
+        <tr><td>timestamp</td><td>查詢時間</td></tr>
+        <tr><td>name</td><td>使用者姓名</td></tr>
+        <tr><td>question_length</td><td>問題字數</td></tr>
+        <tr><td>success</td><td>是否成功回覆</td></tr>
+        <tr><td>error_code</td><td>失敗原因代碼</td></tr>
+      </table>
+      <div class="info-box amber">注意：記錄姓名與問題屬個人資料，頁面需加入告知文字（第 7 節 Prompt 5 已完成）</div>
+
+      <h4>Staging / Production 分離</h4>
+      <div class="code-block"><span class="cm">各建兩份，互不影響：</span>
+GitHub Pages：<span class="str">ai-course-staging/</span>  vs  <span class="str">ai-course/</span>
+Cloudflare Worker：<span class="str">course-api-staging</span>  vs  <span class="str">course-api</span>
+n8n workflow：<span class="str">課程查詢測試版</span>  vs  <span class="str">課程查詢正式版</span>
+Qdrant collection：<span class="str">courses_staging</span>  vs  <span class="str">courses_production</span></div>
+      <div class="info-box purple">流程：先在 staging 改功能 → 測試 10-20 次 → 確認無誤 → 套到 production</div>
+
+      <h4>正式上線檢查表</h4>
+      <ul class="bullet">
+        <li>前端沒有任何 secret（n8n URL、API Key 等）</li>
+        <li>前端只呼叫 Worker，不直連 n8n</li>
+        <li>Worker 限制 Origin</li>
+        <li>Worker 處理 OPTIONS preflight</li>
+        <li>Worker 驗證 Turnstile token</li>
+        <li>Worker 有 Rate Limit</li>
+        <li>Worker 檢查輸入長度</li>
+        <li>n8n Webhook 使用 Header Auth</li>
+        <li>OpenAI 有月度費用上限</li>
+        <li>查詢記錄有個資告知</li>
+        <li>Staging 和 Production 分開</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 9 節</span>
+      <span class="session-title">GitHub Pages 部署與功能確認</span>
+      <span class="session-dur">0.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>部署流程</h3>
+      <ol class="step-list amber">
+        <li>上傳 <code>index.html</code> 到 GitHub repository</li>
+        <li>Settings → Pages 啟用，取得公開網址</li>
+        <li>更新 Worker allowed origin 為 GitHub Pages 網址</li>
+        <li>端對端測試：從公開網址送出問題，確認完整流程正常</li>
+      </ol>
+      <div class="info-box teal">確認 Turnstile 在 production 模式下正常顯示與驗證</div>
+    </div>
+  </details>
+
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 10 節</span>
+      <span class="session-title">成果展示與課程回顧</span>
+      <span class="session-dur">0.5 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>展示項目</h3>
+      <ul class="bullet">
+        <li>開啟 GitHub Pages 網址，現場示範完整查詢流程</li>
+        <li>展示 n8n 工作流畫布與 Google Sheets 查詢記錄</li>
+        <li>分享一個「最有用的 prompt 技巧」或「踩過的最大坑」</li>
+      </ul>
+      <h3>課程回顧</h3>
+      <table>
+        <tr><th>學到什麼</th><th>可以做什麼</th></tr>
+        <tr><td>PSIO 框架</td><td>寫出有結構的 prompt，減少 AI 回錯</td></tr>
+        <tr><td>n8n 工作流</td><td>不寫程式也能串接多個服務</td></tr>
+        <tr><td>向量搜尋</td><td>讓系統理解「意思」而不只是關鍵字</td></tr>
+        <tr><td>Cloudflare Worker</td><td>完整的安全代理、限流、人機驗證</td></tr>
+        <tr><td>Staging/Production</td><td>改動有保護，不會直接壞掉正式服務</td></tr>
+      </table>
+      <div class="tag-list">
+        <span class="tag-pill">產品目錄查詢</span>
+        <span class="tag-pill">公司 FAQ 機器人</span>
+        <span class="tag-pill">LINE Bot 前端</span>
+        <span class="tag-pill">問卷自動整理</span>
+        <span class="tag-pill">內部知識庫查詢</span>
+      </div>
+    </div>
+  </details>
+
+  <!-- 時間總覽 -->
+  <div style="margin-top:56px;">
+    <div class="section-title">課程時間總覽</div>
+    <div class="summary-grid">
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第1節</strong>AI 觀念、Prompt 規範、PSIO</div></div>
+      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第2節</strong>n8n 介面與 Chat Trigger 工作流</div></div>
+      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第3節</strong>Google 憑證申請</div></div>
+      <div class="summary-item"><div class="si-num">2.5h</div><div class="si-text"><strong>第4節</strong>對話策略 × 漸進式前端實作</div></div>
+      <div class="summary-item"><div class="si-num">0.5h</div><div class="si-text"><strong>第5節</strong>向量資料庫概念（壓縮版）</div></div>
+      <div class="summary-item"><div class="si-num">2.5h</div><div class="si-text"><strong>第6節</strong>n8n 查詢工作流（Qdrant）</div></div>
+      <div class="summary-item"><div class="si-num">2h</div><div class="si-text"><strong>第7節</strong>前端整合</div></div>
+      <div class="summary-item"><div class="si-num purple">3.5h</div><div class="si-text"><strong>第8節</strong>Cloudflare Worker 完整安全部署</div></div>
+      <div class="summary-item"><div class="si-num">0.5h</div><div class="si-text"><strong>第9節</strong>GitHub Pages 部署與確認</div></div>
+      <div class="summary-item"><div class="si-num">0.5h</div><div class="si-text"><strong>第10節</strong>成果展示與課程回顧</div></div>
+    </div>
+    <div class="info-box purple" style="margin-top:20px;font-size:15px;font-weight:600;">
+      合計：16 小時　｜　模組一 4h + 模組二 2.5h + 模組三 9.5h
+    </div>
+  </div>
+
+  <div style="text-align:center;color:var(--gray-600);font-size:13px;margin-top:48px;padding-top:24px;border-top:1px solid var(--gray-200);">
+    青聚點 AI 實作課程規劃｜正式上線版 · 2026
+  </div>
+
+</div>
+</body>
+</html>
