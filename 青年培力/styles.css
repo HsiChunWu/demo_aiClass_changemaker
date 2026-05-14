@@ -1,0 +1,205 @@
+/* Page-level styles for 青聚點 intake → knowledge-graph prototype */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; min-height: 100vh; }
+body {
+  background: var(--paper-1);
+  color: var(--ink-1);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { min-height: 100vh; }
+
+button { font-family: inherit; }
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* Form controls --- consistent with design system */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.field-label {
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--ink-2);
+  letter-spacing: var(--tracking-wide);
+}
+.field-hint {
+  font-size: var(--text-caption);
+  color: var(--ink-3);
+}
+.field-input,
+.field-textarea,
+.field-select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--paper-3);
+  border-radius: var(--radius-md);
+  background: var(--paper-1);
+  color: var(--ink-1);
+  outline: none;
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+.field-input::placeholder,
+.field-textarea::placeholder {
+  color: var(--ink-4);
+}
+.field-input:hover,
+.field-textarea:hover,
+.field-select:hover {
+  border-color: var(--paper-4);
+}
+.field-input:focus,
+.field-textarea:focus,
+.field-select:focus {
+  border-color: var(--moss-500);
+  box-shadow: 0 0 0 3px rgba(63, 125, 90, 0.15);
+}
+.field-textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: var(--leading-body);
+}
+.field-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+/* Chip group --- multi-select goals */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.chip {
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--paper-3);
+  background: var(--paper-1);
+  color: var(--ink-2);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-out);
+  user-select: none;
+}
+.chip:hover {
+  border-color: var(--moss-300);
+  color: var(--ink-1);
+}
+.chip.is-active {
+  background: var(--moss-500);
+  border-color: var(--moss-500);
+  color: var(--paper-1);
+}
+
+/* Slider --- hours per week */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--paper-3);
+  outline: none;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--moss-500);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(27, 31, 26, 0.18);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.slider::-webkit-slider-thumb:hover { transform: scale(1.1); }
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--moss-500);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+/* Loading step animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%      { opacity: 1;   transform: scale(1); }
+}
+@keyframes nodePop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes edgeGrow {
+  from { stroke-dashoffset: var(--len, 200); }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(4px, -3px); }
+}
+@keyframes shimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.fadeInUp { animation: fadeInUp 480ms var(--ease-out) both; }
+.shimmer-text {
+  background: linear-gradient(90deg, var(--ink-3) 0%, var(--moss-600) 30%, var(--ink-3) 60%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 2.4s linear infinite;
+}
+
+/* Generic transitions for screen swaps */
+.screen {
+  animation: fadeInUp 360ms var(--ease-out) both;
+}
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  height: 64px;
+  padding: 0 var(--space-8);
+  background: rgba(250, 247, 240, 0.88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--paper-3);
+}
+.app-header .logo { height: 28px; display: block; }
+
+/* Scrollbar polish */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--paper-3);
+  border-radius: 9999px;
+  border: 2px solid var(--paper-1);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--paper-4); }

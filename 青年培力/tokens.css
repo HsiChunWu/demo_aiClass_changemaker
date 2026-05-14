@@ -1,0 +1,247 @@
+/* ============================================================
+   青聚點 Design System — Colors & Type
+   Warm, encouraging, editorial. For young professionals (22–30).
+   Language: 繁體中文
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ---------- COLORS — ink (text on paper) ---------- */
+  --ink-1: #1B1F1A;          /* primary text, near-black warm */
+  --ink-2: #3A4137;          /* secondary text */
+  --ink-3: #6B7568;          /* tertiary text, captions */
+  --ink-4: #A8AFA4;          /* muted, placeholders, mist */
+
+  /* ---------- COLORS — paper (warm neutral surfaces) ---------- */
+  --paper-0: #FFFFFF;        /* pure white — rare, for cards on dark */
+  --paper-1: #FAF7F0;        /* canvas — primary background */
+  --paper-2: #F2EEE4;        /* raised surfaces, code blocks */
+  --paper-3: #E6E0D1;        /* hairline borders, dividers */
+  --paper-4: #D8D1BE;        /* stronger borders */
+
+  /* ---------- COLORS — moss (primary brand: 青 = young/green) ---------- */
+  --moss-50:  #EEF3EE;
+  --moss-100: #D9E4DA;
+  --moss-200: #B7CDB8;
+  --moss-300: #8FB293;
+  --moss-400: #5F9270;
+  --moss-500: #3F7D5A;       /* PRIMARY — buttons, links, primary accent */
+  --moss-600: #2F6647;
+  --moss-700: #2A5A40;
+  --moss-800: #1F4530;
+  --moss-900: #143020;
+
+  /* ---------- COLORS — sun (warm secondary accent) ---------- */
+  --sun-50:   #FBF2DF;
+  --sun-100:  #F6E2B6;
+  --sun-200:  #F0CC83;
+  --sun-300:  #E8A04A;       /* secondary accent, highlights, progress */
+  --sun-400:  #C9842E;
+  --sun-500:  #A66820;
+
+  /* ---------- COLORS — ember (warm warning/highlight) ---------- */
+  --ember-50:  #FBEBE5;
+  --ember-100: #F4C9B9;
+  --ember-300: #C85A3D;      /* warnings, hot tags, important callouts */
+  --ember-500: #8A3A24;
+
+  /* ---------- COLORS — sky (cool secondary, for graph diversity) ---------- */
+  --sky-50:   #E5EEF3;
+  --sky-100:  #BCD0DB;
+  --sky-300:  #4A7A99;       /* graph node category, info chips */
+  --sky-500:  #2C5470;
+
+  /* ---------- COLORS — berry (graph node category) ---------- */
+  --berry-50:  #EFE5EF;
+  --berry-100: #D4BCD5;
+  --berry-300: #8B5A8C;
+  --berry-500: #5E3A60;
+
+  /* ---------- SEMANTIC ---------- */
+  --color-bg:           var(--paper-1);
+  --color-bg-raised:    var(--paper-2);
+  --color-bg-inverse:   var(--ink-1);
+  --color-fg:           var(--ink-1);
+  --color-fg-muted:     var(--ink-3);
+  --color-fg-inverse:   var(--paper-1);
+  --color-border:       var(--paper-3);
+  --color-border-strong:var(--paper-4);
+
+  --color-primary:      var(--moss-500);
+  --color-primary-hover:var(--moss-600);
+  --color-primary-soft: var(--moss-100);
+  --color-primary-fg:   var(--paper-1);
+
+  --color-accent:       var(--sun-300);
+  --color-link:         var(--moss-600);
+
+  --color-success:      var(--moss-500);
+  --color-warning:      var(--sun-300);
+  --color-danger:       var(--ember-300);
+  --color-info:         var(--sky-300);
+
+  /* ---------- TYPOGRAPHY ---------- */
+  --font-display: "Noto Serif TC", "Songti TC", "PingFang TC", serif;
+  --font-body:    "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-mono:    "JetBrains Mono", "SF Mono", Menlo, monospace;
+
+  /* sizes — base 16px, 1.125 minor-third scale for body, custom for display */
+  --text-display:  56px;
+  --text-h1:       40px;
+  --text-h2:       32px;
+  --text-h3:       24px;
+  --text-h4:       20px;
+  --text-body-lg:  18px;
+  --text-body:     16px;
+  --text-body-sm:  14px;
+  --text-caption:  13px;
+  --text-micro:    12px;
+
+  --leading-tight: 1.2;
+  --leading-snug:  1.4;
+  --leading-body:  1.7;     /* 繁中內文舒適行距 */
+  --leading-loose: 1.9;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide:  0.04em;
+  --tracking-caps:  0.08em;
+
+  /* ---------- SPACING (4px grid) ---------- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ---------- RADIUS ---------- */
+  --radius-xs:  4px;
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  20px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
+
+  /* ---------- SHADOWS (warm, low) ---------- */
+  --shadow-xs:  0 1px 2px rgba(27, 31, 26, 0.05);
+  --shadow-sm:  0 2px 6px rgba(27, 31, 26, 0.06), 0 1px 2px rgba(27, 31, 26, 0.04);
+  --shadow-md:  0 8px 20px rgba(27, 31, 26, 0.08), 0 2px 4px rgba(27, 31, 26, 0.04);
+  --shadow-lg:  0 16px 40px rgba(27, 31, 26, 0.10), 0 4px 8px rgba(27, 31, 26, 0.04);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+  /* ---------- MOTION ---------- */
+  --ease-out:    cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --dur-fast:    150ms;
+  --dur-base:    220ms;
+  --dur-slow:    360ms;
+}
+
+/* ============================================================
+   Semantic type rules
+   ============================================================ */
+.t-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-display);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--ink-1);
+}
+.t-h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-h1);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--ink-1);
+}
+.t-h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h2);
+  line-height: var(--leading-snug);
+  color: var(--ink-1);
+}
+.t-h3 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--text-h3);
+  line-height: var(--leading-snug);
+  color: var(--ink-1);
+}
+.t-h4 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--text-h4);
+  line-height: var(--leading-snug);
+  color: var(--ink-1);
+}
+.t-lead {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--ink-2);
+}
+.t-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--ink-1);
+}
+.t-body-sm {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  color: var(--ink-2);
+}
+.t-caption {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--text-caption);
+  line-height: var(--leading-snug);
+  color: var(--ink-3);
+  letter-spacing: var(--tracking-wide);
+}
+.t-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-micro);
+  line-height: 1;
+  color: var(--moss-600);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+}
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  color: var(--ink-2);
+}
+
+/* ============================================================
+   Utilities — 繁中文字不換行 (Chinese breaks between any chars by default)
+   ============================================================ */
+.nowrap { white-space: nowrap; }
+
+/* base */
+html, body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}

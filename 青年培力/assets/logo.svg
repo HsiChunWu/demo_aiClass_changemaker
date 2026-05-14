@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" width="240" height="64">
+  
+  
+  <g transform="translate(8 12)">
+    
+    <line x1="6" y1="6" x2="28" y2="20" stroke="#3F7D5A" stroke-width="2" stroke-linecap="round"></line>
+    <line x1="6" y1="34" x2="28" y2="20" stroke="#3F7D5A" stroke-width="2" stroke-linecap="round"></line>
+    <line x1="40" y1="6" x2="28" y2="20" stroke="#3F7D5A" stroke-width="2" stroke-linecap="round"></line>
+    
+    <circle cx="6" cy="6" r="4" fill="#8FB293"></circle>
+    <circle cx="6" cy="34" r="4" fill="#8FB293"></circle>
+    <circle cx="40" cy="6" r="4" fill="#8FB293"></circle>
+    
+    <circle cx="28" cy="20" r="6.5" fill="#E8A04A"></circle>
+    <circle cx="28" cy="20" r="2.5" fill="#FAF7F0"></circle>
+  </g>
+  
+  <text x="64" y="42" font-family="Noto Serif TC, Songti TC, serif" font-size="28" font-weight="700" fill="#1B1F1A" letter-spacing="2">
+    青聚點
+  </text>
+</svg>
