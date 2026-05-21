@@ -1,0 +1,3085 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub 完整教學指南 · 新手到進階</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+                   "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.75; color: #1a1a2e; background: #f8f9fc;
+    }
+
+    /* ── Layout ── */
+    .layout { display: flex; min-height: 100vh; }
+    .main-content {
+      flex: 1;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 48px 32px 100px 32px;
+    }
+
+    /* ── Side Nav ── */
+    .sidenav {
+      position: sticky;
+      top: 80px;
+      width: 260px;
+      min-width: 260px;
+      align-self: flex-start;
+      max-height: calc(100vh - 100px);
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-right: none;
+      border-radius: 12px 0 0 12px;
+      box-shadow: -4px 4px 24px rgba(0,0,0,0.08);
+      z-index: 100;
+      transition: width 0.3s ease, min-width 0.3s ease;
+    }
+    .sidenav.collapsed {
+      width: 20px;
+      min-width: 20px;
+      overflow: visible;
+    }
+    .sidenav.collapsed .sidenav-inner {
+      display: none;
+    }
+    .sidenav-toggle {
+      position: absolute;
+      left: -36px;
+      top: 12px;
+      width: 36px;
+      height: 36px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: -3px 2px 12px rgba(0,0,0,0.07);
+      color: #64748b;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .sidenav-toggle:hover { background: #f1f5f9; }
+    .sidenav-inner { padding: 16px 0 16px; overflow-y: auto; max-height: calc(100vh - 100px); }
+    .sidenav-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      padding: 0 16px 8px;
+    }
+
+    /* Stage groups */
+    .nav-stage { margin-bottom: 4px; }
+    .nav-stage-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #374151;
+      text-align: left;
+      transition: background 0.12s;
+      border-radius: 0;
+    }
+    .nav-stage-btn:hover { background: #f8fafc; }
+    .nav-stage-btn .stage-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .s1 .stage-badge { background: #dbeafe; color: #1d4ed8; }
+    .s2 .stage-badge { background: #dcfce7; color: #15803d; }
+    .s3 .stage-badge { background: #fef9c3; color: #a16207; }
+    .s4 .stage-badge { background: #fce7f3; color: #be185d; }
+    .nav-stage-btn .chevron {
+      margin-left: auto;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      transition: transform 0.2s;
+    }
+    .nav-stage-btn.open .chevron { transform: rotate(90deg); }
+
+    .nav-items {
+      display: none;
+      padding: 0 0 4px;
+    }
+    .nav-items.open { display: block; }
+    .nav-item {
+      display: block;
+      padding: 5px 16px 5px 44px;
+      font-size: 0.78rem;
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.12s, background 0.12s;
+      border-left: 2px solid transparent;
+      margin-left: 0;
+    }
+    .nav-item:hover { color: #1d4ed8; background: #f0f7ff; }
+    .nav-item.active { color: #1d4ed8; font-weight: 600; border-left-color: #2563eb; background: #eff6ff; }
+    .nav-item.reinforce { color: #b45309; font-weight: 600; }
+    .nav-item.reinforce::after { content: ' 加強'; font-size: 0.68rem; background: #fef9c3; color: #92400e; border: 1px solid #fde68a; border-radius: 4px; padding: 1px 5px; margin-left: 4px; vertical-align: middle; }
+
+    /* ── Stage score badge in nav ── */
+    .nav-score {
+      display: none;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: auto;
+      margin-right: 4px;
+      white-space: nowrap;
+    }
+    .nav-score.show { display: inline-block; }
+    .nav-score.perfect { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .nav-score.partial { background: #fef9c3; color: #92400e; border: 1px solid #fde68a; }
+    .nav-score.poor    { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    /* ── Perfect badge on stage btn ── */
+    .stage-perfect-badge {
+      display: none;
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 1px 7px;
+      margin-left: 4px;
+    }
+    .stage-perfect-badge.show { display: inline-block; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: #fff; border-radius: 16px; padding: 48px 40px 40px;
+      margin-bottom: 48px; position: relative; overflow: hidden;
+    }
+    .hero::after { content: "🐙"; font-size: 120px; position: absolute; right: 32px; bottom: -12px; opacity: 0.12; line-height: 1; }
+    .hero h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 12px; }
+    .hero p { font-size: 1.05rem; opacity: 0.85; max-width: 480px; }
+    .hero .badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; font-weight: 600; margin-bottom: 20px; letter-spacing: 0.5px; }
+
+    /* ── Stage Header ── */
+    .stage-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px 24px; border-radius: 12px; margin-bottom: 24px; margin-top: 56px;
+    }
+    .stage-header:first-of-type { margin-top: 0; }
+    .stage-header h2 { font-size: 1.25rem; font-weight: 800; }
+    .stage-header .s-badge { font-size: 0.78rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+    .stage-s1 { background: #dbeafe; } .stage-s1 h2 { color: #1d4ed8; } .stage-s1 .s-badge { background: #bfdbfe; color: #1e40af; }
+    .stage-s2 { background: #dcfce7; } .stage-s2 h2 { color: #15803d; } .stage-s2 .s-badge { background: #bbf7d0; color: #166534; }
+    .stage-s3 { background: #fef9c3; } .stage-s3 h2 { color: #a16207; } .stage-s3 .s-badge { background: #fde68a; color: #92400e; }
+    .stage-s4 { background: #fce7f3; } .stage-s4 h2 { color: #be185d; } .stage-s4 .s-badge { background: #fbcfe8; color: #9d174d; }
+    .stage-s5 { background: #f0fdf4; } .stage-s5 h2 { color: #15803d; } .stage-s5 .s-badge { background: #bbf7d0; color: #14532d; }
+
+    /* ── Section ── */
+    .section { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 36px 36px 40px; margin-bottom: 28px; }
+    .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+    .step-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; }
+    .sn-1 { background: #2563eb; } .sn-2 { background: #16a34a; } .sn-3 { background: #d97706; } .sn-4 { background: #be185d; }
+    .section h2 { font-size: 1.2rem; font-weight: 700; color: #0f172a; }
+
+    /* ── Typography ── */
+    p { margin-bottom: 14px; } p:last-child { margin-bottom: 0; }
+    h3 { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 24px 0 10px; }
+    h3:first-child { margin-top: 0; }
+    ul, ol { padding-left: 22px; margin-bottom: 14px; } li { margin-bottom: 6px; }
+    a { color: #2563eb; }
+    code { font-family: "SF Mono","Fira Code",Menlo,Consolas,monospace; font-size: 0.88em; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 5px; padding: 1px 6px; color: #be185d; }
+    pre { background: #0f172a; border-radius: 10px; padding: 18px 22px; overflow-x: auto; margin: 16px 0; }
+    pre code { font-size: 0.87rem; background: none; border: none; padding: 0; color: #e2e8f0; }
+
+    /* ── Callouts ── */
+    .callout { border-radius: 10px; padding: 14px 18px; margin: 18px 0; font-size: 0.92rem; display: flex; gap: 12px; align-items: flex-start; }
+    .callout-icon { flex-shrink: 0; font-size: 1.1rem; margin-top: 1px; }
+    .callout.tip { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+    .callout.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .callout.info { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .callout.danger { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+
+    /* ── Terminal ── */
+    .terminal { border-radius: 10px; overflow: hidden; margin: 20px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.18); font-family: "SF Mono","Fira Code",Menlo,Consolas,monospace; }
+    .term-header { background: #3a3a3a; padding: 10px 16px; display: flex; align-items: center; gap: 7px; }
+    .term-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .term-dot.r { background: #ff5f57; } .term-dot.y { background: #ffbd2e; } .term-dot.g { background: #28c840; }
+    .term-title { margin-left: 8px; font-size: 0.78rem; color: #aaa; flex: 1; text-align: center; }
+    .term-body { background: #1a1a2e; padding: 18px 22px; overflow-x: auto; }
+    .term-body pre { margin: 0; background: none; padding: 0; border-radius: 0; }
+    .term-body pre code { font-size: 0.87rem; color: #e2e8f0; background: none; border: none; padding: 0; }
+    .term-prompt { color: #4ade80; } .term-cmd { color: #e2e8f0; } .term-out { color: #94a3b8; }
+    .term-ok { color: #4ade80; } .term-warn { color: #fbbf24; } .term-key { color: #7dd3fc; } .term-val { color: #f9a8d4; }
+
+    /* ── Diagram ── */
+    .diagram { margin: 20px 0; text-align: center; } .diagram svg { max-width: 100%; height: auto; }
+
+    /* ── OS Tabs ── */
+    .tabs { margin: 16px 0; }
+    .tab-btns { display: flex; gap: 8px; }
+    .tab-btn { padding: 7px 18px; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 8px 8px 0 0; background: #f1f5f9; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #64748b; transition: background 0.15s; }
+    .tab-btn.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .tab-panel { display: none; border: 1px solid #e2e8f0; border-radius: 0 8px 8px 8px; overflow: hidden; }
+    .tab-panel.active { display: block; }
+    .tab-panel pre { margin: 0; border-radius: 0; }
+
+    /* ── Config Table ── */
+    .config-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.93rem; }
+    .config-table th { background: #f1f5f9; font-weight: 700; padding: 10px 14px; text-align: left; border: 1px solid #e2e8f0; color: #374151; }
+    .config-table td { padding: 10px 14px; border: 1px solid #e2e8f0; vertical-align: top; }
+    .config-table tr:nth-child(even) td { background: #f8fafc; }
+    .config-table .term { font-family: "SF Mono","Fira Code",Menlo,Consolas,monospace; font-size: 0.85em; color: #be185d; background: #fdf2f8; padding: 2px 6px; border-radius: 4px; }
+
+    /* ── Flow Steps ── */
+    .flow-steps { display: flex; align-items: center; gap: 0; margin: 20px 0; flex-wrap: wrap; }
+    .flow-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; padding: 14px 20px; text-align: center; min-width: 110px; }
+    .flow-box.untracked { border-color: #94a3b8; }
+    .flow-box.staged { border-color: #3b82f6; background: #eff6ff; }
+    .flow-box.committed { border-color: #16a34a; background: #f0fdf4; }
+    .flow-box .icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+    .flow-box .label { font-weight: 700; font-size: 0.9rem; }
+    .flow-box .sub { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+    .flow-arrow { padding: 0 8px; color: #64748b; font-size: 1.2rem; display: flex; flex-direction: column; align-items: center; }
+    .flow-arrow .cmd { font-family: "SF Mono","Fira Code",Menlo,Consolas,monospace; font-size: 0.72rem; color: #be185d; background: #fdf2f8; padding: 2px 6px; border-radius: 4px; margin-top: 4px; white-space: nowrap; }
+
+    /* ── FAQ (details) ── */
+    details { border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    summary { padding: 14px 18px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "＋"; color: #64748b; font-size: 1.1rem; }
+    details[open] summary::after { content: "－"; }
+    details[open] summary { background: #f8fafc; }
+    .faq-body { padding: 14px 18px 16px; font-size: 0.93rem; color: #374151; border-top: 1px solid #f1f5f9; }
+
+    /* ── Quiz ── */
+    .quiz { margin-top: 12px; }
+    .quiz-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin-bottom: 12px; }
+    .quiz-item.answered-correct { border-color: #bbf7d0; background: #f0fdf4; }
+    .quiz-item.answered-wrong   { border-color: #fecaca; background: #fef2f2; }
+    .quiz-q { font-weight: 700; font-size: 0.95rem; color: #0f172a; margin-bottom: 10px; }
+    .quiz-q .q-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 0.8rem; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
+    .quiz-options { list-style: none; padding: 0; }
+    .quiz-options li { margin-bottom: 6px; }
+    .quiz-options label { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 0.9rem; color: #374151; }
+    .quiz-options input[type=radio] { margin-top: 3px; flex-shrink: 0; accent-color: #2563eb; }
+    .quiz-check { margin-top: 12px; display: flex; gap: 8px; align-items: center; }
+    .check-btn { display: inline-block; padding: 6px 16px; background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: background 0.15s; }
+    .check-btn:hover { background: #1d4ed8; }
+    .quiz-result { display: none; margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; }
+    .quiz-result.correct { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .quiz-result.wrong { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    /* Score bar */
+    .quiz-score-bar { display: flex; align-items: center; gap: 12px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 18px; margin-bottom: 16px; }
+    .quiz-score-label { font-size: 0.85rem; font-weight: 700; color: #374151; white-space: nowrap; }
+    .quiz-score-track { flex: 1; height: 8px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
+    .quiz-score-fill { height: 100%; border-radius: 99px; background: #2563eb; width: 0%; transition: width 0.4s ease; }
+    .quiz-score-fill.perfect { background: #16a34a; }
+    .quiz-score-fill.poor    { background: #dc2626; }
+    .quiz-score-num { font-size: 0.88rem; font-weight: 700; color: #374151; white-space: nowrap; min-width: 48px; text-align: right; }
+    /* Reset btn */
+    .quiz-reset-row { margin-bottom: 16px; }
+    .reset-btn { padding: 6px 14px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #64748b; transition: background 0.15s; }
+    .reset-btn:hover { background: #e2e8f0; color: #374151; }
+
+    /* stage quiz colors */
+    .s1-quiz .q-num { background: #dbeafe; color: #1d4ed8; }
+    .s2-quiz .q-num { background: #dcfce7; color: #15803d; }
+    .s3-quiz .q-num { background: #fef9c3; color: #a16207; }
+    .s4-quiz .q-num { background: #fce7f3; color: #be185d; }
+    .s5-quiz .q-num { background: #dcfce7; color: #15803d; }
+    .sn-5 { background: #15803d; }
+    .stage-s6 { background: #f5f3ff; } .stage-s6 h2 { color: #7c3aed; } .stage-s6 .s-badge { background: #ddd6fe; color: #5b21b6; }
+    .s6-quiz .q-num { background: #ede9fe; color: #7c3aed; }
+    .sn-6 { background: #7c3aed; }
+
+    /* ── Stage Divider ── */
+    .stage-divider { border: none; border-top: 2px dashed #e2e8f0; margin: 60px 0 48px; }
+
+    /* ── Footer ── */
+    footer { text-align: center; font-size: 0.82rem; color: #94a3b8; margin-top: 56px; padding-top: 24px; border-top: 1px solid #e2e8f0; }
+    footer a { color: #64748b; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .sidenav { display: none; }
+    }
+    @media (max-width: 600px) {
+      .hero { padding: 32px 24px 28px; } .hero h1 { font-size: 1.6rem; }
+      .section { padding: 24px 20px 28px; }
+      .flow-steps { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Side Navigation ── -->
+<nav class="sidenav" id="sidenav">
+  <div class="sidenav-toggle" id="sidenavToggle" title="展開/收合導覽">◀</div>
+  <div class="sidenav-inner">
+    <div class="sidenav-title">章節導覽</div>
+
+    <!-- Stage 1 -->
+    <div class="nav-stage s1" id="nav-stage-1">
+      <button class="nav-stage-btn open" onclick="toggleStage(this)">
+        <span class="stage-badge">1</span> 入門基礎
+        <span class="stage-perfect-badge" id="badge-perfect-s1">全對 🎉</span>
+        <span class="nav-score" id="nav-score-s1"></span>
+        <span class="chevron">▶</span>
+      </button>
+      <div class="nav-items open">
+        <a class="nav-item" href="#s1-what-is" data-section="s1-what-is">什麼是 GitHub？</a>
+        <a class="nav-item" href="#s1-signup" data-section="s1-signup">註冊帳號與介面</a>
+        <a class="nav-item" href="#s1-repo" data-section="s1-repo">建立第一個 Repo</a>
+        <a class="nav-item" href="#s1-terms" data-section="s1-terms">重要名詞</a>
+        <a class="nav-item" href="#s1-install" data-section="s1-install">安裝 Git</a>
+        <a class="nav-item" href="#s1-config" data-section="s1-config">基本設定</a>
+        <a class="nav-item" href="#s1-faq">❓ 常見問題</a>
+        <a class="nav-item" href="#s1-quiz">📝 練習題</a>
+      </div>
+    </div>
+
+    <!-- Stage 2 -->
+    <div class="nav-stage s2" id="nav-stage-2">
+      <button class="nav-stage-btn" onclick="toggleStage(this)">
+        <span class="stage-badge">2</span> 核心操作
+        <span class="stage-perfect-badge" id="badge-perfect-s2">全對 🎉</span>
+        <span class="nav-score" id="nav-score-s2"></span>
+        <span class="chevron">▶</span>
+      </button>
+      <div class="nav-items">
+        <a class="nav-item" href="#s2-clone" data-section="s2-clone">Clone 專案</a>
+        <a class="nav-item" href="#s2-files" data-section="s2-files">修改檔案</a>
+        <a class="nav-item" href="#s2-workflow" data-section="s2-workflow">add/commit/push</a>
+        <a class="nav-item" href="#s2-history" data-section="s2-history">查看歷史</a>
+        <a class="nav-item" href="#s2-web-edit" data-section="s2-web-edit">網頁編輯</a>
+        <a class="nav-item" href="#s2-upload" data-section="s2-upload">上傳資源</a>
+        <a class="nav-item" href="#s2-faq">❓ 常見問題</a>
+        <a class="nav-item" href="#s2-quiz">📝 練習題</a>
+      </div>
+    </div>
+
+    <!-- Stage 3 -->
+    <div class="nav-stage s3" id="nav-stage-3">
+      <button class="nav-stage-btn" onclick="toggleStage(this)">
+        <span class="stage-badge">3</span> 分支與協作
+        <span class="stage-perfect-badge" id="badge-perfect-s3">全對 🎉</span>
+        <span class="nav-score" id="nav-score-s3"></span>
+        <span class="chevron">▶</span>
+      </button>
+      <div class="nav-items">
+        <a class="nav-item" href="#s3-branch-why" data-section="s3-branch-why">為什麼要用 Branch？</a>
+        <a class="nav-item" href="#s3-branch-op" data-section="s3-branch-op">建立與切換分支</a>
+        <a class="nav-item" href="#s3-merge" data-section="s3-merge">Merge 合併</a>
+        <a class="nav-item" href="#s3-conflict" data-section="s3-conflict">衝突處理</a>
+        <a class="nav-item" href="#s3-fork" data-section="s3-fork">Fork</a>
+        <a class="nav-item" href="#s3-pr" data-section="s3-pr">Pull Request</a>
+        <a class="nav-item" href="#s3-issue" data-section="s3-issue">Issue</a>
+        <a class="nav-item" href="#s3-faq">❓ 常見問題</a>
+        <a class="nav-item" href="#s3-quiz">📝 練習題</a>
+      </div>
+    </div>
+
+    <!-- Stage 4 -->
+    <div class="nav-stage s4" id="nav-stage-4">
+      <button class="nav-stage-btn" onclick="toggleStage(this)">
+        <span class="stage-badge">4</span> 進階技巧
+        <span class="stage-perfect-badge" id="badge-perfect-s4">全對 🎉</span>
+        <span class="nav-score" id="nav-score-s4"></span>
+        <span class="chevron">▶</span>
+      </button>
+      <div class="nav-items">
+        <a class="nav-item" href="#s4-gitignore" data-section="s4-gitignore">.gitignore</a>
+        <a class="nav-item" href="#s4-stash" data-section="s4-stash">git stash</a>
+        <a class="nav-item" href="#s4-revert" data-section="s4-revert">revert vs reset</a>
+        <a class="nav-item" href="#s4-tag" data-section="s4-tag">Tag 與 Release</a>
+        <a class="nav-item" href="#s4-actions" data-section="s4-actions">GitHub Actions</a>
+        <a class="nav-item" href="#s4-ssh" data-section="s4-ssh">SSH 金鑰</a>
+        <a class="nav-item" href="#s4-collab" data-section="s4-collab">協作最佳實踐</a>
+        <a class="nav-item" href="#s4-faq">❓ 常見問題</a>
+        <a class="nav-item" href="#s4-quiz">📝 練習題</a>
+      </div>
+    </div>
+
+    <!-- Stage 5 -->
+    <div class="nav-stage s5" id="nav-stage-5">
+      <button class="nav-stage-btn" onclick="toggleStage(this)">
+        <span class="stage-badge" style="background:#dcfce7;color:#15803d;">5</span> 專案實作
+        <span class="stage-perfect-badge" id="badge-perfect-s5">全對 🎉</span>
+        <span class="nav-score" id="nav-score-s5"></span>
+        <span class="chevron">▶</span>
+      </button>
+      <div class="nav-items">
+        <a class="nav-item" href="#s5-intro" data-section="s5-intro">專案說明</a>
+        <a class="nav-item" href="#s5-init" data-section="s5-init">初始化專案</a>
+        <a class="nav-item" href="#s5-commit" data-section="s5-commit">建立內容與提交</a>
+        <a class="nav-item" href="#s5-branch" data-section="s5-branch">分支開發功能</a>
+        <a class="nav-item" href="#s5-advanced" data-section="s5-advanced">進階設定</a>
+        <a class="nav-item" href="#s5-pages" data-section="s5-pages">啟用 GitHub Pages</a>
+        <a class="nav-item" href="#s5-faq">❓ 常見問題</a>
+        <a class="nav-item" href="#s5-quiz">📝 練習題</a>
+      </div>
+    </div>
+
+    <!-- Stage 6 -->
+    <div class="nav-stage s6" id="nav-stage-6">
+      <button class="nav-stage-btn" onclick="toggleStage(this)">
+        <span class="stage-badge" style="background:#ede9fe;color:#7c3aed;">6</span> Git 指令速查
+        <span class="stage-perfect-badge" id="badge-perfect-s6">全對 🎉</span>
+        <span class="nav-score" id="nav-score-s6"></span>
+        <span class="chevron">▶</span>
+      </button>
+      <div class="nav-items">
+        <a class="nav-item" href="#s6-config" data-section="s6-config">設定與初始化</a>
+        <a class="nav-item" href="#s6-daily" data-section="s6-daily">日常操作</a>
+        <a class="nav-item" href="#s6-branch" data-section="s6-branch">分支管理</a>
+        <a class="nav-item" href="#s6-remote" data-section="s6-remote">遠端操作</a>
+        <a class="nav-item" href="#s6-log" data-section="s6-log">查看歷史</a>
+        <a class="nav-item" href="#s6-undo" data-section="s6-undo">復原操作</a>
+        <a class="nav-item" href="#s6-misc" data-section="s6-misc">其他實用指令</a>
+        <a class="nav-item" href="#s6-faq">❓ 常見問題</a>
+        <a class="nav-item" href="#s6-quiz">📝 練習題</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Main Content ── -->
+<div class="layout">
+<div class="main-content">
+
+  <!-- Hero -->
+  <header class="hero">
+    <span class="badge">完整教學 · 六階段</span>
+    <h1>GitHub 使用教學指南</h1>
+    <p>從完全新手到進階協作，一頁搞定 GitHub 所有核心技能。</p>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       STAGE 1 · 入門基礎
+  ══════════════════════════════════════════ -->
+  <div class="stage-header stage-s1">
+    <span class="s-badge">第一階段</span>
+    <h2>入門基礎</h2>
+  </div>
+
+  <!-- S1-1 -->
+  <section class="section" id="s1-what-is">
+    <div class="section-header">
+      <div class="step-num sn-1">1</div>
+      <h2>什麼是 GitHub？版本控制概念簡介</h2>
+    </div>
+    <h3>🕰️ 版本控制是「文件的時光機」</h3>
+    <p>想像你在寫一份重要報告，每次改完都另存新檔：<code>報告_v1.docx</code>、<code>報告_v2_final.docx</code>……這個過程很煩，萬一想回頭看某個版本，根本不知道改了什麼。</p>
+    <p><strong>版本控制</strong>就是解決這個問題的工具。它自動記錄每一次變更，讓你可以隨時回到任何歷史版本，也能清楚看到每次改了什麼、是誰改的。</p>
+    <h3>Git vs GitHub — 差在哪裡？</h3>
+    <ul>
+      <li><strong>Git</strong>：安裝在你電腦上的版本控制<em>工具</em>，負責在本地追蹤所有變更。</li>
+      <li><strong>GitHub</strong>：一個雲端<em>平台</em>（網站），讓你把 Git 管理的紀錄上傳到網路，方便備份與協作。</li>
+    </ul>
+    <p>簡單說：<strong>Git 是引擎，GitHub 是停車場。</strong></p>
+    <h3>為什麼要用 GitHub？</h3>
+    <ul>
+      <li>📦 <strong>個人備份</strong>：電腦壞掉也不怕，程式碼安全在雲端。</li>
+      <li>💼 <strong>找工作</strong>：GitHub 是工程師的履歷，面試官常看你的 repo。</li>
+      <li>🤝 <strong>多人協作</strong>：多人同時修改不同地方，自動合併，不互相覆蓋。</li>
+      <li>🌍 <strong>開源貢獻</strong>：參與全球開源專案，學習與回饋。</li>
+    </ul>
+    <div class="diagram">
+      <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+        <rect width="600" height="160" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+        <rect x="30" y="45" width="170" height="70" rx="10" fill="#1e3a5f" stroke="#334155" stroke-width="1.5"/>
+        <text x="115" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">💻 本地電腦</text>
+        <text x="115" y="94" text-anchor="middle" font-size="11" fill="#94a3b8">Git 管理的工作目錄</text>
+        <rect x="400" y="45" width="170" height="70" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+        <text x="485" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">☁️ GitHub 雲端</text>
+        <text x="485" y="94" text-anchor="middle" font-size="11" fill="#94a3b8">遠端 Repository</text>
+        <line x1="205" y1="68" x2="395" y2="68" stroke="#4ade80" stroke-width="2" marker-end="url(#ag)"/>
+        <text x="300" y="62" text-anchor="middle" font-size="11" fill="#4ade80" font-weight="600">git push</text>
+        <line x1="395" y1="92" x2="205" y2="92" stroke="#7dd3fc" stroke-width="2" marker-end="url(#ab)"/>
+        <text x="300" y="112" text-anchor="middle" font-size="11" fill="#7dd3fc" font-weight="600">git pull / clone</text>
+        <defs>
+          <marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0,8 4,0 8" fill="#4ade80"/></marker>
+          <marker id="ab" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0,8 4,0 8" fill="#7dd3fc"/></marker>
+        </defs>
+      </svg>
+    </div>
+  </section>
+
+  <!-- S1-2 -->
+  <section class="section" id="s1-signup">
+    <div class="section-header">
+      <div class="step-num sn-1">2</div>
+      <h2>註冊帳號與介面導覽</h2>
+    </div>
+    <h3>① 註冊步驟</h3>
+    <ol>
+      <li>前往 <a href="https://github.com" target="_blank">github.com</a>，點右上角「Sign up」。</li>
+      <li>輸入電子郵件、設定密碼。</li>
+      <li>填入 <strong>Username（帳號名稱）</strong>。</li>
+      <li>通過驗證碼，收取驗證信並點擊連結完成驗證。</li>
+      <li>GitHub 的問卷（幾人團隊、用途等）可直接按「Skip」略過。</li>
+    </ol>
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div>
+        <strong>帳號名稱建議</strong>：帳號會出現在所有 URL 中（<code>github.com/你的帳號</code>），選個好記又專業的名稱。
+        ✅ 英文、數字、連字號（<code>-</code>）；❌ 底線、特殊符號、中文。
+      </div>
+    </div>
+    <h3>② 主要介面區域</h3>
+    <ul>
+      <li>🔍 <strong>搜尋列（頂部）</strong>：搜尋 Repository、使用者、程式碼。</li>
+      <li>➕ <strong>「+」按鈕</strong>：快速建立新 Repository、Gist 等。</li>
+      <li>🔔 <strong>鈴鐺圖示</strong>：通知中心，顯示有人在你的 PR/Issue 留言等。</li>
+      <li>👤 <strong>頭像選單</strong>：個人頁面、設定（Settings）、登出。</li>
+      <li>📋 <strong>左側 Repository 列表</strong>：你的專案列表。</li>
+    </ul>
+  </section>
+
+  <!-- S1-3 -->
+  <section class="section" id="s1-repo">
+    <div class="section-header">
+      <div class="step-num sn-1">3</div>
+      <h2>建立第一個 Repository</h2>
+    </div>
+    <h3>什麼是 Repository？</h3>
+    <p>Repository 就像是<strong>一個專案的資料夾</strong>，但它不只存放檔案，還記錄了從誕生到現在<strong>每一次的變更歷史</strong>，可以隨時回頭查看任何版本。</p>
+    <h3>建立步驟</h3>
+    <ol>
+      <li>點右上角的 <strong>「+」</strong> → 選「New repository」。</li>
+      <li>填入 <strong>Repository name</strong>（例如 <code>my-first-repo</code>）。</li>
+      <li>選擇 <strong>Public</strong> 或 <strong>Private</strong>。</li>
+      <li>勾選 <strong>「Add a README file」</strong>（強烈建議）。</li>
+      <li>視需要選擇 <strong>.gitignore</strong> 和 <strong>License</strong>。</li>
+      <li>點 <strong>「Create repository」</strong> 完成！</li>
+    </ol>
+    <table class="config-table">
+      <thead><tr><th>類型</th><th>誰能看？</th><th>適合用途</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Public</strong></td><td>所有人</td><td>開源專案、個人作品集</td></tr>
+        <tr><td><strong>Private</strong></td><td>只有你和邀請的人</td><td>私人專案、工作用途</td></tr>
+      </tbody>
+    </table>
+    <h3>README / .gitignore / License 用途</h3>
+    <ul>
+      <li>📄 <strong>README.md</strong>：進入 repo 首先看到的說明書。</li>
+      <li>🚫 <strong>.gitignore</strong>：告訴 Git「這些檔案不要追蹤」，例如密碼、暫存檔、node_modules。</li>
+      <li>⚖️ <strong>License</strong>：聲明別人可以如何使用你的程式碼（MIT 最寬鬆，個人學習可不選）。</li>
+    </ul>
+  </section>
+
+  <!-- S1-4 -->
+  <section class="section" id="s1-terms">
+    <div class="section-header">
+      <div class="step-num sn-1">4</div>
+      <h2>認識重要名詞</h2>
+    </div>
+    <p>先把這些名詞搞清楚，後面的操作就會順很多。</p>
+    <table class="config-table">
+      <thead><tr><th>名詞</th><th>一句話說明</th><th>生活比喻</th></tr></thead>
+      <tbody>
+        <tr><td><span class="term">Commit</span></td><td>一次存檔的快照，記錄此刻所有變更</td><td>🎮 打電動存進度</td></tr>
+        <tr><td><span class="term">Branch</span></td><td>從主線分出去的平行開發線</td><td>📝 做草稿副本，不影響正本</td></tr>
+        <tr><td><span class="term">Clone</span></td><td>把遠端 repo 完整複製到本機</td><td>📥 下載整個專案到電腦</td></tr>
+        <tr><td><span class="term">Fork</span></td><td>複製別人的 repo 到自己帳號</td><td>📋 影印別人的筆記再修改</td></tr>
+        <tr><td><span class="term">Pull Request</span></td><td>提交修改請對方審核</td><td>📨 改好的文件交給主管簽核</td></tr>
+        <tr><td><span class="term">Issue</span></td><td>問題回報或功能討論串</td><td>📌 工作 TODO 便利貼</td></tr>
+        <tr><td><span class="term">Merge</span></td><td>把分支的變更合併回主線</td><td>✍️ 把草稿正式謄入正本</td></tr>
+        <tr><td><span class="term">Tag</span></td><td>標記某個特定重要版本</td><td>🔖 在書上貼書籤</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- S1-5 -->
+  <section class="section" id="s1-install">
+    <div class="section-header">
+      <div class="step-num sn-1">5</div>
+      <h2>安裝 Git</h2>
+    </div>
+    <p>GitHub 是網站，<strong>Git</strong> 是你電腦上的工具，需要先安裝才能在終端機執行指令。</p>
+    <div class="tabs" id="tabs-git">
+      <div class="tab-btns">
+        <button class="tab-btn active" onclick="switchTab('git','mac',event)">macOS</button>
+        <button class="tab-btn" onclick="switchTab('git','win',event)">Windows</button>
+        <button class="tab-btn" onclick="switchTab('git','linux',event)">Linux</button>
+      </div>
+      <div class="tab-panel active" id="git-mac">
+        <pre><code># 先安裝 Homebrew（若尚未安裝）
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 再安裝 Git
+brew install git</code></pre>
+      </div>
+      <div class="tab-panel" id="git-win">
+        <pre><code># 前往下載頁面：https://git-scm.com/download/win
+# 下載安裝程式後，所有選項保持預設，一路「Next」即可
+# 安裝完成後開啟「Git Bash」來執行 Git 指令</code></pre>
+      </div>
+      <div class="tab-panel" id="git-linux">
+        <pre><code># Debian / Ubuntu
+sudo apt update && sudo apt install git
+
+# Fedora / RHEL
+sudo dnf install git</code></pre>
+      </div>
+    </div>
+    <h3>確認安裝成功</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git --version</span>
+<span class="term-ok">git version 2.44.0</span></code></pre></div>
+    </div>
+  </section>
+
+  <!-- S1-6 -->
+  <section class="section" id="s1-config">
+    <div class="section-header">
+      <div class="step-num sn-1">6</div>
+      <h2>基本 Git 設定</h2>
+    </div>
+    <p>每次做 commit，Git 都會記錄<strong>作者的名字和信箱</strong>，需要先告訴它你是誰。</p>
+    <pre><code>git config --global user.name "你的名字"
+git config --global user.email "你的信箱@example.com"</code></pre>
+    <p><code>--global</code> 表示套用到這台電腦上所有的 Git repo，不需要每個 repo 都重設。</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git config --global user.name "Xiao Ming"</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git config --global user.email "xiao@example.com"</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git config --list</span>
+<span class="term-key">user.name</span>=<span class="term-val">Xiao Ming</span>
+<span class="term-key">user.email</span>=<span class="term-val">xiao@example.com</span></code></pre></div>
+    </div>
+  </section>
+
+  <!-- S1 FAQ -->
+  <section class="section" id="s1-faq">
+    <div class="section-header">
+      <div class="step-num sn-1" style="background:#64748b;">?</div>
+      <h2>第一階段常見問題</h2>
+    </div>
+    <details><summary>Git 和 GitHub 是同一家公司嗎？</summary>
+      <div class="faq-body">不是。Git 是由 Linux 之父 Linus Torvalds 在 2005 年開發的開源工具；GitHub 是 2008 年成立的公司，2018 年被 Microsoft 收購。兩者獨立存在，你也可以用 Git 搭配 GitLab、Bitbucket 等其他平台。</div>
+    </details>
+    <details><summary>一定要用命令列嗎？有沒有圖形介面？</summary>
+      <div class="faq-body">不一定。有很多 Git GUI 工具，例如 <strong>GitHub Desktop</strong>（免費，官方出品）、<strong>Sourcetree</strong>、<strong>GitKraken</strong>。但學會命令列指令能讓你理解底層邏輯，遇到問題更容易排查，建議先學命令列再用 GUI。</div>
+    </details>
+    <details><summary>Private repo 要付費嗎？</summary>
+      <div class="faq-body">不用！GitHub 免費帳號可以建立無限個 Private repo，也可以邀請 3 位協作者免費使用。付費的 GitHub Pro / Team 提供更多進階功能，但對個人或小團隊來說，免費版就很夠用了。</div>
+    </details>
+    <details><summary>帳號名稱之後可以改嗎？</summary>
+      <div class="faq-body">可以，在 Settings → Account → Change username 更改。但改名後，原本的 URL 會變，如果別人有書籤或你的 repo URL 有被引用，需要注意更新。GitHub 會對舊 URL 做短暫的重新導向。</div>
+    </details>
+    <details><summary>git config --global 和 --local 差在哪？</summary>
+      <div class="faq-body"><code>--global</code> 設定套用到你這台電腦的所有 repo；<code>--local</code> 只套用到目前這個 repo（儲存在 <code>.git/config</code>）。如果你有多個工作帳號，可以在特定 repo 用 <code>--local</code> 覆蓋設定。</div>
+    </details>
+  </section>
+
+  <!-- S1 Quiz -->
+  <section class="section" id="s1-quiz">
+    <div class="section-header">
+      <div class="step-num sn-1">📝</div>
+      <h2>第一階段練習題</h2>
+    </div>
+    <div class="quiz-reset-row">
+      <button class="reset-btn" onclick="resetQuiz('s1')">&#8635; 重置第一階段練習題</button>
+    </div>
+    <div class="quiz-score-bar" id="score-bar-s1">
+      <span class="quiz-score-label">第一階段得分</span>
+      <div class="quiz-score-track"><div class="quiz-score-fill" id="score-fill-s1"></div></div>
+      <span class="quiz-score-num" id="score-num-s1">尚未作答</span>
+    </div>
+    <div class="quiz s1-quiz" id="quiz-container-s1">
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">1</span>Git 和 GitHub 的最大差異是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q1" value="a"> A. Git 是付費工具，GitHub 是免費平台</label></li>
+          <li><label><input type="radio" name="q1" value="b"> B. Git 是本地版本控制工具，GitHub 是雲端協作平台</label></li>
+          <li><label><input type="radio" name="q1" value="c"> C. Git 只能用在 Linux，GitHub 可跨平台</label></li>
+          <li><label><input type="radio" name="q1" value="d"> D. 兩者完全相同，只是名稱不同</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q1','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q1"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">2</span>以下哪個帳號名稱是符合 GitHub 建議的格式？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q2" value="a"> A. 小明同學_2024</label></li>
+          <li><label><input type="radio" name="q2" value="b"> B. john-doe</label></li>
+          <li><label><input type="radio" name="q2" value="c"> C. my account!</label></li>
+          <li><label><input type="radio" name="q2" value="d"> D. JohnDoe@work</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q2','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q2"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">3</span>Repository 最貼切的描述是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q3" value="a"> A. 一個只能存程式碼的雲端硬碟</label></li>
+          <li><label><input type="radio" name="q3" value="b"> B. 一個記錄所有變更歷史的專案資料夾</label></li>
+          <li><label><input type="radio" name="q3" value="c"> C. GitHub 的使用者帳號頁面</label></li>
+          <li><label><input type="radio" name="q3" value="d"> D. 一種程式語言</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q3','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q3"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">4</span>「Fork」這個操作的意思是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q4" value="a"> A. 把自己的 repo 刪除</label></li>
+          <li><label><input type="radio" name="q4" value="b"> B. 把 repo 下載到本機</label></li>
+          <li><label><input type="radio" name="q4" value="c"> C. 複製別人的 repo 到自己的帳號</label></li>
+          <li><label><input type="radio" name="q4" value="d"> D. 把 repo 設為 Private</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q4','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q4"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">5</span>安裝完 Git 後，要確認安裝成功應該執行？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q5" value="a"> A. <code>git status</code></label></li>
+          <li><label><input type="radio" name="q5" value="b"> B. <code>git --version</code></label></li>
+          <li><label><input type="radio" name="q5" value="c"> C. <code>git init</code></label></li>
+          <li><label><input type="radio" name="q5" value="d"> D. <code>git check</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q5','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q5"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">6</span>執行 <code>git config --global user.name "Alice"</code> 的效果是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q6" value="a"> A. 只對目前這個 repo 有效</label></li>
+          <li><label><input type="radio" name="q6" value="b"> B. 修改 GitHub 帳號顯示名稱</label></li>
+          <li><label><input type="radio" name="q6" value="c"> C. 對這台電腦所有 repo 的 commit 都會標記 Alice</label></li>
+          <li><label><input type="radio" name="q6" value="d"> D. 建立一個名為 Alice 的帳號</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q6','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q6"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">7</span>.gitignore 檔案的作用是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q7" value="a"> A. 忽略所有 Git 指令的錯誤訊息</label></li>
+          <li><label><input type="radio" name="q7" value="b"> B. 指定哪些檔案不要被 Git 追蹤</label></li>
+          <li><label><input type="radio" name="q7" value="c"> C. 隱藏 repo 不讓別人看到</label></li>
+          <li><label><input type="radio" name="q7" value="d"> D. 刪除不需要的 commit</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q7','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q7"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">8</span>Public repo 和 Private repo 最主要的差別是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q8" value="a"> A. Public 可以有無限 commit，Private 有上限</label></li>
+          <li><label><input type="radio" name="q8" value="b"> B. Public 所有人可見，Private 只有你和邀請的人</label></li>
+          <li><label><input type="radio" name="q8" value="c"> C. Public 免費，Private 需要付費</label></li>
+          <li><label><input type="radio" name="q8" value="d"> D. Public 支援 Branch，Private 不支援</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q8','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q8"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">9</span>「Commit」的生活化比喻最接近哪一個？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q9" value="a"> A. 把文件寄給別人</label></li>
+          <li><label><input type="radio" name="q9" value="b"> B. 打電動存進度</label></li>
+          <li><label><input type="radio" name="q9" value="c"> C. 開啟一個新分頁</label></li>
+          <li><label><input type="radio" name="q9" value="d"> D. 刪除舊版本</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q9','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q9"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">10</span>以下哪個不是 GitHub 通知中心（鈴鐺）會顯示的事件？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="q10" value="a"> A. 有人在你的 PR 留言</label></li>
+          <li><label><input type="radio" name="q10" value="b"> B. 有人 mention 你的帳號</label></li>
+          <li><label><input type="radio" name="q10" value="c"> C. 你的電腦 CPU 使用率過高</label></li>
+          <li><label><input type="radio" name="q10" value="d"> D. 你訂閱的 repo 有新 release</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('q10','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-q10"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="stage-divider">
+
+  <!-- ══════════════════════════════════════════
+       STAGE 2 · 核心操作
+  ══════════════════════════════════════════ -->
+  <div class="stage-header stage-s2">
+    <span class="s-badge">第二階段</span>
+    <h2>核心操作</h2>
+  </div>
+
+  <!-- S2-1 -->
+  <section class="section" id="s2-clone">
+    <div class="section-header">
+      <div class="step-num sn-2">1</div>
+      <h2>Clone 專案到本機</h2>
+    </div>
+    <p><strong>Clone</strong> 把 GitHub 上的 repo 完整複製到你的電腦，包含<strong>所有歷史紀錄</strong>，讓你在本地有一個可操作的完整副本。</p>
+    <h3>操作步驟</h3>
+    <ol>
+      <li>進入 GitHub 上你想 clone 的 repo 頁面。</li>
+      <li>點綠色 <strong>「&lt;&gt; Code」</strong> 按鈕 → 切到 HTTPS 分頁 → 複製 URL。</li>
+      <li>打開終端機，切換到想存放的位置，執行 <code>git clone</code>。</li>
+    </ol>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git clone https://github.com/username/my-project.git</span>
+<span class="term-out">Cloning into 'my-project'...</span>
+<span class="term-out">remote: Enumerating objects: 23, done.</span>
+<span class="term-ok">Receiving objects: 100% (23/23), 5.12 KiB | 1.02 MiB/s, done.</span>
+<span class="term-prompt">$</span> <span class="term-cmd">cd my-project && ls -a</span>
+<span class="term-out">.git    README.md    index.html    style.css</span></code></pre></div>
+    </div>
+    <pre><code>my-project/
+├── .git/        ← Git 的「大腦」，不要手動修改！
+├── README.md
+└── index.html</code></pre>
+    <div class="callout tip"><span class="callout-icon">💡</span><div><code>.git/</code> 是隱藏資料夾，存放所有版本歷史。刪除它整個 repo 就壞了。</div></div>
+  </section>
+
+  <!-- S2-2 -->
+  <section class="section" id="s2-files">
+    <div class="section-header">
+      <div class="step-num sn-2">2</div>
+      <h2>新增、修改、刪除檔案</h2>
+    </div>
+    <p>在工作目錄新增、修改、刪除檔案，Git 都會注意到，但不會自動存檔。你需要主動告訴 Git 要記錄哪些變更。</p>
+    <h3>三種檔案狀態</h3>
+    <div class="flow-steps">
+      <div class="flow-box untracked"><span class="icon">📄</span><div class="label">Untracked</div><div class="sub">新建，Git 還不認識</div></div>
+      <div class="flow-arrow">→<span class="cmd">git add</span></div>
+      <div class="flow-box staged"><span class="icon">📋</span><div class="label">Staged</div><div class="sub">放入暫存區，待確認</div></div>
+      <div class="flow-arrow">→<span class="cmd">git commit</span></div>
+      <div class="flow-box committed"><span class="icon">✅</span><div class="label">Committed</div><div class="sub">存入歷史，可回溯</div></div>
+    </div>
+    <ul>
+      <li><strong>Untracked</strong>：新建的檔案，Git 還沒開始追蹤。</li>
+      <li><strong>Modified</strong>：已追蹤的檔案被改動，尚未準備 commit。</li>
+      <li><strong>Staged</strong>：用 <code>git add</code> 放進暫存區，下次 commit 會包含這些。</li>
+    </ul>
+    <div class="callout info"><span class="callout-icon">ℹ️</span><div><strong>為什麼需要 Staged？</strong> 因為你可能改了很多檔案，但只想把其中幾個放進這次 commit，暫存區讓你精確控制。</div></div>
+  </section>
+
+  <!-- S2-3 -->
+  <section class="section" id="s2-workflow">
+    <div class="section-header">
+      <div class="step-num sn-2">3</div>
+      <h2>git add / git commit / git push 工作流程</h2>
+    </div>
+    <ul>
+      <li>🧺 <code>git add</code>：把指定檔案放進暫存區。</li>
+      <li>💾 <code>git commit</code>：把暫存區內容確認存成快照，需要寫 message。</li>
+      <li>☁️ <code>git push</code>：把所有未上傳的 commits 同步到 GitHub。</li>
+    </ul>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal — 完整 commit 流程</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git add README.md</span>
+<span class="term-out"># 或用 git add . 加入所有改動</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git commit -m "更新 README：加入使用說明"</span>
+<span class="term-ok">[main 3f2a1c9] 更新 README：加入使用說明</span>
+<span class="term-out"> 1 file changed, 5 insertions(+), 1 deletion(-)</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push origin main</span>
+<span class="term-out">To https://github.com/username/my-project.git</span>
+<span class="term-ok">   a1b2c3d..3f2a1c9  main -> main</span></code></pre></div>
+    </div>
+    <div class="callout tip"><span class="callout-icon">💡</span><div><strong>Commit message 寫作建議：</strong> 動詞開頭（「新增」「修正」「更新」）、說明做了什麼。避免「更新」、「fix」等過於模糊的描述。</div></div>
+  </section>
+
+  <!-- S2-4 -->
+  <section class="section" id="s2-history">
+    <div class="section-header">
+      <div class="step-num sn-2">4</div>
+      <h2>查看歷史紀錄</h2>
+    </div>
+    <ul>
+      <li><code>git status</code>：查看目前工作目錄狀態。</li>
+      <li><code>git log</code>：完整 commit 歷史（含作者、日期、hash）。</li>
+      <li><code>git log --oneline</code>：每筆 commit 一行的精簡版。</li>
+      <li><code>git diff</code>：查看具體改了哪些行。</li>
+    </ul>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git log --oneline</span>
+<span class="term-val">3f2a1c9</span> <span class="term-out">更新 README：加入使用說明</span>
+<span class="term-val">a1b2c3d</span> <span class="term-out">新增 index.html</span>
+<span class="term-val">8e4d5f2</span> <span class="term-out">初始化專案</span></code></pre></div>
+    </div>
+  </section>
+
+  <!-- S2-5 -->
+  <section class="section" id="s2-web-edit">
+    <div class="section-header">
+      <div class="step-num sn-2">5</div>
+      <h2>在 GitHub 網頁上直接編輯</h2>
+    </div>
+    <p>不需要開終端機，GitHub 網頁本身就有編輯功能，適合快速修改單一文字檔案。</p>
+    <ol>
+      <li>進入 repo，點開想編輯的檔案。</li>
+      <li>點右上角 <strong>鉛筆圖示（✏️ Edit this file）</strong>。</li>
+      <li>直接修改內容，完成後點 <strong>「Commit changes...」</strong>。</li>
+      <li>填寫 commit message → 確認送出。</li>
+    </ol>
+    <div class="callout info"><span class="callout-icon">ℹ️</span><div><strong>適合：</strong> 修改 README、修正小錯字、更新連結。<br><strong>不適合：</strong> 需要同時改多個檔案、需要本機測試的變更。</div></div>
+    <div class="callout tip"><span class="callout-icon">💡</span><div>在任何 repo 頁面按下鍵盤 <strong><code>.</code>（英文句點）</strong>，會開啟 <strong>github.dev</strong>——完整的 VS Code 網頁版，支援多檔案編輯，完全免安裝！</div></div>
+  </section>
+
+  <!-- S2-6 -->
+  <section class="section" id="s2-upload">
+    <div class="section-header">
+      <div class="step-num sn-2">6</div>
+      <h2>上傳圖片與其他資源</h2>
+    </div>
+    <h3>方法一：網頁拖曳上傳</h3>
+    <p>進入 repo → 點 <strong>「Add file」→「Upload files」</strong> → 拖曳上傳 → 填 commit message → 送出。</p>
+    <h3>方法二：指令上傳</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git add images/cover.png</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git commit -m "新增封面圖片"</span>
+<span class="term-ok">[main 9c8d7e6] 新增封面圖片</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push origin main</span></code></pre></div>
+    </div>
+    <div class="callout warn"><span class="callout-icon">⚠️</span><div><strong>不建議在 repo 放大型二進位檔！</strong> GitHub 單檔限制 100 MB，整個 repo 建議不超過 1 GB。影片、大型資料集請使用 Git LFS 或其他儲存方案。</div></div>
+  </section>
+
+  <!-- S2 FAQ -->
+  <section class="section" id="s2-faq">
+    <div class="section-header">
+      <div class="step-num sn-2" style="background:#64748b;">?</div>
+      <h2>第二階段常見問題</h2>
+    </div>
+    <details><summary>push 時要求輸入密碼，但密碼輸入正確還是失敗？</summary>
+      <div class="faq-body">GitHub 在 2021 年後不再接受密碼驗證 HTTPS push，需要改用 <strong>Personal Access Token（PAT）</strong>。到 Settings → Developer settings → Personal access tokens 產生 token，把它當密碼貼入即可。或者改用 SSH 金鑰（見第四階段）。</div>
+    </details>
+    <details><summary><code>git add .</code> 和 <code>git add -A</code> 有什麼差別？</summary>
+      <div class="faq-body">在大多數情況下效果相同，都是加入所有有變動的檔案。嚴格說：<code>git add .</code> 只作用於目前目錄及子目錄；<code>git add -A</code> 作用於整個 repo 根目錄。對一般用法來說差異不大，<code>git add .</code> 最常用。</div>
+    </details>
+    <details><summary>commit 之後發現 message 寫錯了，可以改嗎？</summary>
+      <div class="faq-body">可以，但只適用於<strong>還沒 push</strong> 的 commit：<br><code>git commit --amend -m "正確的訊息"</code><br>如果已經 push 了，修改會改寫歷史，需要用 <code>--force</code>，對協作 repo 要特別謹慎。</div>
+    </details>
+    <details><summary>push 時出現「rejected」是什麼意思？</summary>
+      <div class="faq-body">表示遠端有你本地沒有的 commit（通常是其他人先 push 了）。需要先 <code>git pull</code> 把遠端的變更拉下來、解決可能的衝突，再重新 push。</div>
+    </details>
+    <details><summary>可以一次 push 多個 commit 嗎？</summary>
+      <div class="faq-body">可以！你在本機做了幾個 commit，執行一次 <code>git push</code> 就會把所有未上傳的 commits 一起推上去。這也是為什麼建議把相關的改動拆成多個 commit，再一起 push。</div>
+    </details>
+  </section>
+
+  <!-- S2 Quiz -->
+  <section class="section" id="s2-quiz">
+    <div class="section-header">
+      <div class="step-num sn-2">📝</div>
+      <h2>第二階段練習題</h2>
+    </div>
+    <div class="quiz-reset-row">
+      <button class="reset-btn" onclick="resetQuiz('s2')">&#8635; 重置第二階段練習題</button>
+    </div>
+    <div class="quiz-score-bar" id="score-bar-s2">
+      <span class="quiz-score-label">第二階段得分</span>
+      <div class="quiz-score-track"><div class="quiz-score-fill" id="score-fill-s2"></div></div>
+      <span class="quiz-score-num" id="score-num-s2">尚未作答</span>
+    </div>
+    <div class="quiz s2-quiz" id="quiz-container-s2">
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">1</span><code>git clone</code> 執行後，哪個隱藏資料夾會存放所有歷史記錄？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q1" value="a"> A. <code>.github/</code></label></li>
+          <li><label><input type="radio" name="s2q1" value="b"> B. <code>.git/</code></label></li>
+          <li><label><input type="radio" name="s2q1" value="c"> C. <code>.history/</code></label></li>
+          <li><label><input type="radio" name="s2q1" value="d"> D. <code>.cache/</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q1','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q1"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">2</span>新建一個檔案但還沒執行 <code>git add</code>，這個檔案處於什麼狀態？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q2" value="a"> A. Committed</label></li>
+          <li><label><input type="radio" name="s2q2" value="b"> B. Staged</label></li>
+          <li><label><input type="radio" name="s2q2" value="c"> C. Untracked</label></li>
+          <li><label><input type="radio" name="s2q2" value="d"> D. Modified</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q2','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q2"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">3</span>完整的本機存檔流程正確順序是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q3" value="a"> A. commit → add → push</label></li>
+          <li><label><input type="radio" name="s2q3" value="b"> B. add → push → commit</label></li>
+          <li><label><input type="radio" name="s2q3" value="c"> C. add → commit → push</label></li>
+          <li><label><input type="radio" name="s2q3" value="d"> D. push → add → commit</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q3','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q3"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">4</span><code>git log --oneline</code> 和 <code>git log</code> 的主要差異是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q4" value="a"> A. --oneline 只顯示最新 1 筆</label></li>
+          <li><label><input type="radio" name="s2q4" value="b"> B. --oneline 每筆 commit 只顯示一行（hash + message）</label></li>
+          <li><label><input type="radio" name="s2q4" value="c"> C. --oneline 只顯示今天的 commit</label></li>
+          <li><label><input type="radio" name="s2q4" value="d"> D. 兩者完全相同</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q4','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q4"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">5</span>在 GitHub repo 頁面按下鍵盤的 <code>.</code>（句點）會發生什麼？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q5" value="a"> A. 刪除目前選取的檔案</label></li>
+          <li><label><input type="radio" name="s2q5" value="b"> B. 開啟網頁版 VS Code 編輯器（github.dev）</label></li>
+          <li><label><input type="radio" name="s2q5" value="c"> C. 下載整個 repo 的 zip</label></li>
+          <li><label><input type="radio" name="s2q5" value="d"> D. 把 repo 設為 Private</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q5','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q5"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">6</span>以下哪個 commit message 寫法最好？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q6" value="a"> A. 更新</label></li>
+          <li><label><input type="radio" name="s2q6" value="b"> B. fix</label></li>
+          <li><label><input type="radio" name="s2q6" value="c"> C. 修正登入頁面密碼欄位驗證邏輯</label></li>
+          <li><label><input type="radio" name="s2q6" value="d"> D. aaa</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q6','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q6"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">7</span>GitHub 單一檔案的大小上限是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q7" value="a"> A. 50 MB</label></li>
+          <li><label><input type="radio" name="s2q7" value="b"> B. 100 MB</label></li>
+          <li><label><input type="radio" name="s2q7" value="c"> C. 500 MB</label></li>
+          <li><label><input type="radio" name="s2q7" value="d"> D. 1 GB</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q7','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q7"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">8</span><code>git status</code> 的用途是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q8" value="a"> A. 查看目前工作目錄有哪些檔案變動</label></li>
+          <li><label><input type="radio" name="s2q8" value="b"> B. 查看 GitHub 帳號的剩餘空間</label></li>
+          <li><label><input type="radio" name="s2q8" value="c"> C. 確認 GitHub 伺服器是否正常</label></li>
+          <li><label><input type="radio" name="s2q8" value="d"> D. 列出所有 branch</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q8','a',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q8"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">9</span><code>git add .</code> 的效果是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q9" value="a"> A. 把所有檔案刪除</label></li>
+          <li><label><input type="radio" name="s2q9" value="b"> B. 把目前目錄所有有變動的檔案加入暫存區</label></li>
+          <li><label><input type="radio" name="s2q9" value="c"> C. 建立一個新的 commit</label></li>
+          <li><label><input type="radio" name="s2q9" value="d"> D. 上傳到 GitHub</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q9','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q9"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">10</span>想在 GitHub 網頁上直接修改 README，最正確的操作是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s2q10" value="a"> A. 下載 repo → 本機修改 → 重新上傳整個 repo</label></li>
+          <li><label><input type="radio" name="s2q10" value="b"> B. 進入檔案 → 點鉛筆圖示 → 編輯 → Commit changes</label></li>
+          <li><label><input type="radio" name="s2q10" value="c"> C. 刪除 repo 再重建</label></li>
+          <li><label><input type="radio" name="s2q10" value="d"> D. 只能在本機用終端機修改</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s2q10','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s2q10"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="stage-divider">
+
+  <!-- ══════════════════════════════════════════
+       STAGE 3 · 分支與協作
+  ══════════════════════════════════════════ -->
+  <div class="stage-header stage-s3">
+    <span class="s-badge">第三階段</span>
+    <h2>分支與協作</h2>
+  </div>
+
+  <!-- S3-1 -->
+  <section class="section" id="s3-branch-why">
+    <div class="section-header">
+      <div class="step-num sn-3">1</div>
+      <h2>什麼是 Branch？為什麼要用？</h2>
+    </div>
+    <p>Branch（分支）讓你從主線「開叉」出去，在一個<strong>獨立的環境</strong>裡開發新功能或修 bug，不會影響主線的穩定版本。等開發完成並確認沒問題，再合併回主線。</p>
+    <div class="diagram">
+      <svg viewBox="0 0 620 170" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+        <rect width="620" height="170" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+        <!-- main line -->
+        <line x1="30" y1="60" x2="590" y2="60" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,3"/>
+        <text x="30" y="46" font-size="11" font-weight="700" fill="#64748b">main</text>
+        <!-- commits on main -->
+        <circle cx="80" cy="60" r="8" fill="#2563eb"/><text x="80" y="90" text-anchor="middle" font-size="10" fill="#64748b">c1</text>
+        <circle cx="180" cy="60" r="8" fill="#2563eb"/><text x="180" y="90" text-anchor="middle" font-size="10" fill="#64748b">c2</text>
+        <!-- branch off -->
+        <path d="M180,60 Q200,60 220,110" stroke="#d97706" stroke-width="2" fill="none" marker-end="url(#ao)"/>
+        <text x="140" y="130" font-size="11" font-weight="700" fill="#d97706">feature-login</text>
+        <!-- feature commits -->
+        <circle cx="280" cy="120" r="8" fill="#d97706"/><text x="280" y="145" text-anchor="middle" font-size="10" fill="#64748b">f1</text>
+        <circle cx="370" cy="120" r="8" fill="#d97706"/><text x="370" y="145" text-anchor="middle" font-size="10" fill="#64748b">f2</text>
+        <!-- merge back -->
+        <path d="M370,120 Q400,60 430,60" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#am)"/>
+        <!-- continue main -->
+        <circle cx="430" cy="60" r="8" fill="#16a34a"/><text x="430" y="90" text-anchor="middle" font-size="10" fill="#64748b">merge</text>
+        <circle cx="530" cy="60" r="8" fill="#2563eb"/><text x="530" y="90" text-anchor="middle" font-size="10" fill="#64748b">c3</text>
+        <defs>
+          <marker id="ao" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0,8 4,0 8" fill="#d97706"/></marker>
+          <marker id="am" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0,8 4,0 8" fill="#16a34a"/></marker>
+        </defs>
+      </svg>
+    </div>
+    <ul>
+      <li>🛡️ <strong>保護主線</strong>：main 永遠維持穩定可用狀態。</li>
+      <li>👥 <strong>多人並行</strong>：A 開發登入、B 開發首頁，互不干擾。</li>
+      <li>🔬 <strong>安全實驗</strong>：在 branch 上大膽嘗試，失敗了直接刪掉。</li>
+    </ul>
+  </section>
+
+  <!-- S3-2 -->
+  <section class="section" id="s3-branch-op">
+    <div class="section-header">
+      <div class="step-num sn-3">2</div>
+      <h2>建立與切換分支</h2>
+    </div>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-out"># 建立新 branch 並立刻切換過去（最常用）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git checkout -b feature-login</span>
+<span class="term-ok">Switched to a new branch 'feature-login'</span>
+
+<span class="term-out"># 查看所有 branch（* 表示目前所在）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git branch</span>
+<span class="term-ok">* feature-login</span>
+<span class="term-out">  main</span>
+
+<span class="term-out"># 切換到已存在的 branch</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git checkout main</span>
+<span class="term-ok">Switched to branch 'main'</span>
+
+<span class="term-out"># 刪除已合併的 branch</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git branch -d feature-login</span>
+<span class="term-ok">Deleted branch feature-login (was 3f2a1c9).</span></code></pre></div>
+    </div>
+    <div class="callout tip"><span class="callout-icon">💡</span><div>新版 Git 也支援 <code>git switch -c feature-login</code>（建立並切換）和 <code>git switch main</code>（切換），語意更清楚，推薦使用。</div></div>
+  </section>
+
+  <!-- S3-3 -->
+  <section class="section" id="s3-merge">
+    <div class="section-header">
+      <div class="step-num sn-3">3</div>
+      <h2>Merge 合併分支</h2>
+    </div>
+    <p>開發完成後，把 feature branch 合併回 main。</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-out"># 先切回 main</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git checkout main</span>
+
+<span class="term-out"># 把 feature-login 合併進來</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git merge feature-login</span>
+<span class="term-ok">Updating a1b2c3d..3f2a1c9</span>
+<span class="term-ok">Fast-forward</span>
+<span class="term-out"> login.html | 45 ++++++++++++</span>
+<span class="term-out"> 1 file changed, 45 insertions(+)</span></code></pre></div>
+    </div>
+    <div class="callout info"><span class="callout-icon">ℹ️</span><div><strong>Fast-forward</strong>：main 沒有新 commit，Git 直接把指針移過去，最乾淨的合併方式。</div></div>
+  </section>
+
+  <!-- S3-4 -->
+  <section class="section" id="s3-conflict">
+    <div class="section-header">
+      <div class="step-num sn-3">4</div>
+      <h2>衝突（Conflict）發生時怎麼處理</h2>
+    </div>
+    <p>兩個 branch 都修改了同一個檔案的同一行，合併時就會產生衝突。Git 無法自動判斷該保留哪個版本，需要你手動解決。</p>
+    <pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+這是 main 的內容
+=======
+這是 feature-login 的內容
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-login</code></pre>
+    <h3>解決步驟</h3>
+    <ol>
+      <li>打開有衝突的檔案，找到 <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> 標記。</li>
+      <li>決定要保留哪段內容（或兩者都保留），刪除 Git 加的標記符號。</li>
+      <li>儲存檔案，執行 <code>git add</code> → <code>git commit</code> 完成合併。</li>
+    </ol>
+    <div class="callout tip"><span class="callout-icon">💡</span><div>VS Code 遇到衝突會顯示「Accept Current Change / Accept Incoming Change / Accept Both」按鈕，點一下就能解決，比手動編輯方便很多。</div></div>
+  </section>
+
+  <!-- S3-5 -->
+  <section class="section" id="s3-fork">
+    <div class="section-header">
+      <div class="step-num sn-3">5</div>
+      <h2>Fork 別人的專案</h2>
+    </div>
+    <p>想修改別人的開源專案，但你沒有權限直接 push？先 Fork！</p>
+    <p><strong>Fork</strong> 會在你的帳號下複製一份完整的 repo，你可以在上面自由修改，再透過 Pull Request 把改動提交給原作者審核。</p>
+    <ol>
+      <li>進入想要 fork 的 repo 頁面。</li>
+      <li>點右上角的 <strong>「Fork」</strong> 按鈕。</li>
+      <li>選擇要 fork 到哪個帳號，點 <strong>「Create fork」</strong>。</li>
+      <li>現在你帳號下有了一份副本，clone 它到本機，隨意修改。</li>
+    </ol>
+    <div class="callout info"><span class="callout-icon">ℹ️</span><div>Fork 和 Clone 的差別：<strong>Fork</strong> 是在 GitHub 上建立副本（存在雲端）；<strong>Clone</strong> 是把 repo 下載到本機。通常兩者一起用：先 Fork，再 Clone 自己的 fork。</div></div>
+  </section>
+
+  <!-- S3-6 -->
+  <section class="section" id="s3-pr">
+    <div class="section-header">
+      <div class="step-num sn-3">6</div>
+      <h2>Pull Request（PR）：提交貢獻</h2>
+    </div>
+    <p>Pull Request 是向 repo 提交你的變更，請對方審核後合併。是開源貢獻和團隊協作的核心流程。</p>
+    <h3>建立 PR 的步驟</h3>
+    <ol>
+      <li>在你的 branch（或 fork）上完成修改並 push 到 GitHub。</li>
+      <li>進入 GitHub repo 頁面，系統通常會出現「Compare &amp; pull request」黃色提示列，點擊它。</li>
+      <li>填寫 PR 標題和描述（說明改了什麼、為什麼）。</li>
+      <li>點 <strong>「Create pull request」</strong> 送出。</li>
+      <li>等待對方 review → 修改 → 對方按 <strong>「Merge pull request」</strong>。</li>
+    </ol>
+    <div class="callout tip"><span class="callout-icon">💡</span><div><strong>好的 PR 描述應包含：</strong> 做了什麼改動、為什麼這樣改、如何測試、有沒有相關 Issue。讓 reviewer 能快速理解你的意圖。</div></div>
+  </section>
+
+  <!-- S3-7 -->
+  <section class="section" id="s3-issue">
+    <div class="section-header">
+      <div class="step-num sn-3">7</div>
+      <h2>Issue：回報問題與討論</h2>
+    </div>
+    <p>Issue 是 GitHub 內建的「問題追蹤系統」，可以用來：回報 bug、提出新功能需求、討論技術問題、追蹤待辦事項。</p>
+    <h3>建立 Issue</h3>
+    <ol>
+      <li>進入 repo → 點頂部的 <strong>「Issues」</strong> 標籤。</li>
+      <li>點 <strong>「New issue」</strong>。</li>
+      <li>填寫標題（明確描述問題）和內文（重現步驟、錯誤訊息、期望行為）。</li>
+      <li>可以指定 <strong>Assignees</strong>（負責人）、<strong>Labels</strong>（分類標籤）、<strong>Milestone</strong>。</li>
+      <li>送出後，相關的 PR 可以在 message 中寫 <code>Closes #123</code> 讓合併時自動關閉 issue。</li>
+    </ol>
+    <div class="callout tip"><span class="callout-icon">💡</span><div>在 commit message 或 PR 中寫 <code>Closes #42</code>，PR 被 merge 後 Issue #42 會自動關閉。</div></div>
+  </section>
+
+  <!-- S3 FAQ -->
+  <section class="section" id="s3-faq">
+    <div class="section-header">
+      <div class="step-num sn-3" style="background:#64748b;">?</div>
+      <h2>第三階段常見問題</h2>
+    </div>
+    <details><summary>main 和 master 有什麼差別？</summary>
+      <div class="faq-body">GitHub 在 2020 年把新 repo 的預設主分支從 <code>master</code> 改名為 <code>main</code>。兩者功能完全相同，只是名稱不同。舊的 repo 可能仍叫 <code>master</code>。可用 <code>git branch -M main</code> 重新命名。</div>
+    </details>
+    <details><summary>Fork 之後，原 repo 更新了，我的 fork 會自動同步嗎？</summary>
+      <div class="faq-body">不會。你需要手動同步：在 GitHub 網頁上，你的 fork 頁面會顯示「Sync fork」按鈕，點擊即可把原 repo 的最新變更拉進來。或用指令設定 upstream remote 再 pull。</div>
+    </details>
+    <details><summary>Branch 刪掉後，上面的 commit 還在嗎？</summary>
+      <div class="faq-body">如果已經 merge，那些 commit 已經進入主線，刪 branch 只是刪掉「指針」，不影響 commit 歷史。如果還沒 merge 就刪 branch，commit 會暫時變成孤立狀態，Git 會在一段時間後清理。可用 <code>git reflog</code> 找回。</div>
+    </details>
+    <details><summary>一個 PR 可以對應多個 commit 嗎？</summary>
+      <div class="faq-body">可以！PR 其實是把一整個 branch 的所有 commit 請求合併，branch 上可以有一個或多個 commit，都會一起出現在 PR 的 Files changed 頁面供 reviewer 審查。</div>
+    </details>
+    <details><summary>衝突很可怕，有辦法避免嗎？</summary>
+      <div class="faq-body">可以減少但無法完全避免。建議：① 頻繁從 main pull 最新版到你的 branch（<code>git pull origin main</code>）；② 每個人負責不同的檔案或模組；③ 保持 branch 存活時間短，盡快 PR 合併。</div>
+    </details>
+  </section>
+
+  <!-- S3 Quiz -->
+  <section class="section" id="s3-quiz">
+    <div class="section-header">
+      <div class="step-num sn-3">📝</div>
+      <h2>第三階段練習題</h2>
+    </div>
+    <div class="quiz-reset-row">
+      <button class="reset-btn" onclick="resetQuiz('s3')">&#8635; 重置第三階段練習題</button>
+    </div>
+    <div class="quiz-score-bar" id="score-bar-s3">
+      <span class="quiz-score-label">第三階段得分</span>
+      <div class="quiz-score-track"><div class="quiz-score-fill" id="score-fill-s3"></div></div>
+      <span class="quiz-score-num" id="score-num-s3">尚未作答</span>
+    </div>
+    <div class="quiz s3-quiz" id="quiz-container-s3">
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">1</span>使用 Branch 開發新功能的最大優點是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q1" value="a"> A. 讓 commit 速度更快</label></li>
+          <li><label><input type="radio" name="s3q1" value="b"> B. 不影響主線（main）的穩定性</label></li>
+          <li><label><input type="radio" name="s3q1" value="c"> C. 自動備份到雲端</label></li>
+          <li><label><input type="radio" name="s3q1" value="d"> D. 讓 repo 容量變小</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q1','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q1"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">2</span>建立並立刻切換到新 branch 的指令是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q2" value="a"> A. <code>git branch -d feature</code></label></li>
+          <li><label><input type="radio" name="s3q2" value="b"> B. <code>git merge feature</code></label></li>
+          <li><label><input type="radio" name="s3q2" value="c"> C. <code>git checkout -b feature</code></label></li>
+          <li><label><input type="radio" name="s3q2" value="d"> D. <code>git push feature</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q2','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q2"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">3</span>Merge 衝突發生時，Git 用什麼符號標記衝突區段？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q3" value="a"> A. <code>### CONFLICT ###</code></label></li>
+          <li><label><input type="radio" name="s3q3" value="b"> B. <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> 和 <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code></label></li>
+          <li><label><input type="radio" name="s3q3" value="c"> C. <code>--- merge ---</code></label></li>
+          <li><label><input type="radio" name="s3q3" value="d"> D. 用紅色字體顯示</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q3','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q3"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">4</span>Fork 和 Clone 最主要的差別是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q4" value="a"> A. Fork 是本機操作，Clone 是雲端操作</label></li>
+          <li><label><input type="radio" name="s3q4" value="b"> B. Fork 在 GitHub 建立雲端副本，Clone 下載到本機</label></li>
+          <li><label><input type="radio" name="s3q4" value="c"> C. Fork 只複製最新版，Clone 複製完整歷史</label></li>
+          <li><label><input type="radio" name="s3q4" value="d"> D. 兩者完全相同</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q4','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q4"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">5</span>Pull Request 的主要目的是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q5" value="a"> A. 從 GitHub 把最新版本拉下來</label></li>
+          <li><label><input type="radio" name="s3q5" value="b"> B. 提交修改請對方審核後合併</label></li>
+          <li><label><input type="radio" name="s3q5" value="c"> C. 刪除不需要的 branch</label></li>
+          <li><label><input type="radio" name="s3q5" value="d"> D. 要求別人 push 程式碼給你</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q5','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q5"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">6</span>在 commit message 寫「Closes #42」的效果是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q6" value="a"> A. 刪除第 42 個 commit</label></li>
+          <li><label><input type="radio" name="s3q6" value="b"> B. PR 被 merge 後自動關閉 Issue #42</label></li>
+          <li><label><input type="radio" name="s3q6" value="c"> C. 建立第 42 個 branch</label></li>
+          <li><label><input type="radio" name="s3q6" value="d"> D. 只是一個普通的文字，沒有特殊效果</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q6','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q6"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">7</span>執行 <code>git branch</code> 後，星號（*）代表什麼？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q7" value="a"> A. 這個 branch 已被保護，不能刪除</label></li>
+          <li><label><input type="radio" name="s3q7" value="b"> B. 這個 branch 有未解決的衝突</label></li>
+          <li><label><input type="radio" name="s3q7" value="c"> C. 目前所在的 branch</label></li>
+          <li><label><input type="radio" name="s3q7" value="d"> D. 這個 branch 已與 main 合併</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q7','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q7"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">8</span>Issue 上的 Labels 功能用來做什麼？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q8" value="a"> A. 加密 Issue 內容</label></li>
+          <li><label><input type="radio" name="s3q8" value="b"> B. 對 Issue 進行分類標記（bug、enhancement 等）</label></li>
+          <li><label><input type="radio" name="s3q8" value="c"> C. 把 Issue 轉換成 PR</label></li>
+          <li><label><input type="radio" name="s3q8" value="d"> D. 限制哪些人可以留言</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q8','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q8"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">9</span>GitHub 預設主分支的名稱（2020 年後新建 repo）是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q9" value="a"> A. master</label></li>
+          <li><label><input type="radio" name="s3q9" value="b"> B. main</label></li>
+          <li><label><input type="radio" name="s3q9" value="c"> C. primary</label></li>
+          <li><label><input type="radio" name="s3q9" value="d"> D. default</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q9','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q9"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">10</span>要減少 merge 衝突，最有效的做法是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s3q10" value="a"> A. 所有人在同一個 branch 上開發</label></li>
+          <li><label><input type="radio" name="s3q10" value="b"> B. 頻繁從 main 同步最新版到自己的 branch</label></li>
+          <li><label><input type="radio" name="s3q10" value="c"> C. 每次都用 force push</label></li>
+          <li><label><input type="radio" name="s3q10" value="d"> D. 只有一個人可以 commit</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s3q10','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s3q10"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="stage-divider">
+
+  <!-- ══════════════════════════════════════════
+       STAGE 4 · 進階技巧
+  ══════════════════════════════════════════ -->
+  <div class="stage-header stage-s4">
+    <span class="s-badge">第四階段</span>
+    <h2>進階技巧</h2>
+  </div>
+
+  <!-- S4-1 -->
+  <section class="section" id="s4-gitignore">
+    <div class="section-header">
+      <div class="step-num sn-4">1</div>
+      <h2>.gitignore：哪些檔案不要追蹤</h2>
+    </div>
+    <p><code>.gitignore</code> 放在 repo 根目錄，列出 Git 應該忽略的檔案或目錄模式，這些檔案不會被 add、commit 或 push。</p>
+    <h3>常見的需要忽略的檔案</h3>
+    <ul>
+      <li>🔑 <strong>敏感資料</strong>：<code>.env</code>、密碼設定檔</li>
+      <li>📦 <strong>套件目錄</strong>：<code>node_modules/</code>、<code>venv/</code></li>
+      <li>🗑️ <strong>作業系統暫存</strong>：<code>.DS_Store</code>（macOS）、<code>Thumbs.db</code>（Windows）</li>
+      <li>🔧 <strong>IDE 設定</strong>：<code>.idea/</code>、<code>.vscode/</code></li>
+      <li>📂 <strong>編譯輸出</strong>：<code>dist/</code>、<code>build/</code>、<code>*.pyc</code></li>
+    </ul>
+    <pre><code># .gitignore 範例
+.env
+node_modules/
+dist/
+.DS_Store
+*.log
+*.pyc
+__pycache__/</code></pre>
+    <div class="callout tip"><span class="callout-icon">💡</span><div><a href="https://gitignore.io" target="_blank">gitignore.io</a> 可以根據你的語言/框架自動生成 .gitignore 內容。</div></div>
+  </section>
+
+  <!-- S4-2 -->
+  <section class="section" id="s4-stash">
+    <div class="section-header">
+      <div class="step-num sn-4">2</div>
+      <h2>git stash：暫存未完成的工作</h2>
+    </div>
+    <p>你正在開發功能，突然需要切換到另一個 branch 修緊急 bug，但目前的修改還不到 commit 的程度——這時就用 <code>git stash</code> 把工作暫時收起來。</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-out"># 把目前所有未 commit 的變更暫存起來</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git stash</span>
+<span class="term-ok">Saved working directory and index state WIP on feature: 3f2a1c9</span>
+
+<span class="term-out"># 查看所有 stash</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git stash list</span>
+<span class="term-out">stash@{0}: WIP on feature: 3f2a1c9 加入登入頁面</span>
+
+<span class="term-out"># 做完緊急修復後，把 stash 取回</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git stash pop</span>
+<span class="term-ok">Dropped stash@{0}</span></code></pre></div>
+    </div>
+  </section>
+
+  <!-- S4-3 -->
+  <section class="section" id="s4-revert">
+    <div class="section-header">
+      <div class="step-num sn-4">3</div>
+      <h2>git revert vs git reset：撤銷變更</h2>
+    </div>
+    <p>做錯了想反悔，有兩種方式，適用情境不同：</p>
+    <table class="config-table">
+      <thead><tr><th>指令</th><th>效果</th><th>適用時機</th><th>安全性</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>git revert &lt;hash&gt;</code></td>
+          <td>建立一個新 commit 來「反做」指定的 commit</td>
+          <td>已 push 到遠端、多人協作的 repo</td>
+          <td>✅ 安全，不改寫歷史</td>
+        </tr>
+        <tr>
+          <td><code>git reset --soft HEAD~1</code></td>
+          <td>取消最近一次 commit，但保留改動在暫存區</td>
+          <td>還沒 push，想修改後重新 commit</td>
+          <td>⚠️ 只在本機用</td>
+        </tr>
+        <tr>
+          <td><code>git reset --hard HEAD~1</code></td>
+          <td>完全丟棄最近一次 commit 及所有改動</td>
+          <td>確定不需要那些改動，想徹底清除</td>
+          <td>❌ 危險，無法還原</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-out"># 安全地反悔某個 commit（不改寫歷史）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git revert 3f2a1c9</span>
+<span class="term-ok">[main 8a3b2c1] Revert "更新 README：加入使用說明"</span>
+
+<span class="term-out"># 取消最近一次 commit，保留改動</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git reset --soft HEAD~1</span>
+
+<span class="term-out"># 查看 commit hash（用於 revert）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git log --oneline</span>
+<span class="term-val">3f2a1c9</span> <span class="term-out">更新 README：加入使用說明</span>
+<span class="term-val">a1b2c3d</span> <span class="term-out">新增 index.html</span></code></pre></div>
+    </div>
+    <div class="callout danger"><span class="callout-icon">🚨</span><div><strong><code>git reset --hard</code> 無法還原！</strong> 執行前請三思。如果已經 push 過，強制改寫歷史需要 <code>git push --force</code>，會造成其他協作者的困擾。</div></div>
+  </section>
+
+  <!-- S4-4 -->
+  <section class="section" id="s4-tag">
+    <div class="section-header">
+      <div class="step-num sn-4">4</div>
+      <h2>Tag 與 Release：標記版本</h2>
+    </div>
+    <p>Tag 讓你在某個重要的 commit 上貼上「書籤」，通常用來標記軟體版本（如 <code>v1.0.0</code>）。Release 是 GitHub 在 tag 基礎上加的說明頁面，可以附帶下載檔案。</p>
+    <h3>建立 Tag</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-out"># 建立帶說明的 annotated tag（推薦）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git tag -a v1.0.0 -m "第一個正式發布版本"</span>
+
+<span class="term-out"># 把 tag 推送到 GitHub</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push origin v1.0.0</span>
+<span class="term-ok">To https://github.com/username/my-project.git</span>
+<span class="term-ok"> * [new tag]         v1.0.0 -> v1.0.0</span>
+
+<span class="term-out"># 查看所有 tag</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git tag</span>
+<span class="term-out">v0.9.0</span>
+<span class="term-out">v1.0.0</span></code></pre></div>
+    </div>
+    <h3>建立 Release</h3>
+    <p>在 GitHub 網頁上：repo 頁面右側 → <strong>「Releases」→「Create a new release」</strong> → 選擇 tag → 填寫版本說明 → 可上傳安裝包 → 點 <strong>「Publish release」</strong>。</p>
+    <div class="callout tip"><span class="callout-icon">💡</span><div>版本號建議遵循 <strong>語意化版本（Semantic Versioning）</strong>：<code>MAJOR.MINOR.PATCH</code>。例如 <code>v2.1.3</code> 表示第 2 個主版本、第 1 個新功能、第 3 個 bug 修復。</div></div>
+  </section>
+
+  <!-- S4-5 -->
+  <section class="section" id="s4-actions">
+    <div class="section-header">
+      <div class="step-num sn-4">5</div>
+      <h2>GitHub Actions 入門：自動化 CI/CD</h2>
+    </div>
+    <p>GitHub Actions 讓你在特定事件（push、PR、定時）發生時，自動執行工作流程，例如：跑測試、打包、部署到伺服器。設定方式是在 repo 裡建立 <code>.github/workflows/</code> 目錄，放入 YAML 設定檔。</p>
+    <h3>一個簡單的自動測試範例</h3>
+    <pre><code># .github/workflows/test.yml
+name: Run Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test</code></pre>
+    <p>把這個檔案推上去後，每次 push 到 main 或建立 PR，GitHub 就會自動在雲端跑測試，並在 PR 頁面顯示通過 ✅ 或失敗 ❌。</p>
+    <div class="callout info"><span class="callout-icon">ℹ️</span><div>GitHub Actions 對 Public repo 完全免費，Private repo 每月有 2,000 分鐘免費額度（免費帳號），通常對個人專案足夠。</div></div>
+  </section>
+
+  <!-- S4-6 -->
+  <section class="section" id="s4-ssh">
+    <div class="section-header">
+      <div class="step-num sn-4">6</div>
+      <h2>SSH 金鑰設定：免密碼登入</h2>
+    </div>
+    <p>每次 push 都要輸入 token 很煩？設定 SSH 金鑰後，push/pull 都不需要輸入密碼，更安全也更方便。</p>
+    <h3>設定步驟</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-out"># 1. 產生 SSH 金鑰（一路按 Enter 使用預設值即可）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">ssh-keygen -t ed25519 -C "你的信箱@example.com"</span>
+<span class="term-out">Generating public/private ed25519 key pair.</span>
+<span class="term-out">Enter file in which to save the key (~/.ssh/id_ed25519):</span>
+<span class="term-ok">Your identification has been saved in ~/.ssh/id_ed25519</span>
+
+<span class="term-out"># 2. 複製公鑰內容</span>
+<span class="term-prompt">$</span> <span class="term-cmd">cat ~/.ssh/id_ed25519.pub</span>
+<span class="term-out">ssh-ed25519 AAAA... 你的信箱@example.com</span>
+
+<span class="term-out"># 3. 測試連線</span>
+<span class="term-prompt">$</span> <span class="term-cmd">ssh -T git@github.com</span>
+<span class="term-ok">Hi username! You've successfully authenticated.</span></code></pre></div>
+    </div>
+    <h3>把公鑰加到 GitHub</h3>
+    <ol>
+      <li>複製 <code>cat ~/.ssh/id_ed25519.pub</code> 的輸出內容。</li>
+      <li>到 GitHub → Settings → SSH and GPG keys → <strong>「New SSH key」</strong>。</li>
+      <li>貼上公鑰內容，填入名稱（例如「My MacBook」），點 <strong>「Add SSH key」</strong>。</li>
+      <li>之後 clone 時改用 SSH 網址（<code>git@github.com:username/repo.git</code>）即可免密碼操作。</li>
+    </ol>
+  </section>
+
+  <!-- S4-7 -->
+  <section class="section" id="s4-collab">
+    <div class="section-header">
+      <div class="step-num sn-4">7</div>
+      <h2>多人協作最佳實踐</h2>
+    </div>
+    <p>掌握了工具之後，協作流程的品質取決於團隊的工作習慣。以下是經過驗證的最佳實踐：</p>
+    <h3>🌿 Branch 策略</h3>
+    <ul>
+      <li><strong>main</strong> 永遠保持可部署狀態，不直接 commit。</li>
+      <li>每個功能或 bug 修復開一個獨立 branch（命名如 <code>feature/login</code>、<code>fix/typo-in-readme</code>）。</li>
+      <li>Branch 壽命要短，完成後盡快合併並刪除。</li>
+    </ul>
+    <h3>📝 Commit 習慣</h3>
+    <ul>
+      <li>每個 commit 只做一件事，不要把不相關的改動混在一起。</li>
+      <li>Commit message 清楚說明做了什麼（動詞開頭）。</li>
+      <li>不要 commit 未完成的程式碼到 main。</li>
+    </ul>
+    <h3>🔍 Code Review</h3>
+    <ul>
+      <li>所有改動透過 PR 進行，至少一人 review 才能合併。</li>
+      <li>PR 盡量小，讓 review 更容易；大功能拆成多個小 PR。</li>
+      <li>review 時提供建設性意見，而不只是「LGTM」。</li>
+    </ul>
+    <h3>🔄 同步習慣</h3>
+    <ul>
+      <li>每天開始工作前先 <code>git pull</code>，保持本機最新。</li>
+      <li>長壽 branch 要頻繁從 main 同步（<code>git merge main</code> 或 <code>git rebase main</code>）。</li>
+    </ul>
+    <div class="callout tip"><span class="callout-icon">💡</span><div><strong>保護 main branch：</strong> 到 repo Settings → Branches → Add branch protection rule，可設定「需要 PR 才能合併」、「需要至少 N 個 review」等規則，防止直接 push 到 main。</div></div>
+  </section>
+
+  <!-- S4 FAQ -->
+  <section class="section" id="s4-faq">
+    <div class="section-header">
+      <div class="step-num sn-4" style="background:#64748b;">?</div>
+      <h2>第四階段常見問題</h2>
+    </div>
+    <details><summary><code>git revert</code> 和 <code>git reset</code> 我該用哪個？</summary>
+      <div class="faq-body">簡單判斷：<strong>已 push 到遠端 → 用 revert</strong>（安全，不改寫歷史）；<strong>還沒 push → 可以用 reset</strong>（更乾淨，但只在本機用）。在多人協作的 repo 上絕對不要對已 push 的 commit 用 <code>reset --hard</code> 再 force push，會造成其他人的困擾。</div>
+    </details>
+    <details><summary>GitHub Actions 免費額度用完了怎麼辦？</summary>
+      <div class="faq-body">Public repo 的 Actions 不計入額度，完全免費。Private repo 的 Actions 用完免費額度後，可以在 Settings → Billing 升級方案，或購買額外的分鐘數。也可以考慮把 CI 工作搬到其他免費服務，如 CircleCI、GitLab CI 等。</div>
+    </details>
+    <details><summary>SSH 金鑰丟了或電腦換了怎麼辦？</summary>
+      <div class="faq-body">到 GitHub Settings → SSH keys 刪除舊金鑰，在新電腦重新產生一組金鑰並加入。舊的連線就會失效，只有新金鑰能用。建議把金鑰名稱標注設備名稱（如「Work MacBook 2024」），方便管理。</div>
+    </details>
+    <details><summary>什麼是 <code>git rebase</code>？和 merge 有什麼不同？</summary>
+      <div class="faq-body">Rebase 會把你的 commits「搬移」到目標 branch 的最新點上，讓歷史看起來是線性的，沒有合併節點。Merge 保留分叉歷史，更真實但較雜亂。Rebase 讓 log 更整潔，但會改寫 commit 歷史，不建議在已 push 的 branch 上使用。</div>
+    </details>
+    <details><summary>tag 和 branch 有什麼根本差別？</summary>
+      <div class="faq-body">Branch 是<strong>會移動的指針</strong>，隨著新 commit 不斷前進。Tag 是<strong>固定的書籤</strong>，永遠指向同一個 commit，通常用來標記版本號。建立 tag 後，除非手動刪除再建，它不會移動。</div>
+    </details>
+  </section>
+
+  <!-- S4 Quiz -->
+  <section class="section" id="s4-quiz">
+    <div class="section-header">
+      <div class="step-num sn-4">📝</div>
+      <h2>第四階段練習題</h2>
+    </div>
+    <div class="quiz-reset-row">
+      <button class="reset-btn" onclick="resetQuiz('s4')">&#8635; 重置第四階段練習題</button>
+    </div>
+    <div class="quiz-score-bar" id="score-bar-s4">
+      <span class="quiz-score-label">第四階段得分</span>
+      <div class="quiz-score-track"><div class="quiz-score-fill" id="score-fill-s4"></div></div>
+      <span class="quiz-score-num" id="score-num-s4">尚未作答</span>
+    </div>
+    <div class="quiz s4-quiz" id="quiz-container-s4">
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">1</span>已經 push 到遠端的錯誤 commit，最安全的撤銷方式是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q1" value="a"> A. <code>git reset --hard</code> 再 force push</label></li>
+          <li><label><input type="radio" name="s4q1" value="b"> B. <code>git revert &lt;hash&gt;</code></label></li>
+          <li><label><input type="radio" name="s4q1" value="c"> C. 直接刪掉整個 repo 重建</label></li>
+          <li><label><input type="radio" name="s4q1" value="d"> D. <code>git stash</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q1','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q1"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">2</span><code>git stash pop</code> 的效果是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q2" value="a"> A. 刪除所有 stash</label></li>
+          <li><label><input type="radio" name="s4q2" value="b"> B. 把最新的 stash 取回並從 stash 列表移除</label></li>
+          <li><label><input type="radio" name="s4q2" value="c"> C. 建立一個新的 stash</label></li>
+          <li><label><input type="radio" name="s4q2" value="d"> D. 把 stash 轉換成 commit</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q2','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q2"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">3</span>以下哪個檔案<strong>最應該</strong>加入 .gitignore？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q3" value="a"> A. <code>README.md</code></label></li>
+          <li><label><input type="radio" name="s4q3" value="b"> B. <code>index.html</code></label></li>
+          <li><label><input type="radio" name="s4q3" value="c"> C. <code>.env</code>（含 API Key）</label></li>
+          <li><label><input type="radio" name="s4q3" value="d"> D. <code>package.json</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q3','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q3"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">4</span>語意化版本 <code>v2.3.1</code> 中，<code>3</code> 代表？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q4" value="a"> A. 主版本號（不相容的重大變更）</label></li>
+          <li><label><input type="radio" name="s4q4" value="b"> B. 次版本號（新增功能，向下相容）</label></li>
+          <li><label><input type="radio" name="s4q4" value="c"> C. 修訂號（bug 修復）</label></li>
+          <li><label><input type="radio" name="s4q4" value="d"> D. 發布次數</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q4','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q4"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">5</span>GitHub Actions 的工作流程設定檔放在哪裡？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q5" value="a"> A. <code>actions/</code></label></li>
+          <li><label><input type="radio" name="s4q5" value="b"> B. <code>.github/workflows/</code></label></li>
+          <li><label><input type="radio" name="s4q5" value="c"> C. <code>ci/</code></label></li>
+          <li><label><input type="radio" name="s4q5" value="d"> D. <code>scripts/</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q5','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q5"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">6</span>SSH 金鑰設定完成後，clone repo 應該使用哪種 URL？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q6" value="a"> A. <code>https://github.com/user/repo.git</code></label></li>
+          <li><label><input type="radio" name="s4q6" value="b"> B. <code>ftp://github.com/user/repo.git</code></label></li>
+          <li><label><input type="radio" name="s4q6" value="c"> C. <code>git@github.com:user/repo.git</code></label></li>
+          <li><label><input type="radio" name="s4q6" value="d"> D. <code>ssh://user/repo.git</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q6','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q6"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">7</span>Tag 和 Branch 最根本的差別是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q7" value="a"> A. Tag 只能建立 10 個，Branch 無限制</label></li>
+          <li><label><input type="radio" name="s4q7" value="b"> B. Tag 是固定書籤不移動，Branch 隨 commit 前進</label></li>
+          <li><label><input type="radio" name="s4q7" value="c"> C. Tag 只在本機，Branch 會 push 到遠端</label></li>
+          <li><label><input type="radio" name="s4q7" value="d"> D. Tag 用於協作，Branch 用於個人開發</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q7','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q7"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">8</span><code>git reset --soft HEAD~1</code> 執行後，最近一次 commit 的改動會在哪裡？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q8" value="a"> A. 完全消失</label></li>
+          <li><label><input type="radio" name="s4q8" value="b"> B. 回到暫存區（Staged）</label></li>
+          <li><label><input type="radio" name="s4q8" value="c"> C. 回到工作目錄（Untracked）</label></li>
+          <li><label><input type="radio" name="s4q8" value="d"> D. 移到另一個 branch</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q8','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q8"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">9</span>多人協作時，保護 main branch 最好的做法是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q9" value="a"> A. 把 repo 設為 Private</label></li>
+          <li><label><input type="radio" name="s4q9" value="b"> B. 在 Settings 設定 Branch protection rule，要求 PR 審核才能合併</label></li>
+          <li><label><input type="radio" name="s4q9" value="c"> C. 每天備份 main branch</label></li>
+          <li><label><input type="radio" name="s4q9" value="d"> D. 只讓一個人有 push 權限</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q9','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q9"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">10</span>GitHub Actions 對 Public repo 的費用是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s4q10" value="a"> A. 每分鐘計費</label></li>
+          <li><label><input type="radio" name="s4q10" value="b"> B. 每月固定費用</label></li>
+          <li><label><input type="radio" name="s4q10" value="c"> C. 完全免費，不計入額度</label></li>
+          <li><label><input type="radio" name="s4q10" value="d"> D. 需要 Pro 帳號才能使用</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s4q10','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s4q10"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="stage-divider">
+
+  <!-- ══════════════════════════════════════════
+       STAGE 5 · 專案實作
+  ══════════════════════════════════════════ -->
+  <div class="stage-header stage-s5">
+    <span class="s-badge">第五階段</span>
+    <h2>專案實作</h2>
+  </div>
+
+  <!-- S5-1 -->
+  <section class="section" id="s5-intro">
+    <div class="section-header">
+      <div class="step-num sn-5">1</div>
+      <h2>專案說明：你要做什麼</h2>
+    </div>
+    <p>前四個階段你已經學會了 GitHub 的所有核心概念與指令。現在，我們把它們串起來，實際完成一個<strong>可以公開展示的專案</strong>。</p>
+    <h3>🎯 目標：建立個人技術筆記本</h3>
+    <p>我們要建立一個「個人技術筆記本」靜態網站，並部署到 <strong>GitHub Pages</strong>，讓任何人都能用瀏覽器瀏覽你的筆記。</p>
+    <p>為什麼選這個題目？</p>
+    <ul>
+      <li>✅ 不需要任何框架或後端，純 HTML / Markdown 就能做</li>
+      <li>✅ 完成後有東西可以展示（面試、履歷都用得上）</li>
+      <li>✅ 涵蓋前四階段所有核心技能</li>
+    </ul>
+    <h3>完成後你會有</h3>
+    <ul>
+      <li>📦 一個結構完整的 GitHub Public Repo</li>
+      <li>🌐 一個公開可瀏覽的個人頁面（<code>你的帳號.github.io/my-notes</code>）</li>
+      <li>📜 有意義的 commit 歷史、branch 記錄、第一個 Release</li>
+    </ul>
+    <div class="diagram">
+      <svg viewBox="0 0 620 130" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+        <rect width="620" height="130" rx="12" fill="#f0fdf4" stroke="#bbf7d0"/>
+        <rect x="20" y="35" width="100" height="60" rx="8" fill="#15803d"/>
+        <text x="70" y="61" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">初始化</text>
+        <text x="70" y="77" text-anchor="middle" font-size="10" fill="#bbf7d0">建立 Repo</text>
+        <line x1="120" y1="65" x2="148" y2="65" stroke="#15803d" stroke-width="2" marker-end="url(#ag5)"/>
+        <rect x="150" y="35" width="100" height="60" rx="8" fill="#16a34a"/>
+        <text x="200" y="61" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">提交</text>
+        <text x="200" y="77" text-anchor="middle" font-size="10" fill="#bbf7d0">add/commit/push</text>
+        <line x1="250" y1="65" x2="278" y2="65" stroke="#15803d" stroke-width="2" marker-end="url(#ag5)"/>
+        <rect x="280" y="35" width="100" height="60" rx="8" fill="#d97706"/>
+        <text x="330" y="61" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">分支開發</text>
+        <text x="330" y="77" text-anchor="middle" font-size="10" fill="#fef9c3">branch / PR</text>
+        <line x1="380" y1="65" x2="408" y2="65" stroke="#15803d" stroke-width="2" marker-end="url(#ag5)"/>
+        <rect x="410" y="35" width="100" height="60" rx="8" fill="#be185d"/>
+        <text x="460" y="61" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">進階設定</text>
+        <text x="460" y="77" text-anchor="middle" font-size="10" fill="#fce7f3">.gitignore / tag</text>
+        <line x1="510" y1="65" x2="538" y2="65" stroke="#15803d" stroke-width="2" marker-end="url(#ag5)"/>
+        <rect x="540" y="35" width="60" height="60" rx="8" fill="#2563eb"/>
+        <text x="570" y="61" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Pages</text>
+        <text x="570" y="77" text-anchor="middle" font-size="10" fill="#bfdbfe">上線！</text>
+        <defs><marker id="ag5" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#15803d"/></marker></defs>
+      </svg>
+    </div>
+  </section>
+
+  <!-- S5-2 -->
+  <section class="section" id="s5-init">
+    <div class="section-header">
+      <div class="step-num sn-5">2</div>
+      <h2>初始化專案</h2>
+    </div>
+    <p>從建立 Repo 開始，把一切設定好。</p>
+    <h3>① 在 GitHub 建立 Repo</h3>
+    <ol>
+      <li>點右上角 <strong>「+」→「New repository」</strong>。</li>
+      <li>名稱填 <code>my-notes</code>。</li>
+      <li>設定為 <strong>Public</strong>（GitHub Pages 免費版需要 Public）。</li>
+      <li>勾選 <strong>「Add a README file」</strong>。</li>
+      <li>在 Add .gitignore 選 <strong>「macOS」</strong>（或依你的作業系統選）。</li>
+      <li>點 <strong>「Create repository」</strong>。</li>
+    </ol>
+    <h3>② Clone 到本機</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git clone https://github.com/你的帳號/my-notes.git</span>
+<span class="term-out">Cloning into 'my-notes'...</span>
+<span class="term-ok">Receiving objects: 100% (3/3), done.</span>
+<span class="term-prompt">$</span> <span class="term-cmd">cd my-notes</span>
+<span class="term-prompt">$</span> <span class="term-cmd">ls</span>
+<span class="term-out">.gitignore    README.md</span></code></pre></div>
+    </div>
+    <h3>③ 確認 Git 設定</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git config user.name</span>
+<span class="term-out">你的名字</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git config user.email</span>
+<span class="term-out">你的信箱@example.com</span></code></pre></div>
+    </div>
+    <div class="callout tip"><span class="callout-icon">💡</span><div>如果回傳空白，回去第一階段第 6 節設定 <code>git config --global user.name</code> 和 <code>user.email</code>。</div></div>
+  </section>
+
+  <!-- S5-3 -->
+  <section class="section" id="s5-commit">
+    <div class="section-header">
+      <div class="step-num sn-5">3</div>
+      <h2>建立內容與提交</h2>
+    </div>
+    <p>在本機新增第一個頁面，走一遍 add → commit → push 完整流程。</p>
+    <h3>① 新增 index.html</h3>
+    <p>在 <code>my-notes/</code> 資料夾裡建立 <code>index.html</code>，貼入以下內容：</p>
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-TW"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;我的技術筆記本&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: sans-serif; max-width: 680px; margin: 60px auto; padding: 0 24px; }
+    h1 { color: #1e3a5f; }
+    ul { line-height: 2; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;📓 我的技術筆記本&lt;/h1&gt;
+  &lt;p&gt;這裡記錄我學習技術的過程與心得。&lt;/p&gt;
+  &lt;h2&gt;筆記列表&lt;/h2&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="notes.html"&gt;Git &amp; GitHub 學習筆記&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    <h3>② 執行第一次 commit</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git add index.html</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git commit -m "新增首頁 index.html"</span>
+<span class="term-ok">[main 4a1b2c3] 新增首頁 index.html</span>
+<span class="term-out"> 1 file changed, 17 insertions(+)</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push origin main</span>
+<span class="term-out">To https://github.com/你的帳號/my-notes.git</span>
+<span class="term-ok">   a1b2c3d..4a1b2c3  main -> main</span></code></pre></div>
+    </div>
+    <h3>③ 確認上傳成功</h3>
+    <p>回到 GitHub repo 頁面，重新整理，應該看到 <code>index.html</code> 出現在檔案列表中。點進去確認內容正確。</p>
+    <div class="callout info"><span class="callout-icon">✅</span><div>第一次 push 成功！你現在有了一個有內容的 repo。</div></div>
+  </section>
+
+  <!-- S5-4 -->
+  <section class="section" id="s5-branch">
+    <div class="section-header">
+      <div class="step-num sn-5">4</div>
+      <h2>分支開發新功能</h2>
+    </div>
+    <p>用 branch 的方式新增一個筆記頁面，走一遍完整的分支開發流程。</p>
+    <h3>① 建立 feature branch</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git checkout -b feature/add-notes-page</span>
+<span class="term-ok">Switched to a new branch 'feature/add-notes-page'</span></code></pre></div>
+    </div>
+    <h3>② 新增 notes.html</h3>
+    <p>建立 <code>notes.html</code>，貼入以下內容：</p>
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-TW"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Git &amp; GitHub 筆記&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: sans-serif; max-width: 680px; margin: 60px auto; padding: 0 24px; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Git &amp; GitHub 學習筆記&lt;/h1&gt;
+  &lt;h2&gt;核心指令速查&lt;/h2&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;code&gt;git clone &lt;url&gt;&lt;/code&gt; — 複製 repo 到本機&lt;/li&gt;
+    &lt;li&gt;&lt;code&gt;git add .&lt;/code&gt; — 加入所有改動&lt;/li&gt;
+    &lt;li&gt;&lt;code&gt;git commit -m "訊息"&lt;/code&gt; — 存檔&lt;/li&gt;
+    &lt;li&gt;&lt;code&gt;git push origin main&lt;/code&gt; — 上傳&lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;p&gt;&lt;a href="index.html"&gt;← 返回首頁&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    <h3>③ commit 並 push 到遠端</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git add notes.html</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git commit -m "新增 Git 學習筆記頁面"</span>
+<span class="term-ok">[feature/add-notes-page 7c3d4e5] 新增 Git 學習筆記頁面</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push origin feature/add-notes-page</span>
+<span class="term-ok">To https://github.com/你的帳號/my-notes.git</span>
+<span class="term-ok"> * [new branch]  feature/add-notes-page -> feature/add-notes-page</span></code></pre></div>
+    </div>
+    <h3>④ 建立 Pull Request 並合併</h3>
+    <ol>
+      <li>回到 GitHub，看到黃色「Compare &amp; pull request」提示列，點擊它。</li>
+      <li>標題填「新增筆記頁面」，描述填「新增 notes.html，包含 Git 核心指令速查」。</li>
+      <li>點 <strong>「Create pull request」</strong>。</li>
+      <li>確認沒問題後點 <strong>「Merge pull request」→「Confirm merge」</strong>。</li>
+      <li>點 <strong>「Delete branch」</strong> 刪除已合併的 branch。</li>
+    </ol>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal — 同步本機</span></div>
+      <div class="term-body"><pre><code><span class="term-out"># 回到 main 並拉取最新版（含剛 merge 的內容）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git checkout main</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git pull origin main</span>
+<span class="term-ok">Already up to date.</span>
+<span class="term-out"># 刪除本機的 feature branch</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git branch -d feature/add-notes-page</span>
+<span class="term-ok">Deleted branch feature/add-notes-page (was 7c3d4e5).</span></code></pre></div>
+    </div>
+    <div class="callout info"><span class="callout-icon">✅</span><div>恭喜！你完成了一次完整的 branch → PR → merge → 清理流程。</div></div>
+  </section>
+
+  <!-- S5-5 -->
+  <section class="section" id="s5-advanced">
+    <div class="section-header">
+      <div class="step-num sn-5">5</div>
+      <h2>進階設定</h2>
+    </div>
+    <h3>① 確認 .gitignore</h3>
+    <p>用文字編輯器打開 <code>.gitignore</code>，確認包含以下常見排除項目（選 macOS 範本時通常已包含）：</p>
+    <pre><code># macOS
+.DS_Store
+.AppleDouble
+
+# 編輯器
+.idea/
+.vscode/
+
+# 系統暫存
+Thumbs.db</code></pre>
+    <p>如果沒有，手動加入後 commit：</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git add .gitignore</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git commit -m "更新 .gitignore：加入 macOS 和編輯器排除項"</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push origin main</span></code></pre></div>
+    </div>
+    <h3>② 打上第一個版本 Tag</h3>
+    <p>專案有了首頁和筆記頁，來標記這是 <code>v1.0.0</code>！</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">Terminal</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git tag -a v1.0.0 -m "第一個正式版本：首頁 + 筆記頁"</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push origin v1.0.0</span>
+<span class="term-ok">To https://github.com/你的帳號/my-notes.git</span>
+<span class="term-ok"> * [new tag]         v1.0.0 -> v1.0.0</span></code></pre></div>
+    </div>
+    <h3>③ 在 GitHub 建立 Release</h3>
+    <ol>
+      <li>進入 repo 頁面，右側找到 <strong>「Releases」→「Create a new release」</strong>。</li>
+      <li>「Choose a tag」選 <strong>v1.0.0</strong>。</li>
+      <li>標題填「v1.0.0 — 初始版本」。</li>
+      <li>說明欄寫：「完成首頁與 Git 學習筆記頁面」。</li>
+      <li>點 <strong>「Publish release」</strong>。</li>
+    </ol>
+    <div class="callout tip"><span class="callout-icon">💡</span><div>Release 頁面會自動打包當時的程式碼為 zip / tar.gz，讓使用者可以下載特定版本。</div></div>
+  </section>
+
+  <!-- S5-6 -->
+  <section class="section" id="s5-pages">
+    <div class="section-header">
+      <div class="step-num sn-5">6</div>
+      <h2>啟用 GitHub Pages — 讓網站上線</h2>
+    </div>
+    <p>最後一步：把你的 repo 變成一個真正可以瀏覽的網站。</p>
+    <h3>① 啟用 Pages</h3>
+    <ol>
+      <li>進入 repo → 頂部 <strong>「Settings」</strong> 標籤。</li>
+      <li>左側選單找到 <strong>「Pages」</strong>。</li>
+      <li>在「Branch」下拉選 <strong>main</strong>，資料夾保持 <strong>/ (root)</strong>。</li>
+      <li>點 <strong>「Save」</strong>。</li>
+    </ol>
+    <h3>② 等待部署完成</h3>
+    <p>GitHub 會自動建置，通常 1～2 分鐘內完成。重新整理頁面後，頂部會出現：</p>
+    <div class="callout info"><span class="callout-icon">🌐</span><div><strong>Your site is live at</strong> <code>https://你的帳號.github.io/my-notes/</code></div></div>
+    <h3>③ 確認頁面正常</h3>
+    <p>點擊連結，確認：</p>
+    <ul>
+      <li><code>https://你的帳號.github.io/my-notes/</code> 顯示首頁</li>
+      <li>點「Git &amp; GitHub 學習筆記」連結，進入 <code>notes.html</code> 頁面</li>
+    </ul>
+    <div class="callout info"><span class="callout-icon">🎉</span><div><strong>完成了！</strong> 你從零建立了一個真實的 GitHub 專案，有完整的 commit 歷史、PR 記錄、版本 tag，還有一個公開網站。這就是工程師每天在做的事。</div></div>
+    <div class="callout tip"><span class="callout-icon">💡</span><div><strong>往後怎麼更新？</strong> 在本機修改檔案 → git add → git commit → git push，GitHub Pages 會在幾分鐘內自動更新網站。</div></div>
+  </section>
+
+  <!-- S5 FAQ -->
+  <section class="section" id="s5-faq">
+    <div class="section-header">
+      <div class="step-num sn-5" style="background:#64748b;">?</div>
+      <h2>第五階段常見問題</h2>
+    </div>
+    <details><summary>GitHub Pages 啟用後要等多久才能瀏覽？</summary>
+      <div class="faq-body">通常 1～3 分鐘。若超過 5 分鐘還沒上線，可以到 repo 的 <strong>Actions</strong> 標籤查看 deployment 狀態，看是否有錯誤。常見原因是 <code>index.html</code> 不在 root 目錄，或 branch 選錯了。</div>
+    </details>
+    <details><summary>push 後 GitHub Pages 沒更新怎麼辦？</summary>
+      <div class="faq-body">GitHub Pages 更新需要 1～2 分鐘，請稍等後按 Ctrl+Shift+R（硬重新整理）清除瀏覽器快取。若仍未更新，到 Settings → Pages 確認設定正確，或到 Actions 標籤查看部署記錄是否有失敗。</div>
+    </details>
+    <details><summary>可以在 GitHub Pages 用自訂網域嗎？</summary>
+      <div class="faq-body">可以！在 Settings → Pages 的「Custom domain」欄填入你的網域（例如 <code>notes.example.com</code>），然後到你的 DNS 服務商設定 CNAME 指向 <code>你的帳號.github.io</code>。GitHub 也支援免費的 HTTPS 自動憑證。</div>
+    </details>
+    <details><summary>Merge 自己的 PR 和直接 push 到 main 有什麼差別？</summary>
+      <div class="faq-body">功能上結果相同，但流程和習慣不同。透過 PR merge 可以保留完整的開發記錄（誰改了什麼、為什麼），在協作專案中讓其他人有機會 review。直接 push 較快，適合個人小修改。建議養成用 PR 的習慣，未來加入團隊時能直接適應。</div>
+    </details>
+    <details><summary>做壞了，怎麼用 git revert 回復？</summary>
+      <div class="faq-body">找到你想撤銷的 commit hash（用 <code>git log --oneline</code>），然後執行 <code>git revert &lt;hash&gt;</code>。這會建立一個新的 commit 來「反做」那次變更，不會改寫歷史，push 後 GitHub Pages 也會自動更新回去。</div>
+    </details>
+  </section>
+
+  <!-- S5 Quiz -->
+  <section class="section" id="s5-quiz">
+    <div class="section-header">
+      <div class="step-num sn-5">📝</div>
+      <h2>第五階段練習題</h2>
+    </div>
+    <div class="quiz-reset-row">
+      <button class="reset-btn" onclick="resetQuiz('s5')">↺ 重置第五階段練習題</button>
+    </div>
+    <div class="quiz-score-bar" id="score-bar-s5">
+      <span class="quiz-score-label">第五階段得分</span>
+      <div class="quiz-score-track"><div class="quiz-score-fill" id="score-fill-s5"></div></div>
+      <span class="quiz-score-num" id="score-num-s5">尚未作答</span>
+    </div>
+    <div class="quiz s5-quiz" id="quiz-container-s5">
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">1</span>建立 GitHub Pages 時，Repo 必須是什麼類型？（免費帳號）</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q1" value="a"> A. Private，才能保護程式碼</label></li>
+          <li><label><input type="radio" name="s5q1" value="b"> B. Public，免費方案才支援</label></li>
+          <li><label><input type="radio" name="s5q1" value="c"> C. 任何類型都可以，完全免費</label></li>
+          <li><label><input type="radio" name="s5q1" value="d"> D. 需要 Organization 帳號</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q1','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q1"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">2</span>在 GitHub Pages 設定中，「Branch: main / folder: / (root)」代表？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q2" value="a"> A. 只部署 main branch 的 root 資料夾內容</label></li>
+          <li><label><input type="radio" name="s5q2" value="b"> B. 只部署最新的 commit</label></li>
+          <li><label><input type="radio" name="s5q2" value="c"> C. 把整個 repo 的所有 branch 都部署</label></li>
+          <li><label><input type="radio" name="s5q2" value="d"> D. 從 main branch 的 /docs 資料夾部署</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q2','a',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q2"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">3</span>小明在 <code>feature/login</code> branch 上完成了修改並 push，接下來正確的流程是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q3" value="a"> A. 直接刪除 feature branch，改動自動進入 main</label></li>
+          <li><label><input type="radio" name="s5q3" value="b"> B. 建立 Pull Request → 審核 → Merge → 刪除 branch</label></li>
+          <li><label><input type="radio" name="s5q3" value="c"> C. 先刪除 main，再把 feature branch 改名為 main</label></li>
+          <li><label><input type="radio" name="s5q3" value="d"> D. 執行 git push --force 強制覆蓋 main</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q3','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q3"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">4</span>以下哪個步驟順序正確？（本機開發 → 推上 GitHub）</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q4" value="a"> A. git push → git commit → git add</label></li>
+          <li><label><input type="radio" name="s5q4" value="b"> B. git commit → git add → git push</label></li>
+          <li><label><input type="radio" name="s5q4" value="c"> C. git add → git commit → git push</label></li>
+          <li><label><input type="radio" name="s5q4" value="d"> D. git clone → git add → git push</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q4','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q4"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">5</span>push 後 GitHub Pages 沒立刻更新，第一步應該？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q5" value="a"> A. 立刻刪除 repo 重建</label></li>
+          <li><label><input type="radio" name="s5q5" value="b"> B. 等 1～2 分鐘後硬重新整理瀏覽器（Ctrl+Shift+R）</label></li>
+          <li><label><input type="radio" name="s5q5" value="c"> C. 把所有檔案重新 push 一次</label></li>
+          <li><label><input type="radio" name="s5q5" value="d"> D. 關掉 Pages 設定再重開</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q5','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q5"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">6</span><code>git tag -a v1.0.0 -m "說明"</code> 之後，還需要什麼才能讓 tag 出現在 GitHub 上？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q6" value="a"> A. 什麼都不用做，tag 會自動同步</label></li>
+          <li><label><input type="radio" name="s5q6" value="b"> B. 執行 <code>git push origin v1.0.0</code></label></li>
+          <li><label><input type="radio" name="s5q6" value="c"> C. 在 GitHub 網頁上手動建立</label></li>
+          <li><label><input type="radio" name="s5q6" value="d"> D. 執行 <code>git merge v1.0.0</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q6','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q6"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">7</span>PR merge 完成後，feature branch 應該怎麼處理？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q7" value="a"> A. 保留，方便以後繼續用</label></li>
+          <li><label><input type="radio" name="s5q7" value="b"> B. 刪除，保持 repo 整潔</label></li>
+          <li><label><input type="radio" name="s5q7" value="c"> C. 改名為 main</label></li>
+          <li><label><input type="radio" name="s5q7" value="d"> D. 推送到另一個 repo</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q7','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q7"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">8</span>執行 <code>git pull origin main</code> 的時機是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q8" value="a"> A. 上傳本機改動到 GitHub</label></li>
+          <li><label><input type="radio" name="s5q8" value="b"> B. 把 GitHub 上的最新版同步到本機</label></li>
+          <li><label><input type="radio" name="s5q8" value="c"> C. 建立新的 branch</label></li>
+          <li><label><input type="radio" name="s5q8" value="d"> D. 刪除遠端的舊版本</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q8','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q8"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">9</span>GitHub Pages 部署後，你的網站網址格式是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q9" value="a"> A. <code>https://github.com/帳號/repo</code></label></li>
+          <li><label><input type="radio" name="s5q9" value="b"> B. <code>https://帳號.github.io/repo/</code></label></li>
+          <li><label><input type="radio" name="s5q9" value="c"> C. <code>https://pages.github.com/帳號/repo</code></label></li>
+          <li><label><input type="radio" name="s5q9" value="d"> D. <code>https://帳號.github.com/repo</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q9','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q9"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">10</span>想讓 GitHub Pages 上的錯誤版本復原，最安全的方式是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s5q10" value="a"> A. <code>git reset --hard</code> 再 force push</label></li>
+          <li><label><input type="radio" name="s5q10" value="b"> B. 刪除 repo 重建</label></li>
+          <li><label><input type="radio" name="s5q10" value="c"> C. <code>git revert &lt;hash&gt;</code> 再 push</label></li>
+          <li><label><input type="radio" name="s5q10" value="d"> D. 直接在 GitHub Pages 設定裡選舊版本</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s5q10','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s5q10"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       STAGE 6 · Git 指令速查
+  ══════════════════════════════════════════ -->
+  <hr class="stage-divider">
+  <div class="stage-header stage-s6">
+    <span class="s-badge">第六階段</span>
+    <h2>Git 指令速查</h2>
+  </div>
+
+  <!-- S6-1 設定與初始化 -->
+  <section class="section" id="s6-config">
+    <div class="section-header">
+      <div class="step-num sn-6">1</div>
+      <h2>設定與初始化：git config、git init</h2>
+    </div>
+    <h3>git config — 設定使用者資訊</h3>
+    <p>在開始使用 Git 之前，需先設定名稱與 Email，這些資訊會出現在每一個 commit 記錄中。</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git config --global user.name "你的名字"</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git config --global user.email "email@example.com"</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git config --global core.editor "code --wait"</span>  <span class="term-out"># 設定編輯器為 VS Code</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git config --list</span>                                <span class="term-out"># 列出所有生效設定</span></code></pre></div>
+    </div>
+    <table class="config-table">
+      <tr><th>參數</th><th>說明</th></tr>
+      <tr><td><code>--global</code></td><td>套用到目前使用者的所有 repo（最常用）</td></tr>
+      <tr><td><code>--local</code></td><td>只套用到目前 repo（預設，優先權最高）</td></tr>
+      <tr><td><code>--system</code></td><td>套用到系統所有使用者</td></tr>
+      <tr><td><code>--list</code></td><td>列出所有生效的設定值</td></tr>
+    </table>
+    <h3>git init — 建立新 Repo</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git init</span>                   <span class="term-out"># 在目前目錄初始化</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git init my-project</span>        <span class="term-out"># 建立新資料夾並初始化</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git init --bare server.git</span> <span class="term-out"># 建立裸 repo（用於伺服器）</span></code></pre></div>
+    </div>
+    <div class="callout tip"><span class="callout-icon">💡</span><div>設定優先順序：<code>--local</code> &gt; <code>--global</code> &gt; <code>--system</code>。可為不同專案設定不同 Email，例如工作專案用公司帳號，個人專案用私人帳號。</div></div>
+  </section>
+
+  <!-- S6-2 日常操作 -->
+  <section class="section" id="s6-daily">
+    <div class="section-header">
+      <div class="step-num sn-6">2</div>
+      <h2>日常操作：status、add、commit</h2>
+    </div>
+    <h3>git status — 查看目前狀態</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git status</span>      <span class="term-out"># 詳細狀態</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git status -s</span>   <span class="term-out"># 簡短格式：M=修改, ??=未追蹤</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git status -u</span>   <span class="term-out"># 顯示所有未追蹤的檔案</span></code></pre></div>
+    </div>
+    <h3>git add — 加入暫存區</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git add README.md</span>  <span class="term-out"># 加入特定檔案</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git add src/</span>        <span class="term-out"># 加入整個目錄</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git add .</span>           <span class="term-out"># 加入所有變更</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git add -p</span>          <span class="term-out"># 互動式選取部分修改（patch）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git add -u</span>          <span class="term-out"># 只加入已追蹤的修改，略過新增檔案</span></code></pre></div>
+    </div>
+    <table class="config-table">
+      <tr><th>參數</th><th>說明</th></tr>
+      <tr><td><code>-p</code> / <code>--patch</code></td><td>逐段（hunk）選取要暫存的內容，同一個檔案可以只加部分修改</td></tr>
+      <tr><td><code>-u</code> / <code>--update</code></td><td>更新所有已追蹤的檔案，略過新增的未追蹤檔案</td></tr>
+      <tr><td><code>-A</code> / <code>--all</code></td><td>包含新增、修改、刪除，等同 <code>git add .</code></td></tr>
+    </table>
+    <h3>git commit — 提交</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git commit -m "feat: 新增登入功能"</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git commit -am "fix: 修正 null 錯誤"</span>   <span class="term-out"># add + commit（只對已追蹤檔案）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git commit --amend</span>                      <span class="term-out"># 修改最後一個 commit</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git commit --amend --no-edit</span>            <span class="term-out"># 修改內容但保留原訊息</span></code></pre></div>
+    </div>
+    <div class="callout warn"><span class="callout-icon">⚠️</span><div><code>--amend</code> 會改寫歷史，若已 push 到遠端請避免使用，否則需要 force push，會影響其他協作者。</div></div>
+  </section>
+
+  <!-- S6-3 分支管理 -->
+  <section class="section" id="s6-branch">
+    <div class="section-header">
+      <div class="step-num sn-6">3</div>
+      <h2>分支管理：branch、switch、merge、rebase</h2>
+    </div>
+    <h3>git branch — 管理分支</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git branch</span>                    <span class="term-out"># 列出本地分支（* 標示目前）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git branch -a</span>                 <span class="term-out"># 列出本地與遠端分支</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git branch feature/login</span>     <span class="term-out"># 建立新分支（不切換）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git branch -d feature/login</span>  <span class="term-out"># 刪除分支（需已合併）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git branch -D feature/login</span>  <span class="term-out"># 強制刪除（未合併也可）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git branch -m old new</span>        <span class="term-out"># 重新命名分支</span></code></pre></div>
+    </div>
+    <h3>git switch — 切換分支（Git 2.23+ 新語法）</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git switch main</span>              <span class="term-out"># 切換到 main</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git switch -c feature/login</span>  <span class="term-out"># 建立並切換（舊語法：checkout -b）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git switch -</span>                 <span class="term-out"># 切回上一個分支</span></code></pre></div>
+    </div>
+    <h3>git merge — 合併分支</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git merge feature/login</span>           <span class="term-out"># 合併到目前分支</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git merge --no-ff feature/login</span>   <span class="term-out"># 強制建立 merge commit</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git merge --squash feature/login</span>  <span class="term-out"># 壓縮成一個 commit</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git merge --abort</span>                 <span class="term-out"># 有衝突時放棄合併</span></code></pre></div>
+    </div>
+    <table class="config-table">
+      <tr><th>merge 參數</th><th>說明</th></tr>
+      <tr><td><code>--no-ff</code></td><td>保留分支歷史，即使可以 fast-forward 也建立 merge commit</td></tr>
+      <tr><td><code>--squash</code></td><td>把分支所有 commit 壓縮成一個，需手動再 commit</td></tr>
+      <tr><td><code>--abort</code></td><td>遇到衝突時取消整個合併</td></tr>
+    </table>
+    <h3>git rebase — 變基</h3>
+    <p>將目前分支的 commit「搬移」到另一個基礎點，讓歷史更線性。</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git rebase main</span>        <span class="term-out"># 把目前分支接到 main 最新點</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git rebase -i HEAD~3</span>   <span class="term-out"># 互動式整理最近 3 個 commit</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git rebase --abort</span>     <span class="term-out"># 中止</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git rebase --continue</span>  <span class="term-out"># 解完衝突後繼續</span></code></pre></div>
+    </div>
+    <table class="config-table">
+      <tr><th>互動模式（-i）指令</th><th>說明</th></tr>
+      <tr><td><code>pick</code></td><td>保留此 commit</td></tr>
+      <tr><td><code>reword</code></td><td>修改 commit 訊息</td></tr>
+      <tr><td><code>squash</code></td><td>與上一個 commit 合併</td></tr>
+      <tr><td><code>drop</code></td><td>刪除此 commit</td></tr>
+    </table>
+    <div class="callout danger"><span class="callout-icon">🚨</span><div>rebase 會改寫 commit 歷史。若分支已推送到遠端並有其他人使用，請勿對其執行 rebase，否則會造成協作者的歷史衝突。</div></div>
+  </section>
+
+  <!-- S6-4 遠端操作 -->
+  <section class="section" id="s6-remote">
+    <div class="section-header">
+      <div class="step-num sn-6">4</div>
+      <h2>遠端操作：remote、fetch、pull、push</h2>
+    </div>
+    <h3>git remote — 管理遠端連結</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git remote -v</span>                              <span class="term-out"># 列出所有遠端與 URL</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git remote add origin https://github.com/…</span>  <span class="term-out"># 新增遠端</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git remote remove origin</span>                    <span class="term-out"># 移除遠端</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git remote rename origin upstream</span>           <span class="term-out"># 重新命名</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git remote set-url origin https://…</span>         <span class="term-out"># 更改 URL</span></code></pre></div>
+    </div>
+    <h3>git fetch — 抓取但不合併</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git fetch</span>          <span class="term-out"># 抓取預設遠端（origin）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git fetch --all</span>    <span class="term-out"># 抓取所有遠端</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git fetch --prune</span>  <span class="term-out"># 刪除本地已不存在於遠端的追蹤分支</span></code></pre></div>
+    </div>
+    <h3>git pull — fetch + merge</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git pull</span>               <span class="term-out"># 等同 fetch + merge</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git pull --rebase</span>      <span class="term-out"># 用 rebase 代替 merge，歷史更線性</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git pull origin main</span>  <span class="term-out"># 明確指定遠端與分支</span></code></pre></div>
+    </div>
+    <h3>git push — 推送到遠端</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git push origin main</span>               <span class="term-out"># 推送 main 分支</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push -u origin feature/login</span>   <span class="term-out"># 推送並設定追蹤（之後可直接 git push）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push --force-with-lease</span>        <span class="term-out"># 安全的強制推送</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push origin --delete old-branch</span>  <span class="term-out"># 刪除遠端分支</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push --tags</span>                    <span class="term-out"># 推送所有 tag</span></code></pre></div>
+    </div>
+    <div class="callout tip"><span class="callout-icon">💡</span><div>強制推送請用 <code>--force-with-lease</code> 而非 <code>-f</code>。前者在推送前會確認遠端沒有你未知的新 commit，避免覆蓋他人工作。</div></div>
+  </section>
+
+  <!-- S6-5 查看歷史 -->
+  <section class="section" id="s6-log">
+    <div class="section-header">
+      <div class="step-num sn-6">5</div>
+      <h2>查看歷史：log、diff、show、blame</h2>
+    </div>
+    <h3>git log — 瀏覽 commit 記錄</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git log --oneline</span>               <span class="term-out"># 每個 commit 一行</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git log --oneline --graph --all</span>  <span class="term-out"># 所有分支的圖形化歷史</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git log --author="姓名"</span>         <span class="term-out"># 篩選作者</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git log --since="2 weeks ago"</span>   <span class="term-out"># 篩選時間</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git log -p</span>                      <span class="term-out"># 顯示每個 commit 的 diff</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git log -- path/to/file</span>         <span class="term-out"># 只看某個檔案的歷史</span></code></pre></div>
+    </div>
+    <h3>git diff — 比較差異</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git diff</span>                  <span class="term-out"># 工作目錄 vs 暫存區</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git diff --staged</span>         <span class="term-out"># 暫存區 vs 最後一個 commit</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git diff main feature/x</span>  <span class="term-out"># 兩個分支之間的差異</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git diff HEAD~2</span>           <span class="term-out"># 與兩個 commit 前比較</span></code></pre></div>
+    </div>
+    <h3>git show 與 git blame</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git show abc1234</span>              <span class="term-out"># 查看特定 commit 的詳細內容</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git show HEAD~1</span>               <span class="term-out"># 查看上一個 commit</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git blame README.md</span>           <span class="term-out"># 查看每行是誰、何時修改</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git blame -L 10,20 README.md</span>  <span class="term-out"># 只看第 10~20 行</span></code></pre></div>
+    </div>
+    <div class="callout info"><span class="callout-icon">ℹ️</span><div>查詢完整說明可直接在終端機執行 <code>git help &lt;指令名稱&gt;</code>（例如 <code>git help log</code>），或加 <code>--help</code> 旗標（例如 <code>git log --help</code>）。</div></div>
+  </section>
+
+  <!-- S6-6 復原操作 -->
+  <section class="section" id="s6-undo">
+    <div class="section-header">
+      <div class="step-num sn-6">6</div>
+      <h2>復原操作：restore、reset、revert</h2>
+    </div>
+    <h3>git restore — 還原工作目錄或暫存區（Git 2.23+）</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git restore README.md</span>           <span class="term-out"># 丟棄工作目錄的修改</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git restore --staged README.md</span>  <span class="term-out"># 從暫存區移除（unstage）</span></code></pre></div>
+    </div>
+    <h3>git reset — 移動 HEAD</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git reset HEAD~1</span>         <span class="term-out"># 撤銷 commit，修改回工作目錄（--mixed 預設）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git reset --soft HEAD~1</span>  <span class="term-out"># 撤銷 commit，修改保留在暫存區</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git reset --hard HEAD~1</span>  <span class="term-out"># 撤銷 commit，丟棄所有修改（危險！）</span></code></pre></div>
+    </div>
+    <table class="config-table">
+      <tr><th>模式</th><th>HEAD</th><th>暫存區</th><th>工作目錄</th></tr>
+      <tr><td><code>--soft</code></td><td>移動</td><td>不變</td><td>不變</td></tr>
+      <tr><td><code>--mixed</code>（預設）</td><td>移動</td><td>清除</td><td>不變</td></tr>
+      <tr><td><code>--hard</code></td><td>移動</td><td>清除</td><td>清除</td></tr>
+    </table>
+    <h3>git revert — 安全撤銷（保留歷史）</h3>
+    <p>revert 不改寫歷史，而是建立一個「反向 commit」來抵消舊的改動，適合已推送到遠端的情況。</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git revert HEAD</span>           <span class="term-out"># 撤銷最後一個 commit</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git revert abc1234</span>        <span class="term-out"># 撤銷特定 commit</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git revert HEAD~3..HEAD</span>   <span class="term-out"># 撤銷最近 3 個 commit</span></code></pre></div>
+    </div>
+    <div class="callout warn"><span class="callout-icon">⚠️</span><div><strong>reset 還是 revert？</strong> 未推送到遠端 → 可用 <code>reset</code>（<code>--hard</code> 請謹慎）。已推送到遠端 → 使用 <code>revert</code>，不改寫共享歷史，不影響其他協作者。</div></div>
+  </section>
+
+  <!-- S6-7 其他實用指令 -->
+  <section class="section" id="s6-misc">
+    <div class="section-header">
+      <div class="step-num sn-6">7</div>
+      <h2>其他實用指令：stash、tag、cherry-pick、bisect</h2>
+    </div>
+    <h3>git stash — 暫存未完成的修改</h3>
+    <p>需要緊急切換分支處理 bug，又不想 commit 當前未完成工作時使用。</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git stash</span>                    <span class="term-out"># 儲存工作目錄與暫存區</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git stash push -m "WIP 登入"</span>  <span class="term-out"># 附說明</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git stash list</span>               <span class="term-out"># 列出所有 stash</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git stash pop</span>                <span class="term-out"># 取出最新 stash 並刪除</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git stash apply stash@{1}</span>    <span class="term-out"># 取出特定 stash（保留 stash）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git stash drop stash@{0}</span>     <span class="term-out"># 刪除特定 stash</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git stash clear</span>              <span class="term-out"># 清除所有 stash</span></code></pre></div>
+    </div>
+    <h3>git tag — 標記版本</h3>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git tag v1.0.0</span>                   <span class="term-out"># 輕量 tag</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git tag -a v1.0.0 -m "正式版"</span>    <span class="term-out"># 附注 tag（推薦，含作者與時間）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git tag</span>                           <span class="term-out"># 列出所有 tag</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push origin v1.0.0</span>           <span class="term-out"># 推送特定 tag</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git push --tags</span>                   <span class="term-out"># 推送所有 tag</span></code></pre></div>
+    </div>
+    <h3>git cherry-pick — 複製特定 commit</h3>
+    <p>把某個分支上的特定 commit 複製到目前分支，不需要合併整個分支。</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git cherry-pick abc1234</span>           <span class="term-out"># 複製一個 commit</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git cherry-pick abc1234..def5678</span>  <span class="term-out"># 複製一段範圍</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git cherry-pick -n abc1234</span>        <span class="term-out"># 複製但不自動 commit</span></code></pre></div>
+    </div>
+    <h3>git bisect — 二分搜尋找 bug</h3>
+    <p>不知道哪個 commit 引入了 bug 時，讓 Git 自動用二分法縮小範圍。</p>
+    <div class="terminal">
+      <div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">bash</span></div>
+      <div class="term-body"><pre><code><span class="term-prompt">$</span> <span class="term-cmd">git bisect start</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git bisect bad</span>            <span class="term-out"># 目前版本有 bug</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git bisect good v1.0.0</span>   <span class="term-out"># 這個版本正常</span>
+<span class="term-out"># Git 自動切到中間 commit，測試後繼續標記：</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git bisect good</span>   <span class="term-out"># 或 git bisect bad</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git bisect reset</span>          <span class="term-out"># 找到後結束，回到原本 HEAD</span></code></pre></div>
+    </div>
+    <div class="callout info"><span class="callout-icon">ℹ️</span><div>官方文件與更多資源：<br>• Git 完整文件：<a href="https://git-scm.com/docs" target="_blank">git-scm.com/docs</a><br>• Pro Git 書籍（繁中）：<a href="https://git-scm.com/book/zh-tw/v2" target="_blank">git-scm.com/book/zh-tw/v2</a><br>• GitHub 指令速查表：<a href="https://training.github.com/downloads/zh_TW/github-git-cheat-sheet/" target="_blank">training.github.com</a></div></div>
+  </section>
+
+  <!-- S6-FAQ -->
+  <section class="section" id="s6-faq">
+    <div class="section-header">
+      <div class="step-num sn-6" style="background:#64748b;">?</div>
+      <h2>第六階段常見問題</h2>
+    </div>
+    <details>
+      <summary>git fetch 和 git pull 有什麼不同？</summary>
+      <div class="faq-body"><code>git fetch</code> 只把遠端的最新資料抓回本機，不會改動工作目錄和分支。<code>git pull</code> 則是 fetch + merge（或 rebase），會直接把遠端變更合併進來。建議先 <code>fetch</code> 後用 <code>git diff origin/main</code> 確認差異，再決定是否 merge。</div>
+    </details>
+    <details>
+      <summary>什麼時候用 merge，什麼時候用 rebase？</summary>
+      <div class="faq-body"><strong>merge</strong> 保留所有分支歷史，適合把功能分支合入 main，讓大家都能看到「這個功能什麼時候被合入」。<strong>rebase</strong> 整理歷史讓它更線性，適合在個人功能分支上「把 main 的最新更新接進來」，讓 PR 更容易審查。黃金法則：已推送到共享遠端的分支，不要對其 rebase。</div>
+    </details>
+    <details>
+      <summary>不小心 git reset --hard，修改都不見了怎麼辦？</summary>
+      <div class="faq-body">先別慌！Git 的 reflog 記錄了所有 HEAD 的移動歷史，只要沒超過約 90 天，通常都能救回：執行 <code>git reflog</code> 找到 reset 前的 commit hash，再執行 <code>git reset --hard &lt;hash&gt;</code> 即可還原。這是 Git 最強大的安全網之一。</div>
+    </details>
+    <details>
+      <summary>git stash pop 和 git stash apply 差在哪？</summary>
+      <div class="faq-body"><code>git stash pop</code> 取出最新的 stash 並從清單中刪除它。<code>git stash apply</code> 取出內容但保留 stash，可以重複套用到不同分支。通常用 <code>pop</code>；如果需要把相同修改套用到多個地方才用 <code>apply</code>。</div>
+    </details>
+  </section>
+
+  <!-- S6-QUIZ -->
+  <section class="section" id="s6-quiz">
+    <div class="section-header">
+      <div class="step-num sn-6" style="font-size:1.1rem;">📝</div>
+      <h2>練習題</h2>
+    </div>
+    <div class="quiz-reset-row"><button class="reset-btn" onclick="resetQuiz('s6')">重設本階段答題</button></div>
+    <div class="quiz-score-bar" id="score-bar-s6">
+      <span class="quiz-score-label">第六階段得分</span>
+      <div class="quiz-score-track"><div class="quiz-score-fill" id="score-fill-s6"></div></div>
+      <span class="quiz-score-num" id="score-num-s6">尚未作答</span>
+    </div>
+    <div class="quiz s6-quiz" id="quiz-container-s6">
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">1</span><code>git config --global user.email "a@b.com"</code> 中 <code>--global</code> 的作用是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q1" value="a"> A. 只套用到目前 repo</label></li>
+          <li><label><input type="radio" name="s6q1" value="b"> B. 套用到目前使用者的所有 repo</label></li>
+          <li><label><input type="radio" name="s6q1" value="c"> C. 套用到系統所有使用者</label></li>
+          <li><label><input type="radio" name="s6q1" value="d"> D. 上傳設定到 GitHub 帳號</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q1','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q1"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">2</span>想只暫存某個檔案的「部分修改」（非整個檔案），應使用哪個指令？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q2" value="a"> A. <code>git add .</code></label></li>
+          <li><label><input type="radio" name="s6q2" value="b"> B. <code>git add -p</code></label></li>
+          <li><label><input type="radio" name="s6q2" value="c"> C. <code>git add -u</code></label></li>
+          <li><label><input type="radio" name="s6q2" value="d"> D. <code>git add -A</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q2','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q2"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">3</span><code>git commit --amend</code> 的主要用途是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q3" value="a"> A. 建立新的空白 commit</label></li>
+          <li><label><input type="radio" name="s6q3" value="b"> B. 修改最後一個 commit 的內容或訊息</label></li>
+          <li><label><input type="radio" name="s6q3" value="c"> C. 合併最近兩個 commit</label></li>
+          <li><label><input type="radio" name="s6q3" value="d"> D. 刪除最後一個 commit</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q3','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q3"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">4</span><code>git switch -c feature/login</code> 等同於哪個舊語法？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q4" value="a"> A. <code>git checkout feature/login</code></label></li>
+          <li><label><input type="radio" name="s6q4" value="b"> B. <code>git branch feature/login</code></label></li>
+          <li><label><input type="radio" name="s6q4" value="c"> C. <code>git checkout -b feature/login</code></label></li>
+          <li><label><input type="radio" name="s6q4" value="d"> D. <code>git branch -m feature/login</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q4','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q4"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">5</span><code>git merge --no-ff</code> 和一般 merge 的差異是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q5" value="a"> A. 速度比一般 merge 更快</label></li>
+          <li><label><input type="radio" name="s6q5" value="b"> B. 即使可以 fast-forward 也強制建立 merge commit</label></li>
+          <li><label><input type="radio" name="s6q5" value="c"> C. 不會產生任何衝突</label></li>
+          <li><label><input type="radio" name="s6q5" value="d"> D. 只合併特定的檔案</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q5','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q5"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">6</span>需要強制推送時，比 <code>git push -f</code> 更安全的做法是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q6" value="a"> A. <code>git push --all</code></label></li>
+          <li><label><input type="radio" name="s6q6" value="b"> B. <code>git push --tags</code></label></li>
+          <li><label><input type="radio" name="s6q6" value="c"> C. <code>git push --force-with-lease</code></label></li>
+          <li><label><input type="radio" name="s6q6" value="d"> D. <code>git push --prune</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q6','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q6"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">7</span><code>git reset --hard HEAD~1</code> 執行後，結果是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q7" value="a"> A. 撤銷 commit，修改保留在暫存區</label></li>
+          <li><label><input type="radio" name="s6q7" value="b"> B. 撤銷 commit，修改保留在工作目錄</label></li>
+          <li><label><input type="radio" name="s6q7" value="c"> C. 撤銷 commit，並丟棄所有修改</label></li>
+          <li><label><input type="radio" name="s6q7" value="d"> D. 只修改 commit 訊息，不影響檔案</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q7','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q7"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">8</span>已推送到遠端的 commit 需要撤銷，哪個指令最適合？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q8" value="a"> A. <code>git reset --hard</code></label></li>
+          <li><label><input type="radio" name="s6q8" value="b"> B. <code>git revert &lt;hash&gt;</code></label></li>
+          <li><label><input type="radio" name="s6q8" value="c"> C. <code>git branch -D</code></label></li>
+          <li><label><input type="radio" name="s6q8" value="d"> D. <code>git stash drop</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q8','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q8"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">9</span><code>git stash pop</code> 和 <code>git stash apply</code> 的差別是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q9" value="a"> A. pop 比 apply 快</label></li>
+          <li><label><input type="radio" name="s6q9" value="b"> B. pop 取出後刪除 stash；apply 取出但保留 stash</label></li>
+          <li><label><input type="radio" name="s6q9" value="c"> C. apply 只能在同一分支使用</label></li>
+          <li><label><input type="radio" name="s6q9" value="d"> D. 兩者完全相同</label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q9','b',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q9"></div>
+      </div>
+
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="q-num">10</span>不知道哪個 commit 引入了 bug，最有效率的工具是？</div>
+        <ul class="quiz-options">
+          <li><label><input type="radio" name="s6q10" value="a"> A. <code>git log</code></label></li>
+          <li><label><input type="radio" name="s6q10" value="b"> B. <code>git blame</code></label></li>
+          <li><label><input type="radio" name="s6q10" value="c"> C. <code>git bisect</code></label></li>
+          <li><label><input type="radio" name="s6q10" value="d"> D. <code>git diff</code></label></li>
+        </ul>
+        <div class="quiz-check"><button class="check-btn" onclick="checkQuiz('s6q10','c',this)">確認答案</button></div>
+        <div class="quiz-result" id="res-s6q10"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>GitHub 使用教學 · 完整六階段 · 繁體中文 · 2026</p>
+    <p style="margin-top: 6px;">從入門到實作，一頁掌握所有核心技能。</p>
+  </footer>
+
+</div><!-- /.main-content -->
+</div><!-- /.layout -->
+
+<script>
+  /* ================================================================
+     Quiz config: maps stage prefix -> list of {name, correct, section}
+     section = the nav section ID to mark as 'reinforce' if wrong
+  ================================================================ */
+  const QUIZ_CONFIG = {
+    s1: [
+      { name:'q1',    correct:'b', section:'s1-what-is' },
+      { name:'q2',    correct:'b', section:'s1-signup' },
+      { name:'q3',    correct:'b', section:'s1-repo' },
+      { name:'q4',    correct:'c', section:'s1-terms' },
+      { name:'q5',    correct:'b', section:'s1-install' },
+      { name:'q6',    correct:'c', section:'s1-config' },
+      { name:'q7',    correct:'b', section:'s1-repo' },
+      { name:'q8',    correct:'b', section:'s1-repo' },
+      { name:'q9',    correct:'b', section:'s1-terms' },
+      { name:'q10',   correct:'c', section:'s1-signup' },
+    ],
+    s2: [
+      { name:'s2q1',  correct:'b', section:'s2-clone' },
+      { name:'s2q2',  correct:'c', section:'s2-files' },
+      { name:'s2q3',  correct:'c', section:'s2-workflow' },
+      { name:'s2q4',  correct:'b', section:'s2-history' },
+      { name:'s2q5',  correct:'b', section:'s2-web-edit' },
+      { name:'s2q6',  correct:'c', section:'s2-workflow' },
+      { name:'s2q7',  correct:'b', section:'s2-upload' },
+      { name:'s2q8',  correct:'a', section:'s2-history' },
+      { name:'s2q9',  correct:'b', section:'s2-workflow' },
+      { name:'s2q10', correct:'b', section:'s2-web-edit' },
+    ],
+    s3: [
+      { name:'s3q1',  correct:'b', section:'s3-branch-why' },
+      { name:'s3q2',  correct:'c', section:'s3-branch-op' },
+      { name:'s3q3',  correct:'b', section:'s3-conflict' },
+      { name:'s3q4',  correct:'b', section:'s3-fork' },
+      { name:'s3q5',  correct:'b', section:'s3-pr' },
+      { name:'s3q6',  correct:'b', section:'s3-issue' },
+      { name:'s3q7',  correct:'c', section:'s3-branch-op' },
+      { name:'s3q8',  correct:'b', section:'s3-issue' },
+      { name:'s3q9',  correct:'b', section:'s3-branch-why' },
+      { name:'s3q10', correct:'b', section:'s3-conflict' },
+    ],
+    s4: [
+      { name:'s4q1',  correct:'b', section:'s4-revert' },
+      { name:'s4q2',  correct:'b', section:'s4-stash' },
+      { name:'s4q3',  correct:'c', section:'s4-gitignore' },
+      { name:'s4q4',  correct:'b', section:'s4-tag' },
+      { name:'s4q5',  correct:'b', section:'s4-actions' },
+      { name:'s4q6',  correct:'c', section:'s4-ssh' },
+      { name:'s4q7',  correct:'b', section:'s4-tag' },
+      { name:'s4q8',  correct:'b', section:'s4-revert' },
+      { name:'s4q9',  correct:'b', section:'s4-collab' },
+      { name:'s4q10', correct:'c', section:'s4-actions' },
+    ],
+    s5: [
+      { name:'s5q1',  correct:'b', section:'s5-pages' },
+      { name:'s5q2',  correct:'a', section:'s5-pages' },
+      { name:'s5q3',  correct:'b', section:'s5-branch' },
+      { name:'s5q4',  correct:'c', section:'s5-commit' },
+      { name:'s5q5',  correct:'b', section:'s5-pages' },
+      { name:'s5q6',  correct:'b', section:'s5-advanced' },
+      { name:'s5q7',  correct:'b', section:'s5-branch' },
+      { name:'s5q8',  correct:'b', section:'s5-commit' },
+      { name:'s5q9',  correct:'b', section:'s5-pages' },
+      { name:'s5q10', correct:'c', section:'s5-advanced' },
+    ],
+    s6: [
+      { name:'s6q1',  correct:'b', section:'s6-config' },
+      { name:'s6q2',  correct:'b', section:'s6-daily' },
+      { name:'s6q3',  correct:'b', section:'s6-daily' },
+      { name:'s6q4',  correct:'c', section:'s6-branch' },
+      { name:'s6q5',  correct:'b', section:'s6-branch' },
+      { name:'s6q6',  correct:'c', section:'s6-remote' },
+      { name:'s6q7',  correct:'c', section:'s6-undo' },
+      { name:'s6q8',  correct:'b', section:'s6-undo' },
+      { name:'s6q9',  correct:'b', section:'s6-misc' },
+      { name:'s6q10', correct:'c', section:'s6-misc' },
+    ],
+  };
+
+  /* track answered state per question */
+  const quizState = {}; // { [name]: 'correct' | 'wrong' }
+
+  /* ── Side Nav Toggle ── */
+  const sidenav = document.getElementById('sidenav');
+  const toggleBtn = document.getElementById('sidenavToggle');
+  const mainContent = document.querySelector('.main-content');
+  let collapsed = false;
+
+  document.querySelector('.layout').appendChild(sidenav);
+
+  toggleBtn.addEventListener('click', () => {
+    collapsed = !collapsed;
+    sidenav.classList.toggle('collapsed', collapsed);
+    toggleBtn.textContent = collapsed ? '▶' : '◀';
+  });
+
+  /* ── Stage accordion ── */
+  function toggleStage(btn) {
+    const items = btn.nextElementSibling;
+    const isOpen = items.classList.contains('open');
+    items.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+  }
+
+  /* ── Active nav item on scroll ── */
+  const allNavItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        allNavItems.forEach(a => {
+          const isActive = a.getAttribute('href') === '#' + id;
+          if (isActive) a.classList.add('active');
+          else a.classList.remove('active');
+        });
+        const activeLink = document.querySelector(`.nav-item[href="#${id}"]`);
+        if (activeLink) {
+          const navItems = activeLink.closest('.nav-items');
+          if (navItems && !navItems.classList.contains('open')) {
+            navItems.classList.add('open');
+            navItems.previousElementSibling.classList.add('open');
+          }
+          // Scroll sidenav so the active link stays visible
+          activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+
+  /* ── Tab switcher ── */
+  function switchTab(group, id, event) {
+    const panels = document.querySelectorAll(`[id^="${group}-"]`);
+    const btns = document.querySelectorAll(`#tabs-${group} .tab-btn`);
+    panels.forEach(p => p.classList.remove('active'));
+    btns.forEach(b => b.classList.remove('active'));
+    document.getElementById(`${group}-${id}`).classList.add('active');
+    if (event) event.target.classList.add('active');
+  }
+
+  /* ── Quiz checker ── */
+  function checkQuiz(name, correct, btn) {
+    const selected = document.querySelector(`input[name="${name}"]:checked`);
+    const resultEl = document.getElementById('res-' + name);
+    if (!selected) {
+      resultEl.style.display = 'block';
+      resultEl.className = 'quiz-result wrong';
+      resultEl.textContent = '⚠️ 請先選擇一個答案！';
+      return;
+    }
+    const isCorrect = selected.value === correct;
+    quizState[name] = isCorrect ? 'correct' : 'wrong';
+
+    resultEl.style.display = 'block';
+    const quizItem = btn.closest('.quiz-item');
+    if (isCorrect) {
+      resultEl.className = 'quiz-result correct';
+      resultEl.textContent = '✅ 正確！';
+      quizItem.classList.add('answered-correct');
+    } else {
+      const correctLabel = document.querySelector(
+        `input[name="${name}"][value="${correct}"]`
+      ).closest('label').textContent.trim();
+      resultEl.className = 'quiz-result wrong';
+      resultEl.textContent = `❌ 答錯了。正確答案是：${correctLabel}`;
+      quizItem.classList.add('answered-wrong');
+    }
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+
+    /* disable all radio buttons in this item */
+    quizItem.querySelectorAll('input[type=radio]').forEach(r => r.disabled = true);
+
+    /* find which stage this question belongs to and update score */
+    for (const [stage, qs] of Object.entries(QUIZ_CONFIG)) {
+      if (qs.some(q => q.name === name)) {
+        updateStageScore(stage);
+        break;
+      }
+    }
+  }
+
+  /* ── Update score bar + nav badge ── */
+  function updateStageScore(stage) {
+    const qs = QUIZ_CONFIG[stage];
+    const answered = qs.filter(q => quizState[q.name] !== undefined);
+    const correct  = qs.filter(q => quizState[q.name] === 'correct');
+    const total    = qs.length;
+
+    /* score bar */
+    const fill = document.getElementById('score-fill-' + stage);
+    const num  = document.getElementById('score-num-'  + stage);
+    /* bar width = correct / total; colour = correct / answered */
+    const barPct  = Math.round(correct.length / total * 100);
+    const ratePct = answered.length === 0 ? 0 : Math.round(correct.length / answered.length * 100);
+    fill.style.width = barPct + '%';
+    fill.className = 'quiz-score-fill' + (correct.length === total ? ' perfect' : ratePct < 50 ? ' poor' : '');
+    num.textContent = answered.length === 0
+      ? '尚未作答'
+      : `${correct.length} / ${total} 題`;
+
+    /* nav score badge — denominator is always total questions */
+    const navScore = document.getElementById('nav-score-' + stage);
+    if (answered.length > 0) {
+      navScore.textContent = `${correct.length}/${total}`;
+      navScore.classList.add('show');
+      /* colour based on correct vs total */
+      const totalPct = Math.round(correct.length / total * 100);
+      navScore.className = 'nav-score show ' +
+        (correct.length === total ? 'perfect' : totalPct >= 60 ? 'partial' : 'poor');
+    }
+
+    /* only apply reinforce / perfect when ALL 10 answered */
+    if (answered.length < total) return;
+
+    /* clear previous reinforce marks for this stage */
+    document.querySelectorAll(`.nav-item[data-section]`).forEach(a => {
+      const sec = a.getAttribute('data-section');
+      if (sec && sec.startsWith(stage.replace(/^s(\d)$/, 's$1-'))) {
+        // match by prefix e.g. 's1-'
+      }
+    });
+    /* rebuild reinforce marks */
+    const wrongSections = new Set(
+      qs.filter(q => quizState[q.name] === 'wrong').map(q => q.section)
+    );
+
+    document.querySelectorAll('.nav-item[data-section]').forEach(a => {
+      const sec = a.getAttribute('data-section');
+      if (!sec) return;
+      /* determine if this link belongs to current stage */
+      const stageNum = stage.replace('s','');
+      const inThisStage = sec.startsWith('s' + stageNum + '-');
+      if (!inThisStage) return;
+      if (wrongSections.has(sec)) {
+        a.classList.add('reinforce');
+        a.classList.remove('active'); /* let reinforce style win */
+      } else {
+        a.classList.remove('reinforce');
+      }
+    });
+
+    /* perfect badge on stage btn */
+    const perfectBadge = document.getElementById('badge-perfect-' + stage);
+    if (correct.length === total) {
+      perfectBadge.classList.add('show');
+    } else {
+      perfectBadge.classList.remove('show');
+    }
+  }
+
+  /* ── Reset quiz ── */
+  function resetQuiz(stage) {
+    const qs = QUIZ_CONFIG[stage];
+    qs.forEach(q => { delete quizState[q.name]; });
+
+    /* reset each quiz item */
+    const container = document.getElementById('quiz-container-' + stage);
+    container.querySelectorAll('.quiz-item').forEach(item => {
+      item.classList.remove('answered-correct', 'answered-wrong');
+      item.querySelectorAll('input[type=radio]').forEach(r => {
+        r.checked = false;
+        r.disabled = false;
+      });
+      item.querySelectorAll('.quiz-result').forEach(r => {
+        r.style.display = 'none';
+        r.textContent = '';
+      });
+      item.querySelectorAll('.check-btn').forEach(b => {
+        b.disabled = false;
+        b.style.opacity = '1';
+      });
+    });
+
+    /* reset score bar */
+    const fill = document.getElementById('score-fill-' + stage);
+    const num  = document.getElementById('score-num-'  + stage);
+    fill.style.width = '0%';
+    fill.className = 'quiz-score-fill';
+    num.textContent = '尚未作答';
+
+    /* reset nav score badge */
+    const navScore = document.getElementById('nav-score-' + stage);
+    navScore.className = 'nav-score';
+    navScore.textContent = '';
+
+    /* remove reinforce marks */
+    document.querySelectorAll('.nav-item[data-section]').forEach(a => {
+      const sec = a.getAttribute('data-section');
+      if (sec && sec.startsWith('s' + stage.replace('s','') + '-')) {
+        a.classList.remove('reinforce');
+      }
+    });
+
+    /* remove perfect badge */
+    const perfectBadge = document.getElementById('badge-perfect-' + stage);
+    if (perfectBadge) perfectBadge.classList.remove('show');
+  }
+</script>
+</body>
+</html>
