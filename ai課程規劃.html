@@ -337,7 +337,7 @@
     <div class="tnav-card mod2">
       <span class="num">4h</span>
       <div class="label">模組二</div>
-      <div class="sub">VSCode × Codex 前端開發</div>
+      <div class="sub">提案資料彙整 × 分析報告</div>
     </div>
     <div class="tnav-card mod3">
       <span class="num">8h</span>
@@ -501,8 +501,8 @@
   <div class="module-header m2" style="margin-top:48px;">
     <div class="mnum">02</div>
     <div class="minfo">
-      <h2>VSCode × Codex 前端開發</h2>
-      <p>對話策略 → 漸進式實作 → 資料清理與報告撰寫｜共 4 小時</p>
+      <h2>VSCode × Codex：提案資料彙整與分析報告撰寫</h2>
+      <p>介面操作 → 單案整理 → 多案比較 → Skill → 分析報告 → 成果網頁｜共 4 小時</p>
     </div>
   </div>
 
@@ -510,32 +510,46 @@
   <details class="session-card m2">
     <summary>
       <span class="session-num">第 4 節</span>
-      <span class="session-title">與模型對話的方式</span>
-      <span class="session-dur">1 小時</span>
+      <span class="session-title">VSCode 與 Codex 基礎操作</span>
+      <span class="session-dur">45 分鐘</span>
       <span class="chevron">▶</span>
     </summary>
     <div class="session-body">
-      <h3>對話心態建立</h3>
+      <h3>工具介面認識</h3>
       <ul class="bullet">
-        <li>AI 是「可以討論的協作者」，不是搜尋引擎</li>
-        <li>不用第一次就說完整，可以漸進補充</li>
-        <li>錯了繼續說「修改剛才的…」，不需重新開始</li>
+        <li>VSCode 是什麼，和一般文件編輯器有什麼不同</li>
+        <li>檔案總管 Explorer、編輯區 Editor、搜尋 Search、終端機 Terminal 的基本認識</li>
+        <li>Codex 對話區的使用方式</li>
+        <li>如何開啟課程資料夾，指定檔案請 Codex 讀取</li>
+        <li>如何請 Codex 摘要、整理、輸出表格</li>
       </ul>
 
-      <h3>三層次對話策略</h3>
-      <div class="code-block"><span class="cm">── 層次1：直接描述 ──</span>
-<span class="str">「幫我寫一個有姓名和信箱欄位的 HTML 表單」</span>
+      <h3>入門 Prompt 範例</h3>
+      <div class="code-block"><span class="str">「請讀取目前開啟的提案文件，幫我整理成摘要表。
 
-<span class="cm">── 層次2：加上限制條件 ──</span>
-<span class="str">「幫我寫一個 HTML 表單，有姓名和信箱欄位，
- 用藍色主題，送出按鈕在右下角」</span>
+欄位包含：
+1. 提案單位
+2. 課程主題
+3. 服務對象
+4. 主要內容
+5. 預期成果
+6. 資料不足處
+7. 初步審查提醒
 
-<span class="cm">── 層次3：PSIO 完整 Prompt ──</span>
-<span class="str">「目的：建立一個課程查詢頁面。
- 步驟：先規劃 HTML 結構，再加入 CSS 樣式。
- 輸入：姓名輸入框、多行問題輸入框、送出按鈕。
- 輸出：完整可執行的單一 HTML 檔案，風格簡潔專業。」</span></div>
-      <div class="info-box teal">實作：學員用三種層次各寫一個 prompt，比較產出品質差異</div>
+請不要自行補充原文沒有的資料。
+如果資料缺漏，請標示『未提供』。」</span></div>
+      <h3>摘要表欄位設計</h3>
+      <table>
+        <tr><th>欄位</th><th>填寫原則</th></tr>
+        <tr><td>提案單位</td><td>只填原文有明確出現的單位或團隊名稱</td></tr>
+        <tr><td>課程主題</td><td>用一句話概括課程或活動主軸</td></tr>
+        <tr><td>服務對象</td><td>保留年齡、身分、地區等具體描述</td></tr>
+        <tr><td>主要內容</td><td>整理課程單元、活動流程或服務方式</td></tr>
+        <tr><td>預期成果</td><td>只列提案中明確承諾或描述的成果</td></tr>
+        <tr><td>資料不足處</td><td>標示「未提供」或「需補充」，不自行推測</td></tr>
+        <tr><td>初步審查提醒</td><td>指出需確認的風險、缺漏或追問事項</td></tr>
+      </table>
+      <div class="info-box teal">實作：開啟範例提案資料夾，請 Codex 讀取指定檔案並產出第一版摘要表</div>
     </div>
   </details>
 
@@ -543,50 +557,50 @@
   <details class="session-card m2">
     <summary>
       <span class="session-num">第 5 節</span>
-      <span class="session-title">漸進式前端實作系列</span>
-      <span class="session-dur">2 小時</span>
+      <span class="session-title">用 Codex 整理單案提案與成果資料</span>
+      <span class="session-dur">50 分鐘</span>
       <span class="chevron">▶</span>
     </summary>
     <div class="session-body">
-      <p style="font-size:14px;margin-bottom:16px;">每個範例在前一個基礎上累加，聚焦在前端本身的能力，不串接後端。</p>
+      <p style="font-size:14px;margin-bottom:16px;">從一份提案或成果報告開始，練習把非結構化文字整理成可審查、可比較的單案資料卡。</p>
       <table>
-        <tr><th>#</th><th>範例</th><th>目標</th><th>學習點</th><th>時間</th></tr>
-        <tr>
-          <td>1</td>
-          <td>靜態查詢頁面</td>
-          <td>姓名輸入 + 問題輸入 + 送出按鈕</td>
-          <td>看懂 HTML 結構，用 AI 調整樣式</td>
-          <td>20 分</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>表單驗證</td>
-          <td>空白提示、格式錯誤變紅框</td>
-          <td>「在剛才的基礎上加上…」追加功能</td>
-          <td>20 分</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>互動效果</td>
-          <td>課程類別下拉選單、勾選框篩選</td>
-          <td>用 AI 加入互動元素，不改既有結構</td>
-          <td>25 分</td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td>假資料展示</td>
-          <td>用 JS 陣列模擬課程清單，按類別顯示卡片</td>
-          <td>資料與畫面分離的概念，為後續串接做準備</td>
-          <td>25 分</td>
-        </tr>
-        <tr>
-          <td>5</td>
-          <td>UI 優化</td>
-          <td>RWD 手機版、卡片懸停效果、送出動畫</td>
-          <td>用 AI 做 UX 改善，一次描述多個需求</td>
-          <td>30 分</td>
-        </tr>
+        <tr><th>整理項目</th><th>說明</th></tr>
+        <tr><td>提案單位</td><td>提案或執行的組織、團隊、窗口</td></tr>
+        <tr><td>課程主題</td><td>課程或活動的核心方向</td></tr>
+        <tr><td>服務對象</td><td>目標學員、社群或受益族群</td></tr>
+        <tr><td>主要內容</td><td>課程安排、活動流程、執行方式</td></tr>
+        <tr><td>預期成果</td><td>提案中明確寫出的產出、改變或效益</td></tr>
+        <tr><td>資料不足處</td><td>原文未提供、說明模糊或需要追問的地方</td></tr>
       </table>
+      <h3>單案資料卡 Prompt</h3>
+      <div class="code-block"><span class="str">「請讀取這份提案或成果報告，整理成一張單案資料卡。
+
+欄位包含：
+1. 案件名稱
+2. 提案單位
+3. 課程主題
+4. 服務對象
+5. 主要內容
+6. 執行方式
+7. 預期成果
+8. 已有成果或回饋
+9. 亮點
+10. 風險或資料不足處
+11. 需要追問的問題
+
+請只根據原文整理，不要自行補充。
+如果原文沒有提供，請填寫『未提供』。」</span></div>
+
+      <h3>單案資料卡欄位設計</h3>
+      <table>
+        <tr><th>欄位</th><th>用途</th></tr>
+        <tr><td>案件名稱</td><td>方便後續多案比較與引用</td></tr>
+        <tr><td>執行方式</td><td>區分講座、工作坊、陪伴、展演或線上活動</td></tr>
+        <tr><td>已有成果或回饋</td><td>整理成果報告中的數字、引言或觀察</td></tr>
+        <tr><td>亮點</td><td>保留可放入主管摘要的具體優勢</td></tr>
+        <tr><td>需要追問的問題</td><td>轉成後續審查或補件清單</td></tr>
+      </table>
+      <div class="info-box teal">實作：讀取一份提案或成果報告，萃取重點並產出「單案資料卡」，不補寫原文沒有的內容</div>
     </div>
   </details>
 
@@ -594,43 +608,202 @@
   <details class="session-card m2">
     <summary>
       <span class="session-num">第 6 節</span>
-      <span class="session-title">清理撰寫成果報告所需的資料</span>
-      <span class="session-dur">1 小時</span>
+      <span class="session-title">多案比較與提案資料標準化</span>
+      <span class="session-dur">45 分鐘</span>
       <span class="chevron">▶</span>
     </summary>
     <div class="session-body">
-      <h3>為什麼需要資料清理？</h3>
-      <p style="font-size:14px;margin-bottom:8px;">課程結束後通常會留下雜亂的原始資料：學員問答記錄、操作截圖說明、Google Sheets 的填答結果。這些資料需要先整理，AI 才能幫你產出有品質的報告。</p>
+      <h3>從單案到多案</h3>
+      <p style="font-size:14px;margin-bottom:8px;">提案受理者常面對多份格式不同的資料。這一節練習把多份資料整理成一致欄位，方便比較、彙整與回報。</p>
 
-      <h3>第一步：整理原始資料（25 分鐘）</h3>
-      <div class="code-block"><span class="cm">Prompt 範例：資料清洗</span>
-<span class="str">「以下是學員問答記錄，格式不一致。
- 請幫我：1. 移除重複的問題  2. 統一問題的句型為疑問句
- 3. 將問題依主題分類（操作類、觀念類、其他）
- 4. 輸出為表格格式（欄位：類別、問題、出現次數）」</span></div>
-      <h4>常見原始資料類型與清理重點</h4>
+      <h3>比較欄位設計</h3>
       <table>
-        <tr><th>資料類型</th><th>常見問題</th><th>清理方向</th></tr>
-        <tr><td>問答記錄</td><td>重複、格式混亂、口語化</td><td>去重、分類、標準化語句</td></tr>
-        <tr><td>操作截圖說明</td><td>說明文字零散、缺少脈絡</td><td>統一格式：步驟編號＋說明</td></tr>
-        <tr><td>學員填答結果</td><td>空白欄位、中英混用</td><td>補全、統一語言、去除無效填答</td></tr>
+        <tr><th>比較面向</th><th>觀察重點</th></tr>
+        <tr><td>服務對象</td><td>是否重複、是否涵蓋不同族群、是否與計畫目標一致</td></tr>
+        <tr><td>課程主題</td><td>主題分布、是否過度集中、是否有新興需求</td></tr>
+        <tr><td>資源需求</td><td>人力、場地、設備、預算是否合理</td></tr>
+        <tr><td>預期成果</td><td>成果是否具體、可追蹤、可回報</td></tr>
+        <tr><td>風險與缺漏</td><td>資料不足、執行風險、需補問事項</td></tr>
       </table>
 
-      <h3>第二步：萃取報告關鍵資訊（20 分鐘）</h3>
-      <div class="code-block"><span class="cm">Prompt 範例：資訊萃取</span>
-<span class="str">「根據以下清理後的問答記錄，幫我找出：
- 1. 學員最常問的前3個問題
- 2. 最多人卡關的操作步驟
- 3. 對課程最正面的回饋關鍵詞（列出前5個）
- 輸出格式：每項用標題 + 2句說明」</span></div>
-
-      <h3>第三步：確認資料完整性（15 分鐘）</h3>
+      <h3>產出多案比較表</h3>
       <ul class="bullet">
-        <li>確認每個報告章節都有對應的素材（數字、範例、截圖清單）</li>
-        <li>缺少的部分用 AI 標記：「以下哪些欄位資料不足，需要補充？」</li>
-        <li>完成後：資料夾整理好，準備下一階段撰寫報告</li>
+        <li>將多份提案整理成一致欄位</li>
+        <li>比較不同提案的服務對象、課程主題、資源需求與預期成果</li>
+        <li>找出共同亮點、明顯差異與需注意風險</li>
+        <li>用「未提供」或「需補充」標示資料缺漏</li>
       </ul>
-      <div class="info-box teal">實作：學員用提供的範本原始資料，產出一份可直接用於報告的結構化素材包</div>
+      <h3>多案比較 Prompt</h3>
+      <div class="code-block"><span class="str">「請根據以下多份單案資料卡，整理成多案比較表。
+
+比較欄位包含：
+1. 案件名稱
+2. 提案單位
+3. 服務對象
+4. 課程主題
+5. 執行方式
+6. 資源需求
+7. 預期成果
+8. 主要亮點
+9. 主要風險
+10. 資料缺漏
+11. 建議追問事項
+
+請在表格後方補充：
+1. 共同亮點
+2. 主要差異
+3. 值得優先確認的風險
+
+請不要加入原資料沒有支持的判斷。」</span></div>
+
+      <h3>多案比較欄位設計</h3>
+      <table>
+        <tr><th>欄位</th><th>比較目的</th></tr>
+        <tr><td>服務對象</td><td>確認資源是否重複集中或有服務缺口</td></tr>
+        <tr><td>執行方式</td><td>比較各案操作難度與可複製性</td></tr>
+        <tr><td>資源需求</td><td>觀察人力、場地、設備與預算壓力</td></tr>
+        <tr><td>主要亮點</td><td>萃取可向上回報的成果與特色</td></tr>
+        <tr><td>建議追問事項</td><td>形成後續補件或訪談問題</td></tr>
+      </table>
+      <div class="info-box teal">實作：用 3 至 5 份範例提案產出多案比較表，作為後續分析報告的基礎</div>
+    </div>
+  </details>
+
+  <!-- 第7節 -->
+  <details class="session-card m2">
+    <summary>
+      <span class="session-num">第 7 節</span>
+      <span class="session-title">提案資料彙整 Skill 設計</span>
+      <span class="session-dur">40 分鐘</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>從一次性 Prompt 到可重複 Skill</h3>
+      <div class="info-box teal">Prompt 是一次性指令；Skill 是可重複使用的工作流程說明。這一節把前面整理資料、比較多案、撰寫摘要的步驟收斂成一份提案資料彙整 Skill。</div>
+
+      <h3>提案資料彙整 Skill 欄位設計</h3>
+      <table>
+        <tr><th>欄位</th><th>內容</th></tr>
+        <tr><td>Skill 名稱</td><td>提案資料彙整與分析報告 Skill</td></tr>
+        <tr><td>使用時機</td><td>收到多份課程提案、成果資料或問卷回饋，需要整理成分析報告前使用</td></tr>
+        <tr><td>輸入資料</td><td>提案摘要、成果報告、問卷回饋、執行紀錄、訪談紀錄</td></tr>
+        <tr><td>固定流程</td><td>萃取單案資料、標示資料缺漏、整理亮點與風險、產出多案比較表、提出追問問題、撰寫主管摘要</td></tr>
+        <tr><td>輸出格式</td><td>單案資料卡、多案比較表、缺漏清單、提案彙整分析報告</td></tr>
+        <tr><td>品質規則</td><td>不補寫原文沒有的資料；推論需標示；資料不足需列入追問清單</td></tr>
+      </table>
+
+      <h3>Skill 草稿 Prompt</h3>
+      <div class="code-block"><span class="str">「請把我前面用來整理提案資料的流程，整理成一份可重複使用的 Skill 說明。
+
+Skill 需包含：
+1. Skill 名稱
+2. 使用時機
+3. 適合輸入的資料類型
+4. 固定工作流程
+5. 每一步要檢查的重點
+6. 輸出格式
+7. 品質規則
+8. 使用者可以直接貼上的範例指令
+
+請用清楚條列格式撰寫，讓下次遇到新的提案資料時可以直接套用。」</span></div>
+
+      <h3>Skill 範例指令</h3>
+      <div class="code-block"><span class="str">「請依照『提案資料彙整與分析報告 Skill』處理以下資料：
+
+1. 先整理單案資料卡
+2. 再產出多案比較表
+3. 標示資料缺漏與需追問事項
+4. 最後撰寫一份主管摘要
+
+請不要自行補充原文沒有的資訊。
+如果內容是推論，請明確標示。」</span></div>
+      <div class="info-box teal">實作：把前面使用過的 prompt 和欄位設計整理成一份可下次重複使用的 Skill 草稿</div>
+    </div>
+  </details>
+
+  <!-- 第8節 -->
+  <details class="session-card m2">
+    <summary>
+      <span class="session-num">第 8 節</span>
+      <span class="session-title">用 Codex 撰寫提案彙整分析報告</span>
+      <span class="session-dur">60 分鐘</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>報告結構</h3>
+      <table>
+        <tr><th>章節</th><th>內容欄位</th></tr>
+        <tr><td>資料來源與整理範圍</td><td>資料筆數、資料類型、整理時間、限制說明</td></tr>
+        <tr><td>多案比較摘要</td><td>服務對象、課程主題、執行方式、預期成果的整體比較</td></tr>
+        <tr><td>主要發現</td><td>3 至 5 點有資料支持的觀察</td></tr>
+        <tr><td>亮點案例</td><td>具代表性的案件與可引用理由</td></tr>
+        <tr><td>資料缺漏與後續建議</td><td>缺漏欄位、需追問事項、後續補件建議</td></tr>
+        <tr><td>結論摘要</td><td>給主管快速閱讀的 150 至 250 字摘要</td></tr>
+      </table>
+
+      <h3>分析報告 Prompt</h3>
+      <div class="code-block"><span class="str">「請根據以下單案資料卡與多案比較表，撰寫一份提案彙整分析報告。
+
+報告章節包含：
+1. 資料來源與整理範圍
+2. 多案比較摘要
+3. 主要發現
+4. 亮點案例
+5. 資料缺漏與後續建議
+6. 結論摘要
+
+寫作要求：
+1. 語氣適合給主管或上級管理單位閱讀
+2. 主要發現需有資料依據
+3. 不要自行新增原資料沒有支持的結論
+4. 資料不足處請明確列出
+5. 結論摘要請控制在 150 至 250 字」</span></div>
+
+      <h3>檢查報告可信度</h3>
+      <div class="code-block"><span class="str">「請檢查這份提案彙整分析報告，標出哪些句子有明確資料根據，哪些句子可能是推論。
+如果有沒有根據的結論，請改寫成較保守的表述，或標示需要補充資料。」</span></div>
+      <div class="info-box teal">實作：根據單案資料卡與多案比較表，產出一份主管可閱讀的提案彙整分析報告初稿</div>
+    </div>
+  </details>
+
+  <!-- 第二階段作業 -->
+  <details class="session-card m2">
+    <summary>
+      <span class="session-num">作業</span>
+      <span class="session-title">把提案彙整分析報告轉成單頁成果展示網頁</span>
+      <span class="session-dur">課後</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <p style="font-size:14px;margin-bottom:12px;">請使用第二階段最後產出的「提案彙整分析報告」，透過 Codex 製作一個單頁 HTML 成果展示網頁。這份網頁不需要串接後端，只要把報告中的重點整理成清楚、可閱讀、適合向主管或合作單位說明的網頁。</p>
+
+      <h3>作業要求</h3>
+      <ul class="bullet">
+        <li>產出一個單一 HTML 檔案，並在 HTML 內包含 CSS</li>
+        <li>內容需包含：報告標題、提案資料整理範圍、多案比較摘要、主要發現、亮點案例、資料缺漏與後續建議、結論摘要</li>
+        <li>不要自行新增原報告沒有的結論</li>
+        <li>若資料不足，請標示「資料不足」或「需補充」</li>
+        <li>版面風格要清楚、簡潔、適合工作報告使用</li>
+      </ul>
+
+      <h3>作業 Prompt 範例</h3>
+      <div class="code-block"><span class="str">「請根據這份提案彙整分析報告，幫我製作一個單頁 HTML 成果展示網頁。
+
+網頁需要包含：
+1. 報告標題
+2. 提案資料整理範圍
+3. 多案比較摘要
+4. 主要發現
+5. 亮點案例
+6. 資料缺漏與後續建議
+7. 結論摘要
+
+請使用單一 HTML 檔案完成，並在 HTML 內包含 CSS。
+風格請簡潔、清楚，適合給主管或合作單位閱讀。
+請不要加入原報告沒有提到的內容。
+如果資料不足，請標示『資料不足』或『需補充』。」</span></div>
+
+      <div class="info-box teal">與第三階段銜接：這份單頁 HTML 成果展示網頁，會成為第三階段前端實作的起點。第三階段將在這個基礎上，學習如何檢查網頁畫面、測試互動、修正錯誤，並逐步整合成課程查詢 AI 助理的前端介面。</div>
     </div>
   </details>
 
@@ -642,25 +815,39 @@
     <div class="mnum">03</div>
     <div class="minfo">
       <h2>整合應用：課程查詢 AI 助理</h2>
-      <p>向量資料庫概念 → n8n 查詢工作流（Qdrant）→ 前端整合 → 部署上線｜共 8 小時</p>
+      <p>後端查詢工作流 4 小時 → 前端整合與 Chrome DevTools MCP 檢查 4 小時｜共 8 小時</p>
     </div>
   </div>
 
-  <!-- 系統架構 -->
+  <!-- 第三階段全覽 -->
   <details class="session-card m3" open>
     <summary>
-      <span class="session-num">系統架構</span>
-      <span class="session-title">完整資料流說明</span>
+      <span class="session-num">階段目標</span>
+      <span class="session-title">從資料查詢到前端檢查的完整流程</span>
       <span class="session-dur">全覽</span>
       <span class="chevron">▶</span>
     </summary>
     <div class="session-body">
+      <h3>第三階段目標</h3>
+      <table>
+        <tr><th>半天</th><th>目標</th><th>產出</th></tr>
+        <tr><td>第三階段 A｜4 小時</td><td>建立課程查詢 AI 助理的資料查詢流程</td><td>可接收問題、搜尋課程資料、回傳推薦結果的 n8n 工作流</td></tr>
+        <tr><td>第三階段 B｜4 小時</td><td>完成前端整合，並用 Chrome DevTools MCP 檢查真實瀏覽器畫面</td><td>可部署、可測試、可展示的課程查詢前端頁面</td></tr>
+      </table>
+
+      <h3>後端代理 Cloudflare Worker 概念</h3>
+      <p style="font-size:14px;margin-bottom:10px;">實務上，前端頁面通常不會直接把重要網址、金鑰或複雜判斷暴露給使用者。Cloudflare Worker 可以作為很薄的一層後端代理：前端把請求送到 Worker，Worker 再轉送到 n8n、API 或其他服務，並負責基本檢查、隱藏敏感資訊與處理跨網域限制。</p>
+      <div class="info-box amber">本課程不實作 Cloudflare Worker，只讓學員理解「前端頁面」和「真正後端服務」之間有時會需要一層代理。課堂實作仍以 HTML 前端直接串接 n8n Webhook 為主。</div>
+
+      <h3>完整資料流說明</h3>
       <div class="arch">
 <span class="label">使用者瀏覽器</span>
   <span class="note">輸入姓名 + 問題，按下送出</span>
          <span class="arrow">│  POST { name, question }</span>
          <span class="arrow">▼</span>
 <span class="node">[前端 HTML 頁面]</span>  <span class="note">← Codex 產生</span>
+         <span class="arrow">│</span>
+         <span class="arrow">├─ 可選概念：[Cloudflare Worker 後端代理]</span>
          <span class="arrow">│</span>
          <span class="arrow">▼</span>
 <span class="node">[n8n Webhook 節點]</span>
@@ -685,11 +872,11 @@
     </div>
   </details>
 
-  <!-- 第7節 -->
+  <!-- 第9節 -->
   <details class="session-card m3">
     <summary>
-      <span class="session-num">第 7 節</span>
-      <span class="session-title">向量資料庫概念介紹</span>
+      <span class="session-num">第 9 節</span>
+      <span class="session-title">第三階段 A 開始：課程資料與向量資料庫概念</span>
       <span class="session-dur">1 小時</span>
       <span class="chevron">▶</span>
     </summary>
@@ -726,12 +913,12 @@
     </div>
   </details>
 
-  <!-- 第8節 -->
+  <!-- 第10節 -->
   <details class="session-card m3">
     <summary>
-      <span class="session-num">第 8 節</span>
+      <span class="session-num">第 10 節</span>
       <span class="session-title">n8n 查詢工作流建立</span>
-      <span class="session-dur">2.5 小時</span>
+      <span class="session-dur">2 小時</span>
       <span class="chevron">▶</span>
     </summary>
     <div class="session-body">
@@ -745,7 +932,7 @@
       </ol>
       <div class="info-box amber">課程資料（約 20 筆）由講師預先準備，學員直接匯入即可，聚焦在流程理解</div>
 
-      <h3>第二步：主查詢工作流節點配置（1 小時）</h3>
+      <h3>第二步：主查詢工作流節點配置（60 分鐘）</h3>
       <table>
         <tr><th>節點</th><th>設定重點</th></tr>
         <tr><td>① Webhook</td><td>接收 { name, question }</td></tr>
@@ -764,7 +951,7 @@
              課程資料（來自 Qdrant 語意搜尋）：{context}
 <span class="kw">O</span> — Output   推薦 1-3 門課程，每門包含名稱和推薦說明（50字以內）</div>
 
-      <h3>第三步：錯誤處理補強（1 小時）</h3>
+      <h3>第三步：基本錯誤處理（30 分鐘）</h3>
       <ul class="bullet">
         <li>找不到相關課程時的 fallback 回覆（IF 節點判斷搜尋結果是否為空）</li>
         <li>使用者輸入為空時的早期攔截（在 Webhook 後加 IF 節點）</li>
@@ -774,12 +961,84 @@
     </div>
   </details>
 
-  <!-- 第9節 -->
+  <!-- 第11節 -->
   <details class="session-card m3">
     <summary>
-      <span class="session-num">第 9 節</span>
-      <span class="session-title">前端整合</span>
-      <span class="session-dur">1.5 小時</span>
+      <span class="session-num">第 11 節</span>
+      <span class="session-title">查詢回覆品質測試</span>
+      <span class="session-dur">1 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>測試情境設計</h3>
+      <table>
+        <tr><th>測試問題</th><th>觀察重點</th></tr>
+        <tr><td>我完全沒有程式基礎，適合哪門課？</td><td>是否能推薦初階課程並說明理由</td></tr>
+        <tr><td>有沒有適合青年社群經營的課？</td><td>是否能用語意搜尋找到相關主題</td></tr>
+        <tr><td>我想學咖啡烘焙</td><td>資料庫沒有相關課程時，是否能保守回覆</td></tr>
+        <tr><td>空白問題或亂碼</td><td>是否有基本錯誤處理與提醒</td></tr>
+      </table>
+
+      <h3>回覆品質調整 Prompt</h3>
+      <div class="code-block"><span class="str">「請根據以下測試問題與 AI 回覆，幫我檢查：
+1. 推薦是否有根據課程資料
+2. 回覆是否太籠統
+3. 是否有補充資料中沒有的內容
+4. 找不到合適課程時，回覆是否夠保守
+
+請提出 system prompt 的修正建議。」</span></div>
+      <ul class="bullet">
+        <li>用 n8n 執行記錄確認資料流正確</li>
+        <li>測試邊界：問非課程相關問題、問題超長</li>
+        <li>整理「可接受回答」與「需要修正回答」的差異</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 第12節 -->
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 12 節</span>
+      <span class="session-title">第三階段 B 開始：MCP 概念與 Chrome DevTools MCP 設定</span>
+      <span class="session-dur">1 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
+      <h3>MCP 是什麼</h3>
+      <p style="font-size:14px;margin-bottom:10px;">MCP 可以理解成 AI 助理與外部工具之間的標準接口。前面 Codex 主要讀取檔案與修改程式；加入 Chrome DevTools MCP 後，Codex 可以透過真實 Chrome 瀏覽器協助檢查畫面、Console、Network、截圖與互動狀態。</p>
+
+      <h3>Node.js 與 npm 檢查</h3>
+      <table>
+        <tr><th>步驟</th><th>說明</th></tr>
+        <tr><td>檢查 Node.js</td><td>在 VS Code Terminal 輸入 <code>node -v</code>，若出現版本號代表已安裝</td></tr>
+        <tr><td>檢查 npm</td><td>在 VS Code Terminal 輸入 <code>npm -v</code>，若出現版本號代表可使用 npm 套件</td></tr>
+        <tr><td>Windows 未安裝</td><td>到 Node.js 官方網站下載 LTS 版安裝檔，安裝時保留預設選項，完成後重新啟動 VS Code</td></tr>
+        <tr><td>macOS 未安裝</td><td>到 Node.js 官方網站下載 LTS 版安裝檔，或使用 Homebrew 安裝 Node.js，完成後重新啟動 VS Code</td></tr>
+        <tr><td>仍找不到指令</td><td>關閉並重開 VS Code 與 Terminal；若仍失敗，檢查 Node.js 是否加入系統 PATH</td></tr>
+      </table>
+
+      <h3>用 Codex VSCode Extension 加入 Chrome DevTools MCP</h3>
+      <ol class="step-list amber">
+        <li>開啟 VS Code，確認已安裝並登入 Codex VSCode Extension</li>
+        <li>開啟 Codex 側邊欄，進入設定或工具設定區，找到 MCP Servers / Tools 相關入口</li>
+        <li>選擇新增 MCP server，類型選擇本機指令、stdio 或 command server</li>
+        <li>Server name 填入 <code>chrome-devtools</code></li>
+        <li>Command 填入 <code>npx</code></li>
+        <li>Arguments 依序新增兩個值：<code>-y</code>、<code>chrome-devtools-mcp</code></li>
+        <li>儲存設定，回到 Codex 側邊欄重新整理工具清單；必要時重新啟動 VS Code</li>
+        <li>確認 Codex 工具清單中出現 Chrome DevTools 相關能力，例如開啟頁面、截圖、Console、Network 或 Lighthouse</li>
+        <li>請 Codex 測試：「請開啟目前的 HTML 頁面，幫我檢查 Console 是否有錯誤，並截圖確認畫面是否正常。」</li>
+      </ol>
+      <div class="info-box amber">課堂以 Codex VSCode Extension 的視窗介面操作為主：在 Codex 的 MCP / Tools 設定中新增 server，填入 name、command、arguments，不使用命令列加入設定。</div>
+    </div>
+  </details>
+
+  <!-- 第13節 -->
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 13 節</span>
+      <span class="session-title">前端頁面整合與瀏覽器檢查</span>
+      <span class="session-dur">1 小時</span>
       <span class="chevron">▶</span>
     </summary>
     <div class="session-body">
@@ -797,32 +1056,54 @@
 <span class="cm">Prompt 4：視覺優化</span>
 <span class="str">「整體風格參考教育機構網站，主色藍色，卡片有陰影，RWD 支援手機」</span></div>
 
-      <h3>前後端串接測試</h3>
+      <h3>Chrome DevTools MCP 檢查任務</h3>
       <ul class="bullet">
-        <li>用 n8n 執行記錄確認資料流正確</li>
-        <li>測試邊界：問非課程相關問題、問題超長</li>
-        <li>用 Codex 修正實際遇到的 CORS 等問題</li>
+        <li>開啟第二階段作業 HTML，檢查桌機與手機版畫面</li>
+        <li>開啟第三階段課程查詢頁面，確認表單與回覆區塊是否正常</li>
+        <li>查看 Console 是否有錯誤，確認按鈕與表單互動是否正常</li>
+        <li>用截圖或 Lighthouse 結果請 Codex 提出修正建議</li>
       </ul>
     </div>
   </details>
 
-  <!-- 第10節 -->
+  <!-- 第14節 -->
   <details class="session-card m3">
     <summary>
-      <span class="session-num">第 10 節</span>
-      <span class="session-title">功能優化與部署上線</span>
-      <span class="session-dur">1.5 小時</span>
+      <span class="session-num">第 14 節</span>
+      <span class="session-title">互動測試、錯誤修正與 RWD 檢查</span>
+      <span class="session-dur">1 小時</span>
       <span class="chevron">▶</span>
     </summary>
     <div class="session-body">
-      <h3>進階功能選項</h3>
-      <table>
-        <tr><th>功能</th><th>實作方式</th></tr>
-        <tr><td>對話記憶</td><td>n8n 加入 Memory 節點，記住同一使用者上下文</td></tr>
-        <tr><td>回覆評分</td><td>頁面加上 👍👎，記錄到 Google Sheets</td></tr>
-        <tr><td>查詢記錄</td><td>每次問答同步寫入 Google Sheets</td></tr>
-      </table>
+      <h3>前後端串接測試</h3>
+      <ul class="bullet">
+        <li>用 n8n 執行記錄確認資料流正確</li>
+        <li>用 Chrome DevTools MCP 檢查 Network request 是否成功送出</li>
+        <li>測試邊界：問非課程相關問題、問題超長、空白送出</li>
+        <li>用 Codex 修正實際遇到的 CORS、JSON 解析或畫面更新問題</li>
+      </ul>
 
+      <h3>檢查 Prompt 範例</h3>
+      <div class="code-block"><span class="str">「請用瀏覽器檢查這個頁面：
+1. 手機版是否可讀
+2. 表單送出後是否有 loading 狀態
+3. Console 是否有錯誤
+4. Network request 是否成功
+5. 回傳資料是否正確顯示在畫面上
+
+請列出問題，並直接修正 HTML、CSS 或 JavaScript。」</span></div>
+    </div>
+  </details>
+
+  <!-- 第15節 -->
+  <details class="session-card m3">
+    <summary>
+      <span class="session-num">第 15 節</span>
+      <span class="session-title">部署與成果展示</span>
+      <span class="session-dur">1 小時</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="session-body">
       <h3>GitHub Pages 免費部署</h3>
       <ol class="step-list amber">
         <li>建立 GitHub 帳號</li>
@@ -830,45 +1111,14 @@
         <li>Settings → Pages → 選擇 main branch 啟用</li>
         <li>取得公開網址，在真實環境測試完整流程</li>
       </ol>
-    </div>
-  </details>
 
-  <!-- 第11節 -->
-  <details class="session-card m3">
-    <summary>
-      <span class="session-num">第 11 節</span>
-      <span class="session-title">成果展示與課程回顧</span>
-      <span class="session-dur">1 小時</span>
-      <span class="chevron">▶</span>
-    </summary>
-    <div class="session-body">
-      <h3>成果展示（30 分鐘）</h3>
-      <p style="font-size:14px;margin-bottom:10px;">每位學員輪流展示，其他人可以實際使用查詢系統並提問。</p>
+      <h3>成果展示與回顧</h3>
       <ul class="bullet">
         <li>開啟 GitHub Pages 網址，現場示範查詢流程</li>
         <li>展示 n8n 工作流畫布（截圖或直接開啟）</li>
         <li>分享一個「最有用的 prompt 技巧」或「踩過的最大坑」</li>
       </ul>
-
-      <h3>課程回顧（15 分鐘）</h3>
-      <table>
-        <tr><th>學到什麼</th><th>可以做什麼</th></tr>
-        <tr><td>PSIO 框架</td><td>寫出有結構的 prompt，減少 AI 回錯</td></tr>
-        <tr><td>n8n 工作流</td><td>不寫程式也能串接多個服務</td></tr>
-        <tr><td>向量搜尋</td><td>讓系統理解「意思」而不只是關鍵字</td></tr>
-        <tr><td>Codex 前端</td><td>用 AI 產生並修改網頁，快速驗證想法</td></tr>
-      </table>
-
-      <h3>延伸應用方向（15 分鐘）</h3>
-      <div class="tag-list">
-        <span class="tag-pill">產品目錄查詢</span>
-        <span class="tag-pill">公司 FAQ 機器人</span>
-        <span class="tag-pill">LINE Bot 前端介面</span>
-        <span class="tag-pill">問卷自動整理</span>
-        <span class="tag-pill">客戶詢價 → 報價單</span>
-        <span class="tag-pill">內部知識庫查詢</span>
-      </div>
-      <div class="info-box teal" style="margin-top:14px;">課後資源：n8n 官方範本庫、Qdrant 文件、OpenAI Cookbook — 三個最值得書籤的學習來源</div>
+      <div class="info-box teal" style="margin-top:14px;">課後資源：n8n 官方範本庫、Qdrant 文件、Chrome DevTools MCP 文件、OpenAI Cookbook</div>
     </div>
   </details>
 
@@ -880,14 +1130,18 @@
       <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第1節</strong>AI 觀念、LLM/Agent、PSIO、Prompt 規範</div></div>
       <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第2節</strong>n8n 介面與 Chat Trigger 工作流</div></div>
       <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第3節</strong>Google 憑證申請</div></div>
-      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第4節</strong>與模型對話策略</div></div>
-      <div class="summary-item"><div class="si-num">2h</div><div class="si-text"><strong>第5節</strong>漸進式前端實作</div></div>
-      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第6節</strong>清理報告所需資料</div></div>
-      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第7節</strong>向量資料庫概念介紹</div></div>
-      <div class="summary-item"><div class="si-num">2.5h</div><div class="si-text"><strong>第8節</strong>n8n 查詢工作流（Qdrant）</div></div>
-      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第9節</strong>前端整合</div></div>
-      <div class="summary-item"><div class="si-num">1.5h</div><div class="si-text"><strong>第10節</strong>優化與部署</div></div>
-      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第11節</strong>成果展示與課程回顧</div></div>
+      <div class="summary-item"><div class="si-num">45m</div><div class="si-text"><strong>第4節</strong>VSCode 與 Codex 基礎操作</div></div>
+      <div class="summary-item"><div class="si-num">50m</div><div class="si-text"><strong>第5節</strong>單案提案與成果資料整理</div></div>
+      <div class="summary-item"><div class="si-num">45m</div><div class="si-text"><strong>第6節</strong>多案比較與欄位標準化</div></div>
+      <div class="summary-item"><div class="si-num">40m</div><div class="si-text"><strong>第7節</strong>提案資料彙整 Skill 設計</div></div>
+      <div class="summary-item"><div class="si-num">60m</div><div class="si-text"><strong>第8節</strong>提案彙整分析報告撰寫</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第9節</strong>課程資料與向量資料庫概念</div></div>
+      <div class="summary-item"><div class="si-num">2h</div><div class="si-text"><strong>第10節</strong>n8n 查詢工作流（Qdrant）</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第11節</strong>查詢回覆品質測試</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第12節</strong>MCP 概念與 Chrome DevTools MCP 設定</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第13節</strong>前端整合與瀏覽器檢查</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第14節</strong>互動測試、錯誤修正與 RWD 檢查</div></div>
+      <div class="summary-item"><div class="si-num">1h</div><div class="si-text"><strong>第15節</strong>部署與成果展示</div></div>
     </div>
     <div class="info-box" style="margin-top:20px;font-size:15px;font-weight:600;">
       合計：16 小時　｜　模組一 4h + 模組二 4h + 模組三 8h
