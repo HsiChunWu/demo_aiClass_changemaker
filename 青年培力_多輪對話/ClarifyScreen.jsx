@@ -266,7 +266,7 @@ const Message = ({ message, isLatestAssistant }) => {
               borderRadius: 8,
               borderLeft: "3px solid var(--moss-300)",
             }}>
-              <span style={{ fontWeight: 600, color: "var(--moss-700)" }}>為什麼問這個：</span>{" "}
+              <span style={{ fontWeight: 600, color: "var(--moss-700)" }}>想更進一步了解你的需求：</span>{" "}
               {message.reason}
             </div>
           )}
