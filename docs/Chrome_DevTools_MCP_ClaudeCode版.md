@@ -111,52 +111,67 @@ VSCode 側邊欄或 Chat 區域可以看到 Claude Code 對話入口。
 
 ## 5. 新增 Chrome DevTools MCP
 
-### 方法 A：使用 VSCode 指令加入
+Claude Code 提供三種 scope（範圍）的 MCP 設定，依照需求選擇：
 
-在 VSCode 開啟終端機，執行：
+| Scope | 說明 | 儲存位置 |
+|---|---|---|
+| `user`（**建議**） | 這台電腦所有專案都可使用 | `~/.claude.json` 根層級 |
+| `local`（預設） | 只有目前這個專案可使用 | `~/.claude.json` 專案區段 |
+| `project` | 寫入專案資料夾，可 commit 給團隊共用 | `.claude/settings.json` |
 
-```powershell
-code --add-mcp '{"""name""":"""chrome-devtools""","""command""":"""npx""","""args""":["""-y""","""chrome-devtools-mcp@latest"""]}'
+### 方法 A：user scope（個人全域，推薦大多數學員）
+
+在 VSCode 終端機執行：
+
+```bash
+claude mcp add --scope user chrome-devtools -- npx -y chrome-devtools-mcp@latest
+```
+
+設定後，這台電腦的所有 Claude Code 專案都能使用，不需要重複設定。
+
+### 方法 B：local scope（只限目前專案）
+
+```bash
+claude mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest
+```
+
+只在執行指令時所在的專案目錄有效。
+
+### 方法 C：project scope（與團隊共享）
+
+```bash
+claude mcp add --scope project chrome-devtools -- npx -y chrome-devtools-mcp@latest
+```
+
+設定會寫入 `.claude/settings.json`，可以 commit 到 git，讓整個團隊共用同一份 MCP 設定。
+
+### 確認安裝成功
+
+執行：
+
+```bash
+claude mcp list
+```
+
+看到 `chrome-devtools: npx -y chrome-devtools-mcp@latest - ✓ Connected` 代表設定成功。
+
+---
+
+### 附：VSCode 原生 MCP 設定（非 Claude Code 專屬）
+
+若要設定的是 VSCode 本身（而非 Claude Code）的 MCP，指令如下。注意這與 Claude Code 的設定是分開的。
+
+Windows PowerShell 與 macOS/Linux 語法相同：
+
+```bash
+code --add-mcp '{"name":"chrome-devtools","command":"npx","args":["-y","chrome-devtools-mcp@latest"]}'
 ```
 
 完成後重新啟動 VSCode。
 
-### 方法 B：使用 VSCode MCP 設定檔
-
-如果你的 VSCode 或 Claude Code extension 支援 MCP 設定檔，可以加入以下設定：
-
-```json
-{
-  "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
-    }
-  }
-}
-```
-
-設定完成後，重新啟動 VSCode，讓 Claude Code extension 載入 MCP server。
-
 ## 6. 課堂建議設定：隔離模式
 
 課堂操作時，建議使用隔離模式，避免 MCP 操作到個人平常使用的 Chrome profile。
-
-```json
-{
-  "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--isolated",
-        "--no-usage-statistics"
-      ]
-    }
-  }
-}
-```
 
 參數說明：
 
@@ -165,10 +180,25 @@ code --add-mcp '{"""name""":"""chrome-devtools""","""command""":"""npx""","""arg
 | `--isolated` | 使用臨時 Chrome profile，降低個人資料外露風險 |
 | `--no-usage-statistics` | 關閉使用統計回傳 |
 
-如果使用 `code --add-mcp` 指令，可改成：
+### 使用 claude mcp add（推薦）
 
-```powershell
-code --add-mcp '{"""name""":"""chrome-devtools""","""command""":"""npx""","""args""":["""-y""","""chrome-devtools-mcp@latest""","""--isolated""","""--no-usage-statistics"""]}'
+user scope（個人全域）：
+
+```bash
+claude mcp add --scope user chrome-devtools -- npx -y chrome-devtools-mcp@latest --isolated --no-usage-statistics
+```
+
+若之前已設定過不含隔離模式的版本，先移除再重新加入：
+
+```bash
+claude mcp remove --scope user chrome-devtools
+claude mcp add --scope user chrome-devtools -- npx -y chrome-devtools-mcp@latest --isolated --no-usage-statistics
+```
+
+### 附：VSCode 原生 MCP 隔離模式
+
+```bash
+code --add-mcp '{"name":"chrome-devtools","command":"npx","args":["-y","chrome-devtools-mcp@latest","--isolated","--no-usage-statistics"]}'
 ```
 
 ## 7. 第一次測試
